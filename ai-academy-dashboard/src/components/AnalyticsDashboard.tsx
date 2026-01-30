@@ -36,7 +36,6 @@ import {
   Cell,
 } from 'recharts';
 import { format, parseISO, differenceInDays, startOfDay, getHours } from 'date-fns';
-import { sk } from 'date-fns/locale';
 import {
   BarChart3,
   TrendingUp,
@@ -133,7 +132,7 @@ export function AnalyticsDashboard({
     return Array.from(byDate.entries())
       .map(([date, count]) => ({
         date,
-        displayDate: format(parseISO(date), 'd. MMM', { locale: sk }),
+        displayDate: format(parseISO(date), 'MMM d'),
         submissions: count,
       }))
       .sort((a, b) => a.date.localeCompare(b.date));
@@ -234,7 +233,7 @@ export function AnalyticsDashboard({
 
   // Export to CSV
   const exportToCSV = () => {
-    const headers = ['Meno', 'GitHub', 'Tím', 'Rola', 'Body', 'Submisie', 'Rank', 'Posledná submisia'];
+    const headers = ['Name', 'GitHub', 'Team', 'Role', 'Points', 'Submissions', 'Rank', 'Last Submission'];
     const rows = participants.map((p) => {
       const lb = leaderboard.find((l) => l.github_username === p.github_username);
       const lastSub = submissions
@@ -269,13 +268,13 @@ export function AnalyticsDashboard({
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <Users className="h-4 w-4" />
-              Účastníci
+              Participants
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{totalParticipants}</div>
             <p className="text-xs text-muted-foreground">
-              {teamProgress.length} tímov
+              {teamProgress.length} teams
             </p>
           </CardContent>
         </Card>
@@ -283,13 +282,13 @@ export function AnalyticsDashboard({
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <Target className="h-4 w-4" />
-              Submisie
+              Submissions
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{totalSubmissions}</div>
             <p className="text-xs text-muted-foreground">
-              z {totalPossibleSubmissions} možných
+              of {totalPossibleSubmissions} possible
             </p>
           </CardContent>
         </Card>
@@ -303,7 +302,7 @@ export function AnalyticsDashboard({
           <CardContent>
             <div className="text-3xl font-bold text-[#0062FF]">{overallCompletionRate}%</div>
             <p className="text-xs text-muted-foreground">
-              celková dokončenosť
+              overall completion
             </p>
           </CardContent>
         </Card>
@@ -311,13 +310,13 @@ export function AnalyticsDashboard({
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
-              Rizikoví študenti
+              At-Risk Students
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-orange-500">{riskStudents.length}</div>
             <p className="text-xs text-muted-foreground">
-              neaktívni 2+ dní
+              inactive 2+ days
             </p>
           </CardContent>
         </Card>
@@ -334,10 +333,10 @@ export function AnalyticsDashboard({
       {/* Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="overview">Prehľad</TabsTrigger>
-          <TabsTrigger value="teams">Tímy</TabsTrigger>
-          <TabsTrigger value="assignments">Úlohy</TabsTrigger>
-          <TabsTrigger value="risk">Rizikoví študenti</TabsTrigger>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="teams">Teams</TabsTrigger>
+          <TabsTrigger value="assignments">Assignments</TabsTrigger>
+          <TabsTrigger value="risk">At-Risk Students</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -348,7 +347,7 @@ export function AnalyticsDashboard({
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-[#0062FF]" />
-                  Submisie v čase
+                  Submissions Over Time
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -377,7 +376,7 @@ export function AnalyticsDashboard({
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Clock className="h-5 w-5 text-[#0062FF]" />
-                  Aktivita podľa hodiny
+                  Activity by Hour
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -400,7 +399,7 @@ export function AnalyticsDashboard({
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Award className="h-5 w-5 text-[#0062FF]" />
-                  Stav submisií
+                  Submission Status
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -433,13 +432,13 @@ export function AnalyticsDashboard({
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5 text-orange-500" />
-                  Problémové úlohy
+                  Problem Assignments
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {problemAssignments.length === 0 ? (
                   <p className="text-center text-muted-foreground py-8">
-                    Žiadne problémové úlohy
+                    No problem assignments
                   </p>
                 ) : (
                   <div className="space-y-3">
@@ -456,7 +455,7 @@ export function AnalyticsDashboard({
                         </div>
                         <div className="text-right">
                           <p className="text-sm">
-                            <span className="text-orange-500 font-bold">{a.completionRate}%</span> dokončenosť
+                            <span className="text-orange-500 font-bold">{a.completionRate}%</span> completion
                           </p>
                           {a.avgRating && (
                             <p className="text-xs text-muted-foreground">
@@ -479,7 +478,7 @@ export function AnalyticsDashboard({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BarChart3 className="h-5 w-5 text-[#0062FF]" />
-                Porovnanie tímov
+                Team Comparison
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -512,13 +511,13 @@ export function AnalyticsDashboard({
                 <CardContent>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Body:</span>
+                      <span className="text-muted-foreground">Points:</span>
                       <span className="font-bold" style={{ color: TEAM_COLORS[team.team] }}>
                         {team.points}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Avg submisie:</span>
+                      <span className="text-muted-foreground">Avg submissions:</span>
                       <span>{team.avgSubmissions}</span>
                     </div>
                     <div className="flex justify-between">
@@ -536,16 +535,16 @@ export function AnalyticsDashboard({
         <TabsContent value="assignments" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Štatistiky úloh</CardTitle>
+              <CardTitle>Assignment Statistics</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Úloha</TableHead>
+                    <TableHead>Assignment</TableHead>
                     <TableHead>Typ</TableHead>
-                    <TableHead className="text-right">Submisie</TableHead>
-                    <TableHead className="text-right">Dokončenosť</TableHead>
+                    <TableHead className="text-right">Submissions</TableHead>
+                    <TableHead className="text-right">Completion</TableHead>
                     <TableHead className="text-right">Avg Rating</TableHead>
                     <TableHead className="text-right">Max Body</TableHead>
                   </TableRow>
@@ -591,24 +590,24 @@ export function AnalyticsDashboard({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-orange-500" />
-                Rizikoví študenti ({riskStudents.length})
+                At-Risk Students ({riskStudents.length})
               </CardTitle>
             </CardHeader>
             <CardContent>
               {riskStudents.length === 0 ? (
                 <p className="text-center text-muted-foreground py-8">
-                  Žiadni rizikoví študenti - všetci sú aktívni!
+                  No at-risk students - everyone is active!
                 </p>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Meno</TableHead>
-                      <TableHead>Tím</TableHead>
-                      <TableHead>Rola</TableHead>
-                      <TableHead className="text-right">Submisie</TableHead>
-                      <TableHead className="text-right">Body</TableHead>
-                      <TableHead className="text-right">Dni neaktívny</TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Team</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead className="text-right">Submissions</TableHead>
+                      <TableHead className="text-right">Points</TableHead>
+                      <TableHead className="text-right">Days Inactive</TableHead>
                       <TableHead>Status</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -634,16 +633,16 @@ export function AnalyticsDashboard({
                                 : 'text-yellow-500'
                             }
                           >
-                            {p.daysSinceLastSubmission === 999 ? 'Nikdy' : `${p.daysSinceLastSubmission} dní`}
+                            {p.daysSinceLastSubmission === 999 ? 'Never' : `${p.daysSinceLastSubmission} days`}
                           </span>
                         </TableCell>
                         <TableCell>
                           {p.submissionCount === 0 ? (
-                            <Badge variant="destructive">Žiadna submisia</Badge>
+                            <Badge variant="destructive">No submission</Badge>
                           ) : p.daysSinceLastSubmission >= 5 ? (
-                            <Badge variant="destructive">Kritický</Badge>
+                            <Badge variant="destructive">Critical</Badge>
                           ) : (
-                            <Badge className="bg-orange-500">Varovanie</Badge>
+                            <Badge className="bg-orange-500">Warning</Badge>
                           )}
                         </TableCell>
                       </TableRow>

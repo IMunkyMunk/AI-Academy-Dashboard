@@ -175,11 +175,11 @@ export default function PeerReviewsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-muted-foreground">
-            Pre zobrazenie peer reviews vyber svoje meno:
+            To view peer reviews, select your name:
           </p>
           <Select value={selectedUsername} onValueChange={setSelectedUsername}>
             <SelectTrigger className="w-full max-w-md">
-              <SelectValue placeholder="Vyber svoj GitHub username" />
+              <SelectValue placeholder="Select your GitHub username" />
             </SelectTrigger>
             <SelectContent>
               {participants.map((p) => (
@@ -204,7 +204,7 @@ export default function PeerReviewsPage() {
             Peer Reviews
           </h1>
           <p className="text-muted-foreground">
-            Anonymné hodnotenie submisií spolužiakov
+            Anonymous peer review of submissions
           </p>
         </div>
         <Select value={selectedUsername} onValueChange={setSelectedUsername}>
@@ -232,7 +232,7 @@ export default function PeerReviewsPage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{pendingReviews.length}</p>
-                  <p className="text-sm text-muted-foreground">Čaká na recenziu</p>
+                  <p className="text-sm text-muted-foreground">Pending review</p>
                 </div>
               </div>
             </CardContent>
@@ -246,7 +246,7 @@ export default function PeerReviewsPage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{stats.total_reviews_given}</p>
-                  <p className="text-sm text-muted-foreground">Dokončených recenzií</p>
+                  <p className="text-sm text-muted-foreground">Completed reviews</p>
                 </div>
               </div>
             </CardContent>
@@ -262,7 +262,7 @@ export default function PeerReviewsPage() {
                   <p className="text-2xl font-bold">
                     {stats.avg_rating_received?.toFixed(1) ?? '-'}
                   </p>
-                  <p className="text-sm text-muted-foreground">Priemerné hodnotenie</p>
+                  <p className="text-sm text-muted-foreground">Average rating</p>
                 </div>
               </div>
             </CardContent>
@@ -276,7 +276,7 @@ export default function PeerReviewsPage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{stats.bonus_points_earned}</p>
-                  <p className="text-sm text-muted-foreground">Bonus bodov</p>
+                  <p className="text-sm text-muted-foreground">Bonus points</p>
                 </div>
               </div>
             </CardContent>
@@ -289,7 +289,7 @@ export default function PeerReviewsPage() {
         <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
           <TabsTrigger value="pending" className="relative">
             <Clock className="mr-2 h-4 w-4" />
-            Čakajúce
+            Pending
             {pendingReviews.length > 0 && (
               <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center bg-[#0062FF]">
                 {pendingReviews.length}
@@ -298,11 +298,11 @@ export default function PeerReviewsPage() {
           </TabsTrigger>
           <TabsTrigger value="completed">
             <CheckCircle className="mr-2 h-4 w-4" />
-            Dokončené
+            Completed
           </TabsTrigger>
           <TabsTrigger value="received">
             <UserCircle className="mr-2 h-4 w-4" />
-            Prijaté
+            Received
           </TabsTrigger>
         </TabsList>
 
@@ -320,9 +320,9 @@ export default function PeerReviewsPage() {
                   <CardContent className="pt-6">
                     <div className="text-center py-8">
                       <CheckCircle className="h-12 w-12 mx-auto text-green-500 mb-4" />
-                      <p className="font-medium">Všetky recenzie dokončené!</p>
+                      <p className="font-medium">All reviews completed!</p>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Zatiaľ nemáš žiadne čakajúce recenzie
+                        You have no pending reviews at the moment
                       </p>
                     </div>
                   </CardContent>
@@ -346,9 +346,9 @@ export default function PeerReviewsPage() {
                   <CardContent className="pt-6">
                     <div className="text-center py-8">
                       <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                      <p className="font-medium">Zatiaľ žiadne recenzie</p>
+                      <p className="font-medium">No reviews yet</p>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Keď dokončíš recenziu, zobrazí sa tu
+                        When you complete a review, it will appear here
                       </p>
                     </div>
                   </CardContent>
@@ -367,7 +367,7 @@ export default function PeerReviewsPage() {
                     <>
                       <Separator />
                       <p className="text-sm text-muted-foreground">
-                        Preskočené ({skippedReviews.length})
+                        Skipped ({skippedReviews.length})
                       </p>
                       {skippedReviews.map((review) => (
                         <PeerReviewCard
@@ -390,9 +390,9 @@ export default function PeerReviewsPage() {
                   <CardContent className="pt-6">
                     <div className="text-center py-8">
                       <UserCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                      <p className="font-medium">Zatiaľ žiadne prijaté recenzie</p>
+                      <p className="font-medium">No received reviews yet</p>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Keď niekto ohodnotí tvoju submisiu, zobrazí sa tu
+                        When someone reviews your submission, it will appear here
                       </p>
                     </div>
                   </CardContent>
@@ -405,7 +405,7 @@ export default function PeerReviewsPage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="text-sm text-muted-foreground">
-                            Tvoje priemerné peer hodnotenie
+                            Your average peer rating
                           </p>
                           <div className="flex items-center gap-2 mt-1">
                             {[1, 2, 3, 4, 5].map((star) => (
@@ -456,7 +456,7 @@ export default function PeerReviewsPage() {
                             )}
                           </div>
                           <Badge variant="outline">
-                            {review.is_anonymous ? 'Anonymný' : 'Verejný'}
+                            {review.is_anonymous ? 'Anonymous' : 'Public'}
                           </Badge>
                         </div>
                       </CardContent>

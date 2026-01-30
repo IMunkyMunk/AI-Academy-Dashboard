@@ -24,7 +24,6 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { AchievementBadge } from '@/components/AchievementBadge';
 import { formatDistanceToNow, differenceInHours } from 'date-fns';
-import { sk } from 'date-fns/locale';
 import Link from 'next/link';
 import {
   Trophy,
@@ -209,16 +208,16 @@ export function MyDashboardClient({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5 text-[#0062FF]" />
-            Vyber svoj profil
+            Select Your Profile
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-muted-foreground">
-            Pre zobrazenie osobného dashboardu vyber svoje meno zo zoznamu:
+            To view your personal dashboard, select your name from the list:
           </p>
           <Select value={selectedUsername} onValueChange={setSelectedUsername}>
             <SelectTrigger className="w-full max-w-md">
-              <SelectValue placeholder="Vyber svoj GitHub username" />
+              <SelectValue placeholder="Select your GitHub username" />
             </SelectTrigger>
             <SelectContent>
               {participants.map((p) => (
@@ -229,7 +228,7 @@ export function MyDashboardClient({
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground">
-            Tvoja voľba sa uloží pre nabudúce.
+            Your selection will be saved for next time.
           </p>
         </CardContent>
       </Card>
@@ -242,7 +241,7 @@ export function MyDashboardClient({
         <CardContent className="pt-6">
           <div className="flex items-center gap-2 text-red-500">
             <AlertCircle className="h-5 w-5" />
-            <span>Používateľ nenájdený</span>
+            <span>User not found</span>
           </div>
           <Button
             variant="outline"
@@ -252,7 +251,7 @@ export function MyDashboardClient({
               localStorage.removeItem('my-dashboard-username');
             }}
           >
-            Vybrať iného používateľa
+            Select another user
           </Button>
         </CardContent>
       </Card>
@@ -277,7 +276,7 @@ export function MyDashboardClient({
         </Select>
         <Link href={`/participant/${selectedUsername}`}>
           <Button variant="outline" size="sm">
-            Verejný profil
+            Public Profile
             <ExternalLink className="ml-2 h-4 w-4" />
           </Button>
         </Link>
@@ -323,14 +322,14 @@ export function MyDashboardClient({
               <div className="text-center p-3 bg-accent/50 rounded-lg">
                 <Trophy className="h-5 w-5 mx-auto mb-1 text-[#0062FF]" />
                 <p className="text-xl font-bold">{userLeaderboard.total_points}</p>
-                <p className="text-xs text-muted-foreground">Body</p>
+                <p className="text-xs text-muted-foreground">Points</p>
               </div>
               <div className="text-center p-3 bg-accent/50 rounded-lg">
                 <GitCommit className="h-5 w-5 mx-auto mb-1 text-green-500" />
                 <p className="text-xl font-bold">
                   {userLeaderboard.total_submissions}
                 </p>
-                <p className="text-xs text-muted-foreground">Submisie</p>
+                <p className="text-xs text-muted-foreground">Submissions</p>
               </div>
               <div className="text-center p-3 bg-accent/50 rounded-lg">
                 <Star className="h-5 w-5 mx-auto mb-1 text-yellow-500" />
@@ -359,7 +358,7 @@ export function MyDashboardClient({
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
                   <AlertCircle className="h-5 w-5" />
-                  Chýbajúce úlohy ({missingAssignments.length})
+                  Missing Assignments ({missingAssignments.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -390,30 +389,29 @@ export function MyDashboardClient({
                                 : 'Homework'}
                             </Badge>
                             <span className="text-sm text-muted-foreground">
-                              {assignment.max_points} bodov
+                              {assignment.max_points} points
                             </span>
                           </div>
                         </div>
                         <div className="text-right">
                           {status === 'overdue' && (
-                            <Badge variant="destructive">Po termíne</Badge>
+                            <Badge variant="destructive">Overdue</Badge>
                           )}
                           {status === 'urgent' && (
                             <Badge className="bg-orange-500">
                               <Clock className="mr-1 h-3 w-3" />
-                              Menej ako 24h
+                              Less than 24h
                             </Badge>
                           )}
                           {status === 'soon' && (
                             <Badge className="bg-yellow-500 text-black">
-                              Blíži sa deadline
+                              Deadline approaching
                             </Badge>
                           )}
                           {assignment.due_at && (
                             <p className="text-xs text-muted-foreground mt-1">
                               {formatDistanceToNow(new Date(assignment.due_at), {
                                 addSuffix: true,
-                                locale: sk,
                               })}
                             </p>
                           )}
@@ -434,10 +432,10 @@ export function MyDashboardClient({
                   <CheckCircle className="h-8 w-8 text-green-500" />
                   <div>
                     <p className="font-bold text-green-600 dark:text-green-400">
-                      Všetky úlohy odovzdané!
+                      All assignments submitted!
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Gratulujeme, máš 100% completion rate.
+                      Congratulations, you have a 100% completion rate.
                     </p>
                   </div>
                 </div>
@@ -450,28 +448,28 @@ export function MyDashboardClient({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <GitCommit className="h-5 w-5 text-[#0062FF]" />
-                Moje submisie ({submissions.length})
+                My Submissions ({submissions.length})
               </CardTitle>
             </CardHeader>
             <CardContent>
               {isLoading ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  Načítavam...
+                  Loading...
                 </div>
               ) : submissions.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  Zatiaľ žiadne submisie
+                  No submissions yet
                 </div>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Úloha</TableHead>
+                      <TableHead>Assignment</TableHead>
                       <TableHead>Typ</TableHead>
                       <TableHead className="text-right">Body</TableHead>
                       <TableHead className="text-right">Rating</TableHead>
-                      <TableHead>Stav</TableHead>
-                      <TableHead className="text-right">Kedy</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">When</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -516,7 +514,6 @@ export function MyDashboardClient({
                         <TableCell className="text-right text-sm text-muted-foreground">
                           {formatDistanceToNow(new Date(sub.submitted_at), {
                             addSuffix: true,
-                            locale: sk,
                           })}
                         </TableCell>
                       </TableRow>
@@ -535,7 +532,7 @@ export function MyDashboardClient({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-[#0062FF]" />
-                Porovnanie
+                Comparison
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -546,7 +543,7 @@ export function MyDashboardClient({
                 </p>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">Body</span>
+                    <span className="text-sm">Points</span>
                     <div className="flex items-center gap-2">
                       {getComparisonIcon(
                         userLeaderboard.total_points,
@@ -558,7 +555,7 @@ export function MyDashboardClient({
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">Submisie</span>
+                    <span className="text-sm">Submissions</span>
                     <div className="flex items-center gap-2">
                       {getComparisonIcon(
                         userLeaderboard.total_submissions,
@@ -578,11 +575,11 @@ export function MyDashboardClient({
               {/* Overall Comparison */}
               <div>
                 <p className="text-sm font-medium text-muted-foreground mb-2">
-                  vs. Celá akadémia
+                  vs. Entire Academy
                 </p>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">Body</span>
+                    <span className="text-sm">Points</span>
                     <div className="flex items-center gap-2">
                       {getComparisonIcon(
                         userLeaderboard.total_points,
@@ -594,7 +591,7 @@ export function MyDashboardClient({
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">Submisie</span>
+                    <span className="text-sm">Submissions</span>
                     <div className="flex items-center gap-2">
                       {getComparisonIcon(
                         userLeaderboard.total_submissions,
@@ -635,13 +632,13 @@ export function MyDashboardClient({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Award className="h-5 w-5 text-yellow-500" />
-                Moje achievements ({earnedAchievements.length})
+                My Achievements ({earnedAchievements.length})
               </CardTitle>
             </CardHeader>
             <CardContent>
               {earnedAchievements.length === 0 ? (
                 <p className="text-center text-muted-foreground py-4">
-                  Zatiaľ žiadne achievements
+                  No achievements yet
                 </p>
               ) : (
                 <div className="space-y-2">
@@ -662,7 +659,7 @@ export function MyDashboardClient({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="h-5 w-5 text-muted-foreground" />
-                Dostupné achievements ({availableAchievements.length})
+                Available Achievements ({availableAchievements.length})
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -670,7 +667,7 @@ export function MyDashboardClient({
                 <div className="text-center py-4">
                   <Trophy className="h-8 w-8 mx-auto text-yellow-500 mb-2" />
                   <p className="font-medium text-green-500">
-                    Máš všetky achievements!
+                    You have all achievements!
                   </p>
                 </div>
               ) : (

@@ -70,13 +70,13 @@ export default function PendingPage() {
           </div>
 
           <CardTitle className="text-2xl">
-            {isRejected ? 'Registrácia zamietnutá' : 'Čakáme na schválenie'}
+            {isRejected ? 'Registration Rejected' : 'Pending Approval'}
           </CardTitle>
 
           <CardDescription>
             {isRejected
-              ? 'Tvoja registrácia nebola schválená administrátorom.'
-              : 'Tvoja registrácia čaká na schválenie administrátorom.'}
+              ? 'Your registration was not approved by the administrator.'
+              : 'Your registration is pending administrator approval.'}
           </CardDescription>
         </CardHeader>
 
@@ -103,7 +103,7 @@ export default function PendingPage() {
                 )}
               </div>
               <Badge variant={isRejected ? 'destructive' : 'secondary'}>
-                {isRejected ? 'Zamietnuté' : 'Pending'}
+                {isRejected ? 'Rejected' : 'Pending'}
               </Badge>
             </div>
           )}
@@ -124,20 +124,20 @@ export default function PendingPage() {
           }`}>
             {isRejected ? (
               <>
-                <p className="font-medium text-red-500 mb-2">Čo teraz?</p>
+                <p className="font-medium text-red-500 mb-2">What now?</p>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li>• Kontaktuj administrátora pre viac informácií</li>
-                  <li>• Skontroluj, či si použil správny GitHub účet</li>
-                  <li>• Skús sa zaregistrovať znova s iným účtom</li>
+                  <li>• Contact the administrator for more information</li>
+                  <li>• Check if you used the correct GitHub account</li>
+                  <li>• Try registering again with a different account</li>
                 </ul>
               </>
             ) : (
               <>
-                <p className="font-medium text-orange-500 mb-2">Čo sa teraz deje?</p>
+                <p className="font-medium text-orange-500 mb-2">What happens next?</p>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li>• Administrátor overí tvoje údaje</li>
-                  <li>• Po schválení dostaneš prístup k dashboardu</li>
-                  <li>• Budeme ťa informovať emailom</li>
+                  <li>• The administrator will verify your information</li>
+                  <li>• You will get access to the dashboard after approval</li>
+                  <li>• You will be notified by email</li>
                 </ul>
               </>
             )}
@@ -151,7 +151,7 @@ export default function PendingPage() {
               className="w-full"
             >
               <RefreshCw className="mr-2 h-4 w-4" />
-              Skontrolovať stav
+              Check Status
             </Button>
 
             <Button
@@ -160,7 +160,7 @@ export default function PendingPage() {
               className="w-full text-muted-foreground"
             >
               <LogOut className="mr-2 h-4 w-4" />
-              Odhlásiť sa
+              Sign Out
             </Button>
           </div>
         </CardContent>

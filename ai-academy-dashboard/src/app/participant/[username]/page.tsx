@@ -177,10 +177,10 @@ export default async function ParticipantPage({ params }: ParticipantPageProps) 
               <CheckCircle className="h-8 w-8 text-green-500" />
               <div>
                 <p className="font-bold text-green-600 dark:text-green-400">
-                  Všetky úlohy odovzdané!
+                  All assignments submitted!
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {subs.length} z {allAssignments.length} úloh dokončených
+                  {subs.length} of {allAssignments.length} assignments completed
                 </p>
               </div>
             </div>

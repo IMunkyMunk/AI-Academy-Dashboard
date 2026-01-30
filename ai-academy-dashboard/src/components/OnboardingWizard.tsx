@@ -131,7 +131,7 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
 
   const handleSubmitProfile = async () => {
     if (!formData.github_username || !formData.name || !formData.email || !formData.role || !formData.team || !formData.stream) {
-      toast.error('Vyplň všetky povinné polia');
+      toast.error('Please fill in all required fields');
       return;
     }
 
@@ -150,10 +150,10 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Registrácia zlyhala');
+        throw new Error(result.error || 'Registration failed');
       }
 
-      toast.success('Profil vytvorený!');
+      toast.success('Profile created!');
 
       if (user) {
         await refreshParticipant();
@@ -161,7 +161,7 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
 
       goNext(); // Go to webhook step
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Registrácia zlyhala');
+      toast.error(error instanceof Error ? error.message : 'Registration failed');
     } finally {
       setIsSubmitting(false);
     }
@@ -169,7 +169,7 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success('Skopírované do schránky');
+    toast.success('Copied to clipboard');
   };
 
   const webhookUrl = typeof window !== 'undefined'
@@ -245,32 +245,32 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
               </div>
 
               <div>
-                <h1 className="text-3xl font-bold mb-2">Vitaj v AI Academy!</h1>
+                <h1 className="text-3xl font-bold mb-2">Welcome to AI Academy!</h1>
                 <p className="text-muted-foreground text-lg">
-                  Priprav sa na vzrušujúcu cestu do sveta AI a strojového učenia.
+                  Get ready for an exciting journey into the world of AI and machine learning.
                 </p>
               </div>
 
               <div className="grid grid-cols-3 gap-4 py-6">
                 <div className="text-center p-4 rounded-lg bg-muted/50">
                   <Target className="h-8 w-8 mx-auto mb-2 text-[#0062FF]" />
-                  <p className="font-medium">5 dní</p>
-                  <p className="text-sm text-muted-foreground">Intenzívne školenie</p>
+                  <p className="font-medium">5 Days</p>
+                  <p className="text-sm text-muted-foreground">Intensive training</p>
                 </div>
                 <div className="text-center p-4 rounded-lg bg-muted/50">
                   <Trophy className="h-8 w-8 mx-auto mb-2 text-yellow-500" />
-                  <p className="font-medium">Achievementy</p>
-                  <p className="text-sm text-muted-foreground">Zbieraj odznaky</p>
+                  <p className="font-medium">Achievements</p>
+                  <p className="text-sm text-muted-foreground">Collect badges</p>
                 </div>
                 <div className="text-center p-4 rounded-lg bg-muted/50">
                   <Users className="h-8 w-8 mx-auto mb-2 text-green-500" />
-                  <p className="font-medium">Tímová práca</p>
-                  <p className="text-sm text-muted-foreground">Spolupracuj s ostatnými</p>
+                  <p className="font-medium">Teamwork</p>
+                  <p className="text-sm text-muted-foreground">Collaborate with others</p>
                 </div>
               </div>
 
               <p className="text-sm text-muted-foreground">
-                Tento sprievodca ti pomôže nastaviť všetko potrebné za pár minút.
+                This wizard will help you set up everything you need in just a few minutes.
               </p>
 
               <Button
@@ -278,7 +278,7 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
                 className="bg-[#0062FF] hover:bg-[#0052D9]"
                 onClick={goNext}
               >
-                Začať
+                Get Started
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
@@ -291,9 +291,9 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#24292e] mb-4">
                   <Github className="h-8 w-8 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold mb-2">Prepoj GitHub účet</h2>
+                <h2 className="text-2xl font-bold mb-2">Connect GitHub Account</h2>
                 <p className="text-muted-foreground">
-                  Potrebujeme prepojiť tvoj GitHub účet pre sledovanie submisií.
+                  We need to connect your GitHub account to track submissions.
                 </p>
               </div>
 
@@ -301,7 +301,7 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
                 <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-6 text-center">
                   <CheckCircle className="h-12 w-12 mx-auto text-green-500 mb-3" />
                   <p className="font-medium text-green-600 dark:text-green-400">
-                    GitHub účet prepojený!
+                    GitHub account connected!
                   </p>
                   <p className="text-sm text-muted-foreground mt-1">
                     @{user.user_metadata?.user_name}
@@ -315,11 +315,11 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
                     onClick={handleGitHubLogin}
                   >
                     <Github className="mr-2 h-5 w-5" />
-                    Prihlásiť sa cez GitHub
+                    Sign in with GitHub
                   </Button>
 
                   <p className="text-xs text-center text-muted-foreground">
-                    Požadujeme len prístup k základným údajom (meno, email, avatar).
+                    We only require access to basic information (name, email, avatar).
                   </p>
                 </div>
               )}
@@ -329,14 +329,14 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
               <div className="flex justify-between">
                 <Button variant="ghost" onClick={goBack}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Späť
+                  Back
                 </Button>
                 <Button
                   onClick={goNext}
                   disabled={!user}
                   className="bg-[#0062FF] hover:bg-[#0052D9]"
                 >
-                  Pokračovať
+                  Continue
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
@@ -350,9 +350,9 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#0062FF]/10 mb-4">
                   <User className="h-8 w-8 text-[#0062FF]" />
                 </div>
-                <h2 className="text-2xl font-bold mb-2">Nastav si profil</h2>
+                <h2 className="text-2xl font-bold mb-2">Set Up Your Profile</h2>
                 <p className="text-muted-foreground">
-                  Doplň informácie o sebe a svojom zaradení.
+                  Complete information about yourself and your assignment.
                 </p>
               </div>
 
@@ -370,7 +370,7 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
                     {user && (
                       <p className="text-xs text-green-500 flex items-center gap-1">
                         <CheckCircle className="h-3 w-3" />
-                        Overené
+                        Verified
                       </p>
                     )}
                   </div>
@@ -389,10 +389,10 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="name">Celé meno</Label>
+                  <Label htmlFor="name">Full Name</Label>
                   <Input
                     id="name"
-                    placeholder="Ján Novák"
+                    placeholder="John Smith"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
@@ -401,13 +401,13 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
 
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label>Rola</Label>
+                    <Label>Role</Label>
                     <Select
                       value={formData.role}
                       onValueChange={(value) => setFormData({ ...formData, role: value })}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Vyber" />
+                        <SelectValue placeholder="Select" />
                       </SelectTrigger>
                       <SelectContent>
                         {ROLES.map((role) => (
@@ -425,13 +425,13 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Tím</Label>
+                    <Label>Team</Label>
                     <Select
                       value={formData.team}
                       onValueChange={(value) => setFormData({ ...formData, team: value })}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Vyber" />
+                        <SelectValue placeholder="Select" />
                       </SelectTrigger>
                       <SelectContent>
                         {TEAMS.map((team) => (
@@ -450,7 +450,7 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
                       onValueChange={(value) => setFormData({ ...formData, stream: value })}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Vyber" />
+                        <SelectValue placeholder="Select" />
                       </SelectTrigger>
                       <SelectContent>
                         {STREAMS.map((stream) => (
@@ -469,7 +469,7 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
               <div className="flex justify-between">
                 <Button variant="ghost" onClick={goBack}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Späť
+                  Back
                 </Button>
                 <Button
                   onClick={handleSubmitProfile}
@@ -477,7 +477,7 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
                   className="bg-[#0062FF] hover:bg-[#0052D9]"
                 >
                   {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Vytvoriť profil
+                  Create Profile
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
@@ -491,26 +491,26 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple-500/10 mb-4">
                   <Webhook className="h-8 w-8 text-purple-500" />
                 </div>
-                <h2 className="text-2xl font-bold mb-2">Nastav Webhook</h2>
+                <h2 className="text-2xl font-bold mb-2">Set Up Webhook</h2>
                 <p className="text-muted-foreground">
-                  Webhook automaticky zaznamená tvoje submisie pri každom pushu.
+                  Webhook will automatically record your submissions on every push.
                 </p>
               </div>
 
               <div className="bg-muted/50 rounded-lg p-6 space-y-4">
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline">Krok 1</Badge>
-                  <span className="font-medium">Otvor nastavenia repozitára</span>
+                  <Badge variant="outline">Step 1</Badge>
+                  <span className="font-medium">Open repository settings</span>
                 </div>
                 <p className="text-sm text-muted-foreground pl-6">
-                  Choď do svojho GitHub repozitára → Settings → Webhooks → Add webhook
+                  Go to your GitHub repository - Settings - Webhooks - Add webhook
                 </p>
 
                 <Separator />
 
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline">Krok 2</Badge>
-                  <span className="font-medium">Nastav Payload URL</span>
+                  <Badge variant="outline">Step 2</Badge>
+                  <span className="font-medium">Set Payload URL</span>
                 </div>
                 <div className="flex items-center gap-2 pl-6">
                   <code className="flex-1 bg-background px-3 py-2 rounded border text-sm truncate">
@@ -528,21 +528,21 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
                 <Separator />
 
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline">Krok 3</Badge>
-                  <span className="font-medium">Vyber Content type</span>
+                  <Badge variant="outline">Step 3</Badge>
+                  <span className="font-medium">Select Content type</span>
                 </div>
                 <p className="text-sm text-muted-foreground pl-6">
-                  Nastav na <code className="bg-background px-1 rounded">application/json</code>
+                  Set to <code className="bg-background px-1 rounded">application/json</code>
                 </p>
 
                 <Separator />
 
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline">Krok 4</Badge>
-                  <span className="font-medium">Vyber eventy</span>
+                  <Badge variant="outline">Step 4</Badge>
+                  <span className="font-medium">Select events</span>
                 </div>
                 <p className="text-sm text-muted-foreground pl-6">
-                  Vyber &quot;Just the push event&quot; a klikni &quot;Add webhook&quot;
+                  Select &quot;Just the push event&quot; and click &quot;Add webhook&quot;
                 </p>
               </div>
 
@@ -553,7 +553,7 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-[#0062FF] hover:underline"
                 >
-                  Otvoriť GitHub repozitáre
+                  Open GitHub Repositories
                   <ExternalLink className="h-4 w-4" />
                 </a>
               </div>
@@ -563,13 +563,13 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
               <div className="flex justify-between">
                 <Button variant="ghost" onClick={goBack}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Späť
+                  Back
                 </Button>
                 <Button
                   onClick={goNext}
                   className="bg-[#0062FF] hover:bg-[#0052D9]"
                 >
-                  Hotovo
+                  Done
                   <CheckCircle className="ml-2 h-4 w-4" />
                 </Button>
               </div>
@@ -584,30 +584,30 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
               </div>
 
               <div>
-                <h1 className="text-3xl font-bold mb-2">Všetko pripravené!</h1>
+                <h1 className="text-3xl font-bold mb-2">All Set!</h1>
                 <p className="text-muted-foreground text-lg">
-                  Si pripravený začať svoju AI Academy cestu.
+                  You are ready to start your AI Academy journey.
                 </p>
               </div>
 
               <div className="bg-gradient-to-r from-[#0062FF]/10 to-purple-500/10 rounded-lg p-6">
-                <h3 className="font-semibold mb-3">Čo ďalej?</h3>
+                <h3 className="font-semibold mb-3">What's Next?</h3>
                 <ul className="text-sm text-muted-foreground space-y-2 text-left">
                   <li className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500" />
-                    Pozri si svoj dashboard a sleduj progres
+                    Check your dashboard and track your progress
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500" />
-                    Začni pracovať na Day 1 úlohách
+                    Start working on Day 1 assignments
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500" />
-                    Pushni zmeny do repozitára pre zaznamenanie submisie
+                    Push changes to your repository to record submissions
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500" />
-                    Zbieraj achievementy a súťaž na leaderboarde
+                    Collect achievements and compete on the leaderboard
                   </li>
                 </ul>
               </div>
@@ -616,7 +616,7 @@ export function OnboardingWizard({ initialStep = 'welcome', fromGitHub = false }
                 <Link href="/my-dashboard">
                   <Button size="lg" className="bg-[#0062FF] hover:bg-[#0052D9]">
                     <User className="mr-2 h-5 w-5" />
-                    Môj Dashboard
+                    My Dashboard
                   </Button>
                 </Link>
                 <Link href="/leaderboard">

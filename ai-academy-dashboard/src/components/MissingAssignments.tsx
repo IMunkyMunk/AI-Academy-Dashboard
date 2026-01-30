@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { differenceInHours, differenceInMinutes, formatDistanceToNow } from 'date-fns';
-import { sk } from 'date-fns/locale';
 import { AlertCircle, Clock, ExternalLink, AlertTriangle } from 'lucide-react';
 import type { Assignment } from '@/lib/types';
 
@@ -47,7 +46,7 @@ function CountdownTimer({ dueAt }: { dueAt: string }) {
   if (hoursLeft < 0) {
     return (
       <span className="text-red-500 font-medium">
-        Po termíne
+        Overdue
       </span>
     );
   }
@@ -62,7 +61,7 @@ function CountdownTimer({ dueAt }: { dueAt: string }) {
 
   return (
     <span className="text-muted-foreground">
-      {formatDistanceToNow(due, { addSuffix: true, locale: sk })}
+      {formatDistanceToNow(due, { addSuffix: true })}
     </span>
   );
 }
@@ -106,13 +105,13 @@ export function MissingAssignments({
             <div className="flex items-center gap-2">
               <AlertCircle className="h-5 w-5 text-amber-500" />
               <span className="font-medium">
-                {assignments.length} chýbajúcich úloh
+                {assignments.length} missing assignments
               </span>
               {overdueCount > 0 && (
-                <Badge variant="destructive">{overdueCount} po termíne</Badge>
+                <Badge variant="destructive">{overdueCount} overdue</Badge>
               )}
               {urgentCount > 0 && (
-                <Badge className="bg-orange-500">{urgentCount} urgentných</Badge>
+                <Badge className="bg-orange-500">{urgentCount} urgent</Badge>
               )}
             </div>
           </div>
@@ -126,10 +125,10 @@ export function MissingAssignments({
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
           <AlertCircle className="h-5 w-5" />
-          Chýbajúce úlohy ({assignments.length})
+          Missing Assignments ({assignments.length})
           {overdueCount > 0 && (
             <Badge variant="destructive" className="ml-2">
-              {overdueCount} po termíne
+              {overdueCount} overdue
             </Badge>
           )}
         </CardTitle>
@@ -160,7 +159,7 @@ export function MissingAssignments({
                       {assignment.type === 'in_class' ? 'In-Class' : 'Homework'}
                     </Badge>
                     <span className="text-sm text-muted-foreground">
-                      {assignment.max_points} bodov
+                      {assignment.max_points} points
                     </span>
                     {assignment.description && (
                       <span className="text-sm text-muted-foreground hidden md:inline">
@@ -172,17 +171,17 @@ export function MissingAssignments({
                 <div className="flex items-center gap-3">
                   <div className="text-right">
                     {status === 'overdue' && (
-                      <Badge variant="destructive">Po termíne</Badge>
+                      <Badge variant="destructive">Overdue</Badge>
                     )}
                     {status === 'urgent' && (
                       <Badge className="bg-orange-500">
                         <Clock className="mr-1 h-3 w-3" />
-                        Menej ako 24h
+                        Less than 24h
                       </Badge>
                     )}
                     {status === 'soon' && (
                       <Badge className="bg-yellow-500 text-black">
-                        Blíži sa deadline
+                        Deadline approaching
                       </Badge>
                     )}
                     {assignment.due_at && (
@@ -199,7 +198,7 @@ export function MissingAssignments({
                     >
                       <Button size="sm" variant="outline">
                         <ExternalLink className="h-4 w-4 mr-1" />
-                        Otvoriť
+                        Open
                       </Button>
                     </a>
                   )}
@@ -213,7 +212,7 @@ export function MissingAssignments({
         <div className="flex items-center gap-4 mt-4 pt-4 border-t text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded bg-red-500/30 border border-red-500/50"></div>
-            <span>Po termíne</span>
+            <span>Overdue</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded bg-orange-500/30 border border-orange-500/50"></div>

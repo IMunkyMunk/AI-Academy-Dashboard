@@ -28,7 +28,6 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
-import { sk } from 'date-fns/locale';
 import type { PeerReviewWithDetails } from '@/lib/types';
 
 interface PeerReviewCardProps {
@@ -54,7 +53,7 @@ export function PeerReviewCard({
 
   const handleSubmitReview = async () => {
     if (rating === 0) {
-      toast.error('Prosím vyber hodnotenie');
+      toast.error('Please select a rating');
       return;
     }
 
@@ -78,11 +77,11 @@ export function PeerReviewCard({
         throw new Error(data.error || 'Failed to submit review');
       }
 
-      toast.success(`Recenzia odoslaná! +${data.bonus_points_earned} bonus bodov`);
+      toast.success(`Review submitted! +${data.bonus_points_earned} bonus points`);
       setIsViewOpen(false);
       onComplete();
     } catch (error) {
-      toast.error('Nepodarilo sa odoslať recenziu');
+      toast.error('Failed to submit review');
     } finally {
       setIsSubmitting(false);
     }
@@ -105,11 +104,11 @@ export function PeerReviewCard({
         throw new Error('Failed to skip review');
       }
 
-      toast.info('Recenzia preskočená');
+      toast.info('Review skipped');
       setIsViewOpen(false);
       onComplete();
     } catch (error) {
-      toast.error('Nepodarilo sa preskočiť recenziu');
+      toast.error('Failed to skip review');
     } finally {
       setIsSubmitting(false);
     }
@@ -142,12 +141,12 @@ export function PeerReviewCard({
                 {isPending && <Clock className="mr-1 h-3 w-3" />}
                 {isCompleted && <CheckCircle className="mr-1 h-3 w-3" />}
                 {isSkipped && <SkipForward className="mr-1 h-3 w-3" />}
-                {isPending ? 'Čaká na recenziu' : isCompleted ? 'Dokončené' : 'Preskočené'}
+                {isPending ? 'Pending Review' : isCompleted ? 'Completed' : 'Skipped'}
               </Badge>
               {isCompleted && peerReview.bonus_points_earned > 0 && (
                 <Badge variant="secondary" className="bg-green-500/20 text-green-500">
                   <Gift className="mr-1 h-3 w-3" />
-                  +{peerReview.bonus_points_earned} bodov
+                  +{peerReview.bonus_points_earned} points
                 </Badge>
               )}
             </div>
@@ -160,7 +159,7 @@ export function PeerReviewCard({
               {peerReview.is_anonymous && isReviewer ? (
                 <div className="flex items-center gap-1">
                   <UserCircle className="h-4 w-4" />
-                  <span>Anonymný autor</span>
+                  <span>Anonymous author</span>
                 </div>
               ) : (
                 author && (
@@ -178,7 +177,6 @@ export function PeerReviewCard({
               <span>
                 {formatDistanceToNow(new Date(peerReview.assigned_at), {
                   addSuffix: true,
-                  locale: sk,
                 })}
               </span>
             </div>
@@ -211,7 +209,7 @@ export function PeerReviewCard({
                 <DialogTrigger asChild>
                   <Button size="sm" className="bg-[#0062FF] hover:bg-[#0052D9]">
                     <Eye className="mr-2 h-4 w-4" />
-                    Ohodnotiť
+                    Review
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -234,13 +232,13 @@ export function PeerReviewCard({
                     <div>
                       <Label className="text-muted-foreground">Commit message</Label>
                       <p className="mt-1 font-mono text-sm bg-muted p-2 rounded">
-                        {submission?.commit_message || 'Žiadna správa'}
+                        {submission?.commit_message || 'No message'}
                       </p>
                     </div>
 
                     {submission?.readme_content && (
                       <div>
-                        <Label className="text-muted-foreground">README obsah</Label>
+                        <Label className="text-muted-foreground">README content</Label>
                         <div className="mt-1 text-sm bg-muted p-3 rounded max-h-48 overflow-y-auto">
                           <pre className="whitespace-pre-wrap font-mono text-xs">
                             {submission.readme_content}
@@ -257,7 +255,7 @@ export function PeerReviewCard({
                         className="inline-flex items-center gap-2 text-sm text-[#0062FF] hover:underline"
                       >
                         <ExternalLink className="h-4 w-4" />
-                        Pozrieť commit na GitHub
+                        View commit on GitHub
                       </a>
                     )}
 
@@ -265,7 +263,7 @@ export function PeerReviewCard({
 
                     {/* Rating */}
                     <div>
-                      <Label>Hodnotenie *</Label>
+                      <Label>Rating *</Label>
                       <div className="flex items-center gap-1 mt-2">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <button
@@ -295,12 +293,12 @@ export function PeerReviewCard({
 
                     {/* Feedback */}
                     <div>
-                      <Label htmlFor="feedback">Feedback (voliteľné)</Label>
+                      <Label htmlFor="feedback">Feedback (optional)</Label>
                       <Textarea
                         id="feedback"
                         value={feedback}
                         onChange={(e) => setFeedback(e.target.value)}
-                        placeholder="Napíš konštruktívny feedback..."
+                        placeholder="Write constructive feedback..."
                         rows={3}
                         className="mt-2"
                       />
@@ -310,10 +308,10 @@ export function PeerReviewCard({
                     <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3">
                       <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
                         <Gift className="h-5 w-5" />
-                        <span className="font-medium">+2 bonus bodov</span>
+                        <span className="font-medium">+2 bonus points</span>
                       </div>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Za dokončenie tejto recenzie získaš bonus body do leaderboardu.
+                        Complete this review to earn bonus points for the leaderboard.
                       </p>
                     </div>
 
@@ -325,7 +323,7 @@ export function PeerReviewCard({
                         disabled={isSubmitting}
                       >
                         <SkipForward className="mr-2 h-4 w-4" />
-                        Preskočiť
+                        Skip
                       </Button>
                       <Button
                         onClick={handleSubmitReview}
@@ -335,7 +333,7 @@ export function PeerReviewCard({
                         {isSubmitting && (
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         )}
-                        Odoslať recenziu
+                        Submit Review
                       </Button>
                     </div>
                   </div>
@@ -343,7 +341,7 @@ export function PeerReviewCard({
               </Dialog>
             ) : (
               <Badge variant="outline">
-                {isCompleted ? 'Dokončené' : isSkipped ? 'Preskočené' : 'Čaká'}
+                {isCompleted ? 'Completed' : isSkipped ? 'Skipped' : 'Pending'}
               </Badge>
             )}
           </div>

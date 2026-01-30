@@ -344,19 +344,19 @@ function getMentionNotificationEmail(params: {
   submissionId: string;
 }) {
   return {
-    subject: `${params.authorName} ťa označil/a v komentári`,
+    subject: `${params.authorName} mentioned you in a comment`,
     html: `
       <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #0062FF;">AI Academy Dashboard</h2>
-        <p>Ahoj ${params.mentionedName},</p>
-        <p><strong>${params.authorName}</strong> ťa označil/a v komentári:</p>
+        <p>Hi ${params.mentionedName},</p>
+        <p><strong>${params.authorName}</strong> mentioned you in a comment:</p>
         <blockquote style="border-left: 3px solid #0062FF; padding-left: 16px; margin: 16px 0; color: #666;">
           "${params.commentPreview}${params.commentPreview.length >= 100 ? '...' : ''}"
         </blockquote>
         <p style="margin-top: 24px;">
           <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin"
              style="background: #0062FF; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
-            Zobraziť komentár
+            View comment
           </a>
         </p>
       </div>
@@ -371,19 +371,19 @@ function getReplyNotificationEmail(params: {
   submissionId: string;
 }) {
   return {
-    subject: `${params.authorName} odpovedal/a na tvoj komentár`,
+    subject: `${params.authorName} replied to your comment`,
     html: `
       <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #0062FF;">AI Academy Dashboard</h2>
-        <p>Ahoj ${params.recipientName},</p>
-        <p><strong>${params.authorName}</strong> odpovedal/a na tvoj komentár:</p>
+        <p>Hi ${params.recipientName},</p>
+        <p><strong>${params.authorName}</strong> replied to your comment:</p>
         <blockquote style="border-left: 3px solid #0062FF; padding-left: 16px; margin: 16px 0; color: #666;">
           "${params.commentPreview}${params.commentPreview.length >= 100 ? '...' : ''}"
         </blockquote>
         <p style="margin-top: 24px;">
           <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin"
              style="background: #0062FF; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
-            Zobraziť diskusiu
+            View discussion
           </a>
         </p>
       </div>

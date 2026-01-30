@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "AI Academy Dashboard",
-  description: "Kyndryl AI Academy - Progress Tracking & Leaderboard",
+  description: "AI Academy Dashboard - Progress Tracking & Leaderboard",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

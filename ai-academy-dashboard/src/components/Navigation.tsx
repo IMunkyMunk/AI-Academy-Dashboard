@@ -52,14 +52,14 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/my-dashboard', label: 'Môj Progress', icon: User, requiresAuth: true, requiresApproval: true },
+  { href: '/my-dashboard', label: 'My Progress', icon: User, requiresAuth: true, requiresApproval: true },
   { href: '/peer-reviews', label: 'Peer Reviews', icon: UsersRound, requiresAuth: true, requiresApproval: true },
   { href: '/leaderboard', label: 'Leaderboard', icon: Trophy, requiresAuth: true, requiresApproval: true },
   { href: '/progress', label: 'Progress Matrix', icon: Grid3X3, requiresAuth: true, requiresApproval: true },
   { href: '/teams', label: 'Teams', icon: Users, requiresAuth: true, requiresApproval: true },
   { href: '/analytics', label: 'Analytics', icon: BarChart3, requiresAuth: true, requiresApproval: true },
   { href: '/admin', label: 'Submissions', icon: ShieldCheck, adminOnly: true },
-  { href: '/admin/users', label: 'Používatelia', icon: Users, adminOnly: true },
+  { href: '/admin/users', label: 'Users', icon: Users, adminOnly: true },
 ];
 
 export function Navigation() {
@@ -96,9 +96,6 @@ export function Navigation() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0062FF]">
               <span className="text-lg font-bold text-white">AI</span>
             </div>
-            <span className="text-base sm:text-lg font-semibold hidden xs:inline">
-              Academy
-            </span>
             <span className="text-base sm:text-lg font-semibold hidden sm:inline">
               Dashboard
             </span>
@@ -164,7 +161,7 @@ export function Navigation() {
                     <DropdownMenuLabel>
                       <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium">
-                          {participant?.name || user.user_metadata?.name || 'Používateľ'}
+                          {participant?.name || user.user_metadata?.name || 'User'}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           @{user.user_metadata?.user_name}
@@ -185,7 +182,7 @@ export function Navigation() {
                     <DropdownMenuItem asChild>
                       <Link href="/my-dashboard" className="cursor-pointer">
                         <User className="mr-2 h-4 w-4" />
-                        Môj Dashboard
+                        My Dashboard
                       </Link>
                     </DropdownMenuItem>
                     {participant && (
@@ -195,7 +192,7 @@ export function Navigation() {
                           className="cursor-pointer"
                         >
                           <Settings className="mr-2 h-4 w-4" />
-                          Verejný profil
+                          Public Profile
                         </Link>
                       </DropdownMenuItem>
                     )}
@@ -203,7 +200,7 @@ export function Navigation() {
                       <DropdownMenuItem asChild>
                         <Link href="/onboarding?from=github" className="cursor-pointer">
                           <UserPlus className="mr-2 h-4 w-4" />
-                          Dokončiť registráciu
+                          Complete Registration
                         </Link>
                       </DropdownMenuItem>
                     )}
@@ -216,7 +213,7 @@ export function Navigation() {
                         <DropdownMenuItem asChild>
                           <Link href="/admin/users" className="cursor-pointer">
                             <Users className="mr-2 h-4 w-4" />
-                            Správa používateľov
+                            User Management
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
@@ -233,22 +230,16 @@ export function Navigation() {
                       className="cursor-pointer text-red-500 focus:text-red-500"
                     >
                       <LogOut className="mr-2 h-4 w-4" />
-                      Odhlásiť sa
+                      Sign Out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
                 <div className="hidden sm:flex items-center gap-2">
-                  <Link href="/onboarding">
-                    <Button variant="ghost" size="sm">
-                      <UserPlus className="h-4 w-4 sm:mr-2" />
-                      <span className="hidden sm:inline">Začať</span>
-                    </Button>
-                  </Link>
                   <Link href="/login">
                     <Button size="sm" className="bg-[#0062FF] hover:bg-[#0052D9]">
                       <LogIn className="h-4 w-4 sm:mr-2" />
-                      <span className="hidden sm:inline">Prihlásiť</span>
+                      <span className="hidden sm:inline">Sign In</span>
                     </Button>
                   </Link>
                 </div>
@@ -269,7 +260,7 @@ export function Navigation() {
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0062FF]">
                       <span className="text-lg font-bold text-white">AI</span>
                     </div>
-                    Academy Dashboard
+                    Dashboard
                   </SheetTitle>
                 </SheetHeader>
 
@@ -303,16 +294,10 @@ export function Navigation() {
                 {/* Mobile Auth Section */}
                 {!user && (
                   <div className="flex flex-col gap-2">
-                    <Link href="/onboarding" onClick={closeMobileMenu}>
-                      <Button variant="outline" className="w-full justify-start" size="lg">
-                        <UserPlus className="mr-3 h-5 w-5" />
-                        Začať
-                      </Button>
-                    </Link>
                     <Link href="/login" onClick={closeMobileMenu}>
                       <Button className="w-full justify-start bg-[#0062FF] hover:bg-[#0052D9]" size="lg">
                         <LogIn className="mr-3 h-5 w-5" />
-                        Prihlásiť sa
+                        Sign In
                       </Button>
                     </Link>
                   </div>
@@ -338,7 +323,7 @@ export function Navigation() {
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate">
-                          {participant?.name || user.user_metadata?.name || 'Používateľ'}
+                          {participant?.name || user.user_metadata?.name || 'User'}
                         </p>
                         <p className="text-sm text-muted-foreground truncate">
                           @{user.user_metadata?.user_name}
@@ -363,7 +348,7 @@ export function Navigation() {
                         className="flex items-center gap-3 rounded-lg px-3 py-3 text-base font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground active:scale-[0.98]"
                       >
                         <User className="h-5 w-5" />
-                        Môj Dashboard
+                        My Dashboard
                       </Link>
                       {participant && (
                         <Link
@@ -372,7 +357,7 @@ export function Navigation() {
                           className="flex items-center gap-3 rounded-lg px-3 py-3 text-base font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground active:scale-[0.98]"
                         >
                           <Settings className="h-5 w-5" />
-                          Verejný profil
+                          Public Profile
                         </Link>
                       )}
                       {!participant && (
@@ -382,7 +367,7 @@ export function Navigation() {
                           className="flex items-center gap-3 rounded-lg px-3 py-3 text-base font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground active:scale-[0.98]"
                         >
                           <UserPlus className="h-5 w-5" />
-                          Dokončiť registráciu
+                          Complete Registration
                         </Link>
                       )}
                     </div>
@@ -399,7 +384,7 @@ export function Navigation() {
                       }}
                     >
                       <LogOut className="mr-3 h-5 w-5" />
-                      Odhlásiť sa
+                      Sign Out
                     </Button>
                   </div>
                 )}

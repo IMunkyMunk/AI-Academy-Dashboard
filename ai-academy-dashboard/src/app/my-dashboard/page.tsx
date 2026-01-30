@@ -37,9 +37,9 @@ export default async function MyDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Môj Dashboard</h1>
+        <h1 className="text-3xl font-bold">My Dashboard</h1>
         <p className="text-muted-foreground">
-          Sleduj svoj pokrok, submisie a achievements
+          Track your progress, submissions, and achievements
         </p>
       </div>
 

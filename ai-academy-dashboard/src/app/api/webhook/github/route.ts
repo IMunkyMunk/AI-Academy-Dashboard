@@ -16,7 +16,7 @@ function verifySignature(payload: string, signature: string): boolean {
 
 // Parse self-rating from README content
 function parseSelfRating(content: string): number | null {
-  const match = content.match(/\*\*Celkové hodnotenie:\*\* (\d)\/5/);
+  const match = content.match(/\*\*Overall rating:\*\* (\d)\/5/);
   return match ? parseInt(match[1]) : null;
 }
 

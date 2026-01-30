@@ -96,7 +96,7 @@ export function UpcomingDeadlines({ assignments }: UpcomingDeadlinesProps) {
         <CardContent>
           <div className="flex items-center gap-3 text-muted-foreground">
             <CheckCircle className="h-5 w-5 text-green-500" />
-            <span>Žiadne nadchádzajúce deadlines</span>
+            <span>No upcoming deadlines</span>
           </div>
         </CardContent>
       </Card>
@@ -151,10 +151,10 @@ export function UpcomingDeadlines({ assignments }: UpcomingDeadlinesProps) {
                 <div className="text-right">
                   <LiveCountdown dueAt={assignment.due_at!} />
                   {isUrgent && !isOverdue && (
-                    <p className="text-xs text-orange-500 mt-1">Urgentné!</p>
+                    <p className="text-xs text-orange-500 mt-1">Urgent!</p>
                   )}
                   {isOverdue && (
-                    <p className="text-xs text-red-500 mt-1">Po termíne</p>
+                    <p className="text-xs text-red-500 mt-1">Overdue</p>
                   )}
                 </div>
               </div>

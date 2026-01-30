@@ -34,7 +34,6 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
-import { sk } from 'date-fns/locale';
 import type { CommentWithAuthor, Participant } from '@/lib/types';
 
 interface SubmissionCommentsProps {
@@ -108,7 +107,7 @@ export function SubmissionComments({
         throw new Error(data.error || 'Failed to submit comment');
       }
 
-      toast.success(parentId ? 'Odpoveď pridaná' : 'Komentár pridaný');
+      toast.success(parentId ? 'Reply added' : 'Comment added');
 
       if (parentId) {
         setReplyingTo(null);
@@ -119,7 +118,7 @@ export function SubmissionComments({
 
       fetchComments();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Nepodarilo sa pridať komentár');
+      toast.error(error instanceof Error ? error.message : 'Failed to add comment');
     } finally {
       setIsSubmitting(false);
     }
@@ -146,12 +145,12 @@ export function SubmissionComments({
         throw new Error(data.error || 'Failed to edit comment');
       }
 
-      toast.success('Komentár upravený');
+      toast.success('Comment edited');
       setEditingId(null);
       setEditContent('');
       fetchComments();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Nepodarilo sa upraviť komentár');
+      toast.error(error instanceof Error ? error.message : 'Failed to edit comment');
     } finally {
       setIsSubmitting(false);
     }
@@ -171,10 +170,10 @@ export function SubmissionComments({
         throw new Error(data.error || 'Failed to delete comment');
       }
 
-      toast.success('Komentár zmazaný');
+      toast.success('Comment deleted');
       fetchComments();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Nepodarilo sa zmazať komentár');
+      toast.error(error instanceof Error ? error.message : 'Failed to delete comment');
     }
   };
 
@@ -289,12 +288,11 @@ export function SubmissionComments({
               <span className="text-xs text-muted-foreground">
                 {formatDistanceToNow(new Date(comment.created_at), {
                   addSuffix: true,
-                  locale: sk,
                 })}
               </span>
               {comment.is_edited && (
                 <span className="text-xs text-muted-foreground italic">
-                  (upravené)
+                  (edited)
                 </span>
               )}
             </div>
@@ -315,7 +313,7 @@ export function SubmissionComments({
                     disabled={isSubmitting || !editContent.trim()}
                   >
                     {isSubmitting && <Loader2 className="mr-2 h-3 w-3 animate-spin" />}
-                    Uložiť
+                    Save
                   </Button>
                   <Button
                     size="sm"
@@ -325,7 +323,7 @@ export function SubmissionComments({
                       setEditContent('');
                     }}
                   >
-                    Zrušiť
+                    Cancel
                   </Button>
                 </div>
               </div>
@@ -346,7 +344,7 @@ export function SubmissionComments({
                   }}
                 >
                   <CornerDownRight className="mr-1 h-3 w-3" />
-                  Odpovedať
+                  Reply
                 </Button>
 
                 {isOwner && (
@@ -364,14 +362,14 @@ export function SubmissionComments({
                         }}
                       >
                         <Pencil className="mr-2 h-3 w-3" />
-                        Upraviť
+                        Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="text-red-500"
                         onClick={() => handleDeleteComment(comment.id)}
                       >
                         <Trash2 className="mr-2 h-3 w-3" />
-                        Zmazať
+                        Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -387,7 +385,7 @@ export function SubmissionComments({
                     ref={textareaRef}
                     value={editContent}
                     onChange={(e) => handleTextChange(e.target.value, true)}
-                    placeholder={`Odpoveď pre @${comment.author?.github_username}...`}
+                    placeholder={`Reply to @${comment.author?.github_username}...`}
                     rows={2}
                     className="resize-none pr-10"
                   />
@@ -441,7 +439,7 @@ export function SubmissionComments({
                   >
                     {isSubmitting && <Loader2 className="mr-2 h-3 w-3 animate-spin" />}
                     <Send className="mr-1 h-3 w-3" />
-                    Odpovedať
+                    Reply
                   </Button>
                 </div>
               </div>
@@ -471,7 +469,7 @@ export function SubmissionComments({
               ref={!replyingTo ? textareaRef : undefined}
               value={newComment}
               onChange={(e) => handleTextChange(e.target.value, false)}
-              placeholder="Napíš komentár... Použi @meno pre označenie"
+              placeholder="Write a comment... Use @name to mention"
               rows={3}
               className="resize-none"
             />
@@ -529,14 +527,14 @@ export function SubmissionComments({
             >
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               <Send className="mr-2 h-4 w-4" />
-              Odoslať
+              Send
             </Button>
           </div>
         </div>
       ) : (
         <Card className="bg-muted/50">
           <CardContent className="py-4 text-center text-muted-foreground">
-            Pre pridanie komentára sa musíš prihlásiť
+            You must be logged in to add a comment
           </CardContent>
         </Card>
       )}
@@ -559,8 +557,8 @@ export function SubmissionComments({
       ) : comments.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
           <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
-          <p>Zatiaľ žiadne komentáre</p>
-          <p className="text-sm">Buď prvý kto pridá komentár!</p>
+          <p>No comments yet</p>
+          <p className="text-sm">Be the first to add a comment!</p>
         </div>
       ) : (
         <div className="space-y-1">
@@ -580,7 +578,7 @@ export function SubmissionComments({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-[#0062FF]" />
-              Diskusia ({totalCount})
+              Discussion ({totalCount})
             </DialogTitle>
           </DialogHeader>
           {dialogContent}
@@ -594,7 +592,7 @@ export function SubmissionComments({
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           <MessageSquare className="h-5 w-5 text-[#0062FF]" />
-          Diskusia ({totalCount})
+          Discussion ({totalCount})
         </CardTitle>
       </CardHeader>
       <CardContent>{dialogContent}</CardContent>

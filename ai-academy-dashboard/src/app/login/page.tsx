@@ -93,7 +93,7 @@ function LoginForm() {
 
   const handleMagicLink = async () => {
     if (!email) {
-      setLoginError('Zadaj emailovú adresu');
+      setLoginError('Please enter your email address');
       return;
     }
 
@@ -119,21 +119,21 @@ function LoginForm() {
               <Mail className="h-8 w-8 text-white" />
             </div>
           </div>
-          <CardTitle className="text-2xl">Skontroluj email</CardTitle>
+          <CardTitle className="text-2xl">Check your email</CardTitle>
           <CardDescription>
-            Poslali sme ti prihlasovací link na <strong>{email}</strong>
+            We sent a login link to <strong>{email}</strong>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 text-center">
           <p className="text-sm text-muted-foreground">
-            Klikni na link v emaile pre prihlásenie. Link je platný 1 hodinu.
+            Click the link in the email to sign in. The link is valid for 1 hour.
           </p>
           <Button
             variant="outline"
             onClick={() => setMagicLinkSent(false)}
             className="w-full"
           >
-            Použiť iný email
+            Use a different email
           </Button>
         </CardContent>
       </Card>
@@ -148,9 +148,9 @@ function LoginForm() {
             <span className="text-2xl font-bold text-white">AI</span>
           </div>
         </div>
-        <CardTitle className="text-2xl">Vitaj v AI Academy</CardTitle>
+        <CardTitle className="text-2xl">Sign In</CardTitle>
         <CardDescription>
-          Prihlás sa pre prístup k dashboardu
+          Sign in to access the dashboard
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -159,7 +159,7 @@ function LoginForm() {
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
               {error === 'auth_failed'
-                ? 'Prihlásenie zlyhalo. Skúste to znova.'
+                ? 'Authentication failed. Please try again.'
                 : loginError || error}
             </AlertDescription>
           </Alert>
@@ -178,7 +178,7 @@ function LoginForm() {
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="github" className="flex items-center gap-2">
               <Github className="h-4 w-4" />
-              Študent
+              User
             </TabsTrigger>
             <TabsTrigger value="admin" className="flex items-center gap-2">
               <ShieldCheck className="h-4 w-4" />
@@ -199,15 +199,15 @@ function LoginForm() {
               ) : (
                 <Github className="mr-2 h-5 w-5" />
               )}
-              Prihlásiť sa cez GitHub
+              Sign in with GitHub
             </Button>
 
             <div className="text-center text-sm text-muted-foreground">
-              <p>Pre študentov AI Academy</p>
+              <p>For registered users</p>
               <ul className="mt-2 space-y-1 text-xs">
-                <li>• Automatické priradenie avataru</li>
-                <li>• Verifikácia GitHub username</li>
-                <li>• Po schválení adminom získaš prístup</li>
+                <li>• Automatic avatar assignment</li>
+                <li>• GitHub username verification</li>
+                <li>• Access granted after admin approval</li>
               </ul>
             </div>
           </TabsContent>
@@ -228,7 +228,7 @@ function LoginForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Heslo</Label>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -250,7 +250,7 @@ function LoginForm() {
                 ) : (
                   <KeyRound className="mr-2 h-5 w-5" />
                 )}
-                Prihlásiť sa
+                Sign In
               </Button>
             </form>
 
@@ -259,7 +259,7 @@ function LoginForm() {
                 <Separator />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">alebo</span>
+                <span className="bg-card px-2 text-muted-foreground">or</span>
               </div>
             </div>
 
@@ -275,11 +275,11 @@ function LoginForm() {
               ) : (
                 <Sparkles className="mr-2 h-4 w-4" />
               )}
-              Poslať prihlasovací link
+              Send magic link
             </Button>
 
             <p className="text-center text-xs text-muted-foreground">
-              Zadaj email a klikni na &quot;Poslať prihlasovací link&quot; pre prihlásenie bez hesla
+              Enter your email and click &quot;Send magic link&quot; to sign in without a password
             </p>
           </TabsContent>
         </Tabs>

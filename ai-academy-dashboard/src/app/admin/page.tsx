@@ -38,7 +38,6 @@ import { SubmissionComments } from '@/components/SubmissionComments';
 import { useAuth } from '@/components/AuthProvider';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatDistanceToNow, format } from 'date-fns';
-import { sk } from 'date-fns/locale';
 import {
   ShieldCheck,
   Clock,
@@ -214,7 +213,7 @@ export default function AdminPage() {
   // Bulk review handler
   const handleBulkReview = async () => {
     if (!bulkRating && !bulkStatus) {
-      toast.error('Vyber rating alebo status');
+      toast.error('Select a rating or status');
       return;
     }
 
@@ -235,10 +234,10 @@ export default function AdminPage() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Hromadné hodnotenie zlyhalo');
+        throw new Error(result.error || 'Bulk review failed');
       }
 
-      toast.success(`Úspešne ohodnotených ${result.updated_count} submisií`);
+      toast.success(`Successfully reviewed ${result.updated_count} submissions`);
       setIsBulkDialogOpen(false);
       setBulkRating('');
       setBulkStatus('');
@@ -246,7 +245,7 @@ export default function AdminPage() {
       setSelectedIds(new Set());
       fetchAllSubmissions();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Hromadné hodnotenie zlyhalo');
+      toast.error(error instanceof Error ? error.message : 'Bulk review failed');
     } finally {
       setIsBulkSubmitting(false);
     }
@@ -257,7 +256,7 @@ export default function AdminPage() {
     const selectedSubmissions = filteredSubmissions.filter((s) => selectedIds.has(s.id));
 
     const csvContent = [
-      ['Meno', 'GitHub', 'Tím', 'Rola', 'Deň', 'Úloha', 'Typ', 'Self Rating', 'Mentor Rating', 'Status', 'Dátum'].join(','),
+      ['Name', 'GitHub', 'Team', 'Role', 'Day', 'Assignment', 'Type', 'Self Rating', 'Mentor Rating', 'Status', 'Date'].join(','),
       ...selectedSubmissions.map((s) =>
         [
           `"${s.participants?.name || ''}"`,
@@ -282,7 +281,7 @@ export default function AdminPage() {
     a.download = `submissions-export-${format(new Date(), 'yyyy-MM-dd-HHmm')}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success(`Exportovaných ${selectedSubmissions.length} submisií`);
+    toast.success(`Exported ${selectedSubmissions.length} submissions`);
   };
 
   if (isLoading) {
@@ -378,7 +377,7 @@ export default function AdminPage() {
               <div className="flex items-center gap-4">
                 <CheckSquare className="h-5 w-5 text-[#0062FF]" />
                 <span className="font-medium">
-                  {selectedIds.size} {selectedIds.size === 1 ? 'položka vybraná' : selectedIds.size < 5 ? 'položky vybrané' : 'položiek vybraných'}
+                  {selectedIds.size} {selectedIds.size === 1 ? 'item selected' : 'items selected'}
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -396,7 +395,7 @@ export default function AdminPage() {
                   onClick={() => setIsBulkDialogOpen(true)}
                 >
                   <Star className="mr-2 h-4 w-4" />
-                  Hromadné hodnotenie
+                  Bulk Review
                 </Button>
                 <Button
                   variant="ghost"
@@ -441,7 +440,7 @@ export default function AdminPage() {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Hľadať podľa mena alebo username..."
+                    placeholder="Search by name or username..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10"
@@ -455,7 +454,7 @@ export default function AdminPage() {
                   <SelectValue placeholder="Team" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Všetky tímy</SelectItem>
+                  <SelectItem value="all">All Teams</SelectItem>
                   {TEAMS.map((team) => (
                     <SelectItem key={team} value={team}>
                       {team}
@@ -470,7 +469,7 @@ export default function AdminPage() {
                   <SelectValue placeholder="Role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Všetky role</SelectItem>
+                  <SelectItem value="all">All Roles</SelectItem>
                   {ROLES.map((role) => (
                     <SelectItem key={role} value={role}>
                       {role}
@@ -482,10 +481,10 @@ export default function AdminPage() {
               {/* Day Filter */}
               <Select value={dayFilter} onValueChange={setDayFilter}>
                 <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="Deň" />
+                  <SelectValue placeholder="Day" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Všetky dni</SelectItem>
+                  <SelectItem value="all">All Days</SelectItem>
                   {DAYS.map((day) => (
                     <SelectItem key={day} value={day.toString()}>
                       Day {day}
@@ -498,10 +497,10 @@ export default function AdminPage() {
               {activeTab === 'all' && (
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-[160px]">
-                    <SelectValue placeholder="Stav" />
+                    <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Všetky stavy</SelectItem>
+                    <SelectItem value="all">All Statuses</SelectItem>
                     {STATUSES.map((status) => (
                       <SelectItem key={status.value} value={status.value}>
                         {status.label}
@@ -515,7 +514,7 @@ export default function AdminPage() {
               {hasActiveFilters && (
                 <Button variant="ghost" size="sm" onClick={clearFilters}>
                   <X className="mr-2 h-4 w-4" />
-                  Vyčistiť filtre
+                  Clear Filters
                 </Button>
               )}
             </div>
@@ -523,10 +522,10 @@ export default function AdminPage() {
             {/* Active filters display */}
             {hasActiveFilters && (
               <div className="flex items-center gap-2 mt-4">
-                <span className="text-sm text-muted-foreground">Aktívne filtre:</span>
+                <span className="text-sm text-muted-foreground">Active filters:</span>
                 {searchQuery && (
                   <Badge variant="secondary">
-                    Hľadanie: &quot;{searchQuery}&quot;
+                    Search: &quot;{searchQuery}&quot;
                   </Badge>
                 )}
                 {teamFilter !== 'all' && (
@@ -544,7 +543,7 @@ export default function AdminPage() {
                   </Badge>
                 )}
                 <span className="text-sm text-muted-foreground ml-2">
-                  ({filteredSubmissions.length} výsledkov)
+                  ({filteredSubmissions.length} results)
                 </span>
               </div>
             )}
@@ -557,18 +556,18 @@ export default function AdminPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Clock className="h-5 w-5 text-orange-500" />
-                Čakajúce na recenziu
+                Pending Review
               </CardTitle>
             </CardHeader>
             <CardContent>
               {filteredSubmissions.length === 0 ? (
                 <div className="text-center py-12">
                   <CheckCircle className="h-12 w-12 mx-auto text-green-500 mb-4" />
-                  <p className="text-lg font-medium">Žiadne čakajúce recenzie!</p>
+                  <p className="text-lg font-medium">No pending reviews!</p>
                   <p className="text-muted-foreground">
                     {hasActiveFilters
-                      ? 'Skúste zmeniť filtre.'
-                      : 'Všetky submisie boli skontrolované.'}
+                      ? 'Try changing filters.'
+                      : 'All submissions have been reviewed.'}
                   </p>
                 </div>
               ) : (
@@ -595,18 +594,18 @@ export default function AdminPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Filter className="h-5 w-5 text-[#0062FF]" />
-                Všetky submisie
+                All Submissions
               </CardTitle>
             </CardHeader>
             <CardContent>
               {filteredSubmissions.length === 0 ? (
                 <div className="text-center py-12">
                   <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-lg font-medium">Žiadne submisie</p>
+                  <p className="text-lg font-medium">No submissions</p>
                   <p className="text-muted-foreground">
                     {hasActiveFilters
-                      ? 'Skúste zmeniť filtre.'
-                      : 'Zatiaľ neboli odoslané žiadne submisie.'}
+                      ? 'Try changing filters.'
+                      : 'No submissions have been submitted yet.'}
                   </p>
                 </div>
               ) : (
@@ -632,21 +631,21 @@ export default function AdminPage() {
       <Dialog open={isBulkDialogOpen} onOpenChange={setIsBulkDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Hromadné hodnotenie</DialogTitle>
+            <DialogTitle>Bulk Review</DialogTitle>
             <DialogDescription>
-              Ohodnoť {selectedIds.size} {selectedIds.size === 1 ? 'submisiu' : selectedIds.size < 5 ? 'submisie' : 'submisií'} naraz
+              Review {selectedIds.size} {selectedIds.size === 1 ? 'submission' : 'submissions'} at once
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Rating (voliteľné)</Label>
+              <Label>Rating (optional)</Label>
               <Select value={bulkRating} onValueChange={setBulkRating}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Vyber rating" />
+                  <SelectValue placeholder="Select rating" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Bez zmeny</SelectItem>
+                  <SelectItem value="">No change</SelectItem>
                   {[1, 2, 3, 4, 5].map((r) => (
                     <SelectItem key={r} value={r.toString()}>
                       {'⭐'.repeat(r)} ({r}/5)
@@ -657,13 +656,13 @@ export default function AdminPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Status (voliteľné)</Label>
+              <Label>Status (optional)</Label>
               <Select value={bulkStatus} onValueChange={setBulkStatus}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Vyber status" />
+                  <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Bez zmeny</SelectItem>
+                  <SelectItem value="">No change</SelectItem>
                   {STATUSES.map((status) => (
                     <SelectItem key={status.value} value={status.value}>
                       {status.label}
@@ -674,9 +673,9 @@ export default function AdminPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Poznámka (voliteľné)</Label>
+              <Label>Notes (optional)</Label>
               <Input
-                placeholder="Spoločná poznámka pre všetky submisie..."
+                placeholder="Common note for all submissions..."
                 value={bulkNotes}
                 onChange={(e) => setBulkNotes(e.target.value)}
               />
@@ -685,7 +684,7 @@ export default function AdminPage() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsBulkDialogOpen(false)}>
-              Zrušiť
+              Cancel
             </Button>
             <Button
               onClick={handleBulkReview}
@@ -693,7 +692,7 @@ export default function AdminPage() {
               className="bg-[#0062FF] hover:bg-[#0052D9]"
             >
               {isBulkSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Ohodnotiť {selectedIds.size} {selectedIds.size === 1 ? 'submisiu' : selectedIds.size < 5 ? 'submisie' : 'submisií'}
+              Review {selectedIds.size} {selectedIds.size === 1 ? 'submission' : 'submissions'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -834,7 +833,6 @@ function SubmissionsTable({
             <TableCell className="text-muted-foreground">
               {formatDistanceToNow(new Date(sub.submitted_at), {
                 addSuffix: true,
-                locale: sk,
               })}
             </TableCell>
             <TableCell>

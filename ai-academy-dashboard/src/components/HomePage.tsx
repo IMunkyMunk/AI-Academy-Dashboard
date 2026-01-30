@@ -139,8 +139,8 @@ export function HomePage({
               <div className="flex items-center gap-3">
                 <User className="h-5 w-5 text-[#0062FF]" />
                 <div>
-                  <p className="font-medium">Môj Dashboard</p>
-                  <p className="text-sm text-muted-foreground">Sleduj svoj pokrok a chýbajúce úlohy</p>
+                  <p className="font-medium">My Dashboard</p>
+                  <p className="text-sm text-muted-foreground">Track your progress and missing assignments</p>
                 </div>
               </div>
               <ArrowRight className="h-4 w-4" />
@@ -196,7 +196,7 @@ export function HomePage({
                 <GitCommit className="h-5 w-5 text-orange-500" />
                 <div>
                   <p className="font-medium">Peer Reviews</p>
-                  <p className="text-sm text-muted-foreground">Ohodnoť práce kolegov</p>
+                  <p className="text-sm text-muted-foreground">Review your peers' work</p>
                 </div>
               </div>
               <ArrowRight className="h-4 w-4" />

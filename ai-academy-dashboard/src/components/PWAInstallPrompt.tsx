@@ -89,9 +89,9 @@ export function PWAInstallPrompt() {
               </div>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-sm">Nainštaluj AI Academy</p>
+              <p className="font-medium text-sm">Install AI Academy</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Pridaj si aplikáciu na plochu pre rýchly prístup
+                Add the app to your home screen for quick access
               </p>
               <div className="flex items-center gap-2 mt-3">
                 <Button
@@ -100,14 +100,14 @@ export function PWAInstallPrompt() {
                   className="bg-[#0062FF] hover:bg-[#0052D9]"
                 >
                   <Download className="mr-1.5 h-3.5 w-3.5" />
-                  Nainštalovať
+                  Install
                 </Button>
                 <Button
                   size="sm"
                   variant="ghost"
                   onClick={handleDismiss}
                 >
-                  Neskôr
+                  Later
                 </Button>
               </div>
             </div>

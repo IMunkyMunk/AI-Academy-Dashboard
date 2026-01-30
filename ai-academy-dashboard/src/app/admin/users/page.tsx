@@ -8,13 +8,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
   Table,
   TableBody,
   TableCell,
@@ -30,12 +23,10 @@ import {
   DialogFooter,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatDistanceToNow } from 'date-fns';
-import { sk } from 'date-fns/locale';
 import {
-  ShieldCheck,
   Users,
   Clock,
   CheckCircle,
@@ -101,8 +92,8 @@ export default function AdminUsersPage() {
 
       toast.success(
         newStatus === 'approved'
-          ? 'Používateľ bol schválený'
-          : 'Používateľ bol zamietnutý'
+          ? 'User has been approved'
+          : 'User has been rejected'
       );
 
       // Update local state
@@ -113,7 +104,7 @@ export default function AdminUsersPage() {
       setSelectedUser(null);
       setActionType(null);
     } catch (error) {
-      toast.error('Nepodarilo sa zmeniť stav používateľa');
+      toast.error('Failed to change user status');
     } finally {
       setIsSubmitting(false);
     }
@@ -148,8 +139,8 @@ export default function AdminUsersPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Správa používateľov</h1>
-          <p className="text-muted-foreground">Schvaľovanie registrácií</p>
+          <h1 className="text-3xl font-bold">User Management</h1>
+          <p className="text-muted-foreground">Approve registrations</p>
         </div>
         <Card>
           <CardContent className="pt-6">
@@ -171,9 +162,9 @@ export default function AdminUsersPage() {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Users className="h-8 w-8 text-[#0062FF]" />
-            Správa používateľov
+            User Management
           </h1>
-          <p className="text-muted-foreground">Schvaľovanie a správa registrácií</p>
+          <p className="text-muted-foreground">Approve and manage registrations</p>
         </div>
         <Button variant="outline" onClick={handleRefresh} disabled={isRefreshing}>
           <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -187,7 +178,7 @@ export default function AdminUsersPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <Users className="h-4 w-4" />
-              Celkom
+              Total
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -198,7 +189,7 @@ export default function AdminUsersPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <Clock className="h-4 w-4 text-orange-500" />
-              Čakajúci
+              Pending
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -209,7 +200,7 @@ export default function AdminUsersPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-green-500" />
-              Schválení
+              Approved
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -220,7 +211,7 @@ export default function AdminUsersPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <XCircle className="h-4 w-4 text-red-500" />
-              Zamietnutí
+              Rejected
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -235,7 +226,7 @@ export default function AdminUsersPage() {
           <TabsList>
             <TabsTrigger value="pending" className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              Čakajúci
+              Pending
               {pendingCount > 0 && (
                 <Badge variant="secondary" className="ml-1 bg-orange-500/20 text-orange-500">
                   {pendingCount}
@@ -244,19 +235,19 @@ export default function AdminUsersPage() {
             </TabsTrigger>
             <TabsTrigger value="approved" className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4" />
-              Schválení
+              Approved
             </TabsTrigger>
             <TabsTrigger value="rejected" className="flex items-center gap-2">
               <XCircle className="h-4 w-4" />
-              Zamietnutí
+              Rejected
             </TabsTrigger>
-            <TabsTrigger value="all">Všetci</TabsTrigger>
+            <TabsTrigger value="all">All</TabsTrigger>
           </TabsList>
 
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Hľadať..."
+              placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -270,26 +261,26 @@ export default function AdminUsersPage() {
             {filteredParticipants.length === 0 ? (
               <div className="text-center py-12">
                 <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-lg font-medium">Žiadni používatelia</p>
+                <p className="text-lg font-medium">No users found</p>
                 <p className="text-muted-foreground">
                   {searchQuery
-                    ? 'Skúste zmeniť vyhľadávanie.'
+                    ? 'Try changing your search query.'
                     : activeTab === 'pending'
-                    ? 'Žiadne čakajúce registrácie.'
-                    : 'Žiadni používatelia v tejto kategórii.'}
+                    ? 'No pending registrations.'
+                    : 'No users in this category.'}
                 </p>
               </div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Používateľ</TableHead>
+                    <TableHead>User</TableHead>
                     <TableHead>GitHub</TableHead>
-                    <TableHead>Tím</TableHead>
-                    <TableHead>Rola</TableHead>
-                    <TableHead>Stav</TableHead>
-                    <TableHead>Registrácia</TableHead>
-                    <TableHead>Akcie</TableHead>
+                    <TableHead>Team</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Registered</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -344,20 +335,19 @@ export default function AdminUsersPage() {
                       </TableCell>
                       <TableCell>
                         {user.status === 'approved' && (
-                          <Badge className="bg-green-500">Schválený</Badge>
+                          <Badge className="bg-green-500">Approved</Badge>
                         )}
                         {user.status === 'pending' && (
-                          <Badge className="bg-orange-500">Čakajúci</Badge>
+                          <Badge className="bg-orange-500">Pending</Badge>
                         )}
                         {user.status === 'rejected' && (
-                          <Badge variant="destructive">Zamietnutý</Badge>
+                          <Badge variant="destructive">Rejected</Badge>
                         )}
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm">
                         {user.created_at
                           ? formatDistanceToNow(new Date(user.created_at), {
                               addSuffix: true,
-                              locale: sk,
                             })
                           : '-'}
                       </TableCell>
@@ -411,12 +401,12 @@ export default function AdminUsersPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {actionType === 'approve' ? 'Schváliť používateľa' : 'Zamietnuť používateľa'}
+              {actionType === 'approve' ? 'Approve User' : 'Reject User'}
             </DialogTitle>
             <DialogDescription>
               {actionType === 'approve'
-                ? 'Používateľ získa prístup k dashboardu.'
-                : 'Používateľ bude zamietnutý a nebude mať prístup.'}
+                ? 'The user will get access to the dashboard.'
+                : 'The user will be rejected and will not have access.'}
             </DialogDescription>
           </DialogHeader>
 
@@ -449,7 +439,7 @@ export default function AdminUsersPage() {
                 setActionType(null);
               }}
             >
-              Zrušiť
+              Cancel
             </Button>
             <Button
               onClick={() =>
@@ -467,7 +457,7 @@ export default function AdminUsersPage() {
               }
             >
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {actionType === 'approve' ? 'Schváliť' : 'Zamietnuť'}
+              {actionType === 'approve' ? 'Approve' : 'Reject'}
             </Button>
           </DialogFooter>
         </DialogContent>

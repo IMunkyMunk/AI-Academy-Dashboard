@@ -15,6 +15,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { getSupabaseClient } from '@/lib/supabase';
+import { useAuth } from '@/components/AuthProvider';
 import {
   LayoutDashboard,
   Trophy,
@@ -34,21 +35,21 @@ import {
 import type { Participant } from '@/lib/types';
 
 const PAGES = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard, keywords: ['home', 'domov'] },
-  { name: 'Môj Progress', href: '/my-dashboard', icon: User, keywords: ['môj', 'profil', 'progress'] },
-  { name: 'Peer Reviews', href: '/peer-reviews', icon: UsersRound, keywords: ['peer', 'recenzia', 'hodnotenie', 'spolužiak'] },
-  { name: 'Leaderboard', href: '/leaderboard', icon: Trophy, keywords: ['rank', 'poradie', 'body'] },
-  { name: 'Progress Matrix', href: '/progress', icon: Grid3X3, keywords: ['matrix', 'prehľad', 'úlohy'] },
-  { name: 'Teams', href: '/teams', icon: Users, keywords: ['tímy', 'skupiny'] },
-  { name: 'Analytics', href: '/analytics', icon: BarChart3, keywords: ['štatistiky', 'grafy', 'analýza'] },
-  { name: 'Admin Panel', href: '/admin', icon: ShieldCheck, keywords: ['správa', 'review', 'hodnotenie'] },
-  { name: 'Onboarding', href: '/onboarding', icon: Rocket, keywords: ['registrácia', 'začať', 'nový'] },
-  { name: 'Prihlásiť sa', href: '/login', icon: LogIn, keywords: ['login', 'prihlásenie'] },
+  { name: 'Dashboard', href: '/', icon: LayoutDashboard, keywords: ['home', 'main'] },
+  { name: 'My Progress', href: '/my-dashboard', icon: User, keywords: ['my', 'profile', 'progress'] },
+  { name: 'Peer Reviews', href: '/peer-reviews', icon: UsersRound, keywords: ['peer', 'review', 'rating'] },
+  { name: 'Leaderboard', href: '/leaderboard', icon: Trophy, keywords: ['rank', 'ranking', 'points'] },
+  { name: 'Progress Matrix', href: '/progress', icon: Grid3X3, keywords: ['matrix', 'overview', 'tasks'] },
+  { name: 'Teams', href: '/teams', icon: Users, keywords: ['teams', 'groups'] },
+  { name: 'Analytics', href: '/analytics', icon: BarChart3, keywords: ['statistics', 'graphs', 'analysis'] },
+  { name: 'Admin Panel', href: '/admin', icon: ShieldCheck, keywords: ['admin', 'review', 'manage'] },
+  { name: 'Onboarding', href: '/onboarding', icon: Rocket, keywords: ['register', 'start', 'new'] },
+  { name: 'Sign In', href: '/login', icon: LogIn, keywords: ['login', 'sign in'] },
 ];
 
 const QUICK_ACTIONS = [
-  { name: 'Nová submisia', action: 'new-submission', icon: FileText, description: 'Odovzdať novú úlohu' },
-  { name: 'Nastavenia', action: 'settings', icon: Settings, description: 'Upraviť nastavenia' },
+  { name: 'New Submission', action: 'new-submission', icon: FileText, description: 'Submit new assignment' },
+  { name: 'Settings', action: 'settings', icon: Settings, description: 'Edit settings' },
 ];
 
 export function CommandPalette() {
@@ -56,9 +57,15 @@ export function CommandPalette() {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { user, isAdmin, userStatus } = useAuth();
+
+  // Only show for authenticated and approved users
+  const canShowSearch = user && (isAdmin || userStatus === 'approved');
 
   // Keyboard shortcut listener
   useEffect(() => {
+    if (!canShowSearch) return;
+
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
@@ -68,7 +75,7 @@ export function CommandPalette() {
 
     document.addEventListener('keydown', down);
     return () => document.removeEventListener('keydown', down);
-  }, []);
+  }, [canShowSearch]);
 
   // Fetch participants when dialog opens
   useEffect(() => {
@@ -113,7 +120,6 @@ export function CommandPalette() {
     runCommand(() => {
       switch (action) {
         case 'new-submission':
-          // Open external GitHub repo or show toast
           window.open('https://github.com', '_blank');
           break;
         case 'settings':
@@ -125,6 +131,11 @@ export function CommandPalette() {
     });
   };
 
+  // Don't render anything for unauthenticated users
+  if (!canShowSearch) {
+    return null;
+  }
+
   return (
     <>
       {/* Search trigger button */}
@@ -133,21 +144,21 @@ export function CommandPalette() {
         className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground bg-muted/50 hover:bg-muted rounded-md border border-border transition-colors"
       >
         <Search className="h-4 w-4" />
-        <span className="hidden md:inline">Hľadať...</span>
+        <span className="hidden md:inline">Search...</span>
         <kbd className="pointer-events-none hidden md:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
           <span className="text-xs">⌘</span>K
         </kbd>
       </button>
 
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Hľadať študentov, stránky, akcie..." />
+        <CommandInput placeholder="Search participants, pages, actions..." />
         <CommandList>
           <CommandEmpty>
-            {isLoading ? 'Načítavam...' : 'Žiadne výsledky.'}
+            {isLoading ? 'Loading...' : 'No results found.'}
           </CommandEmpty>
 
           {/* Pages */}
-          <CommandGroup heading="Stránky">
+          <CommandGroup heading="Pages">
             {PAGES.map((page) => {
               const Icon = page.icon;
               return (
@@ -167,7 +178,7 @@ export function CommandPalette() {
 
           {/* Participants */}
           {participants.length > 0 && (
-            <CommandGroup heading="Študenti">
+            <CommandGroup heading="Participants">
               {participants.slice(0, 10).map((participant) => (
                 <CommandItem
                   key={participant.id}
@@ -209,7 +220,7 @@ export function CommandPalette() {
                   className="text-muted-foreground"
                 >
                   <Calculator className="mr-2 h-4 w-4" />
-                  <span>Zobraziť všetkých {participants.length} študentov...</span>
+                  <span>Show all {participants.length} participants...</span>
                 </CommandItem>
               )}
             </CommandGroup>
@@ -218,7 +229,7 @@ export function CommandPalette() {
           <CommandSeparator />
 
           {/* Quick Actions */}
-          <CommandGroup heading="Akcie">
+          <CommandGroup heading="Actions">
             {QUICK_ACTIONS.map((action) => {
               const Icon = action.icon;
               return (
@@ -242,19 +253,19 @@ export function CommandPalette() {
             <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px]">
               ↑↓
             </kbd>
-            <span>navigovať</span>
+            <span>navigate</span>
           </div>
           <div className="flex items-center gap-2">
             <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px]">
               ↵
             </kbd>
-            <span>vybrať</span>
+            <span>select</span>
           </div>
           <div className="flex items-center gap-2">
             <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px]">
               esc
             </kbd>
-            <span>zavrieť</span>
+            <span>close</span>
           </div>
         </div>
       </CommandDialog>

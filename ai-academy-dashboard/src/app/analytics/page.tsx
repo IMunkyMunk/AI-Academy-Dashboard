@@ -75,7 +75,7 @@ export default async function AnalyticsPage() {
       <div>
         <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
         <p className="text-muted-foreground">
-          Prehľad pokroku, aktivity a štatistík pre mentorov
+          Overview of progress, activity, and statistics for mentors
         </p>
       </div>
 

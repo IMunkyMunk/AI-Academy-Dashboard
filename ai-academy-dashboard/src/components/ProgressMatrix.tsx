@@ -29,7 +29,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Grid3X3, Download, CheckCircle, XCircle, FileText, Users } from 'lucide-react';
 import { format } from 'date-fns';
-import { sk } from 'date-fns/locale';
 import Link from 'next/link';
 import type {
   ProgressMatrix as ProgressMatrixType,
@@ -177,7 +176,7 @@ export function ProgressMatrix({ data, participants, assignments, submissions }:
             <body>
               <div class="header">
                 <h1>Progress Matrix - AI Academy</h1>
-                <p>Generated: ${format(new Date(), 'd. MMMM yyyy HH:mm', { locale: sk })}</p>
+                <p>Generated: ${format(new Date(), 'MMMM d, yyyy HH:mm')}</p>
               </div>
               <table>
                 <thead>
@@ -248,7 +247,7 @@ export function ProgressMatrix({ data, participants, assignments, submissions }:
     ];
 
     const csvContent = [
-      ['Meno', 'GitHub', 'Tím', 'Status', 'Odovzdané'].join(','),
+      ['Name', 'GitHub', 'Team', 'Status', 'Submitted'].join(','),
       ...allParticipants.map((p) =>
         [`"${p.name}"`, p.github, p.team, p.status, p.submitted_at].join(',')
       ),
@@ -426,11 +425,11 @@ export function ProgressMatrix({ data, participants, assignments, submissions }:
             <TabsList>
               <TabsTrigger value="missing" className="flex items-center gap-2">
                 <XCircle className="h-4 w-4" />
-                Chýbajúce ({drillDown?.notSubmitted.length ?? 0})
+                Missing ({drillDown?.notSubmitted.length ?? 0})
               </TabsTrigger>
               <TabsTrigger value="submitted" className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4" />
-                Odovzdané ({drillDown?.submitted.length ?? 0})
+                Submitted ({drillDown?.submitted.length ?? 0})
               </TabsTrigger>
             </TabsList>
 
@@ -438,15 +437,15 @@ export function ProgressMatrix({ data, participants, assignments, submissions }:
               {drillDown?.notSubmitted.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <CheckCircle className="h-12 w-12 mx-auto text-green-500 mb-2" />
-                  <p>Všetci študenti odovzdali!</p>
+                  <p>All students submitted!</p>
                 </div>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Študent</TableHead>
-                      <TableHead>Tím</TableHead>
-                      <TableHead>Akcia</TableHead>
+                      <TableHead>Student</TableHead>
+                      <TableHead>Team</TableHead>
+                      <TableHead>Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -477,7 +476,7 @@ export function ProgressMatrix({ data, participants, assignments, submissions }:
                         <TableCell>
                           <Link href={`/participant/${p.github_username}`}>
                             <Button variant="ghost" size="sm">
-                              Profil
+                              Profile
                             </Button>
                           </Link>
                         </TableCell>
@@ -492,15 +491,15 @@ export function ProgressMatrix({ data, participants, assignments, submissions }:
               {drillDown?.submitted.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <XCircle className="h-12 w-12 mx-auto text-red-500 mb-2" />
-                  <p>Nikto ešte neodovzdal</p>
+                  <p>No one has submitted yet</p>
                 </div>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Študent</TableHead>
-                      <TableHead>Tím</TableHead>
-                      <TableHead>Odovzdané</TableHead>
+                      <TableHead>Student</TableHead>
+                      <TableHead>Team</TableHead>
+                      <TableHead>Submitted</TableHead>
                       <TableHead>Status</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -533,9 +532,7 @@ export function ProgressMatrix({ data, participants, assignments, submissions }:
                           <Badge variant="secondary">{p.team}</Badge>
                         </TableCell>
                         <TableCell className="text-muted-foreground text-sm">
-                          {format(new Date(p.submission.submitted_at), 'd. MMM HH:mm', {
-                            locale: sk,
-                          })}
+                          {format(new Date(p.submission.submitted_at), 'MMM d HH:mm')}
                         </TableCell>
                         <TableCell>
                           {p.submission.status === 'approved' && (

@@ -36,14 +36,14 @@ export default function OfflinePage() {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/10 mb-4">
               <WifiOff className="h-8 w-8 text-green-500" />
             </div>
-            <h1 className="text-2xl font-bold mb-2">Si späť online!</h1>
+            <h1 className="text-2xl font-bold mb-2">You are back online!</h1>
             <p className="text-muted-foreground mb-6">
-              Tvoje pripojenie bolo obnovené.
+              Your connection has been restored.
             </p>
             <Link href="/">
               <Button className="bg-[#0062FF] hover:bg-[#0052D9]">
                 <Home className="mr-2 h-4 w-4" />
-                Späť na dashboard
+                Back to dashboard
               </Button>
             </Link>
           </CardContent>
@@ -59,9 +59,9 @@ export default function OfflinePage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-orange-500/10 mb-4">
             <WifiOff className="h-8 w-8 text-orange-500" />
           </div>
-          <h1 className="text-2xl font-bold mb-2">Si offline</h1>
+          <h1 className="text-2xl font-bold mb-2">You are offline</h1>
           <p className="text-muted-foreground mb-6">
-            Zdá sa, že nemáš pripojenie k internetu. Skontroluj svoje pripojenie a skús to znova.
+            It looks like you don't have an internet connection. Check your connection and try again.
           </p>
           <div className="space-y-3">
             <Button
@@ -69,10 +69,10 @@ export default function OfflinePage() {
               className="w-full bg-[#0062FF] hover:bg-[#0052D9]"
             >
               <RefreshCw className="mr-2 h-4 w-4" />
-              Skúsiť znova
+              Try again
             </Button>
             <p className="text-xs text-muted-foreground">
-              Niektoré funkcie môžu byť dostupné v offline režime vďaka cache.
+              Some features may be available offline thanks to cache.
             </p>
           </div>
         </CardContent>

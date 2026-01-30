@@ -68,14 +68,14 @@ export function getReviewNotificationEmail(params: {
   const stars = '★'.repeat(mentorRating) + '☆'.repeat(5 - mentorRating);
 
   return {
-    subject: `Tvoja submisia bola ohodnotená: ${assignmentTitle}`,
+    subject: `Your submission has been reviewed: ${assignmentTitle}`,
     html: `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hodnotenie submisie</title>
+  <title>Submission Review</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f5; padding: 40px 20px;">
@@ -95,17 +95,17 @@ export function getReviewNotificationEmail(params: {
           <tr>
             <td style="padding: 40px 30px;">
               <p style="margin: 0 0 20px; color: #374151; font-size: 16px;">
-                Ahoj <strong>${participantName}</strong>,
+                Hello <strong>${participantName}</strong>,
               </p>
 
               <p style="margin: 0 0 20px; color: #374151; font-size: 16px;">
-                Tvoja submisia pre úlohu <strong>${assignmentTitle}</strong> bola ohodnotená mentorom.
+                Your submission for <strong>${assignmentTitle}</strong> has been reviewed by a mentor.
               </p>
 
               <!-- Rating Box -->
               <div style="background-color: #f9fafb; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
                 <p style="margin: 0 0 10px; color: #6b7280; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                  Hodnotenie
+                  Rating
                 </p>
                 <p style="margin: 0; font-size: 32px; color: #f59e0b;">
                   ${stars}
@@ -119,7 +119,7 @@ export function getReviewNotificationEmail(params: {
               <!-- Notes -->
               <div style="background-color: #eff6ff; border-left: 4px solid #0062FF; padding: 15px; margin: 20px 0;">
                 <p style="margin: 0 0 5px; color: #1e40af; font-size: 14px; font-weight: 600;">
-                  Poznámka od mentora:
+                  Note from mentor:
                 </p>
                 <p style="margin: 0; color: #374151; font-size: 14px;">
                   ${mentorNotes}
@@ -130,12 +130,12 @@ export function getReviewNotificationEmail(params: {
               <!-- CTA Button -->
               <div style="text-align: center; margin: 30px 0;">
                 <a href="${dashboardUrl}" style="display: inline-block; background-color: #0062FF; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; font-weight: 600;">
-                  Zobraziť môj dashboard
+                  View my dashboard
                 </a>
               </div>
 
               <p style="margin: 20px 0 0; color: #6b7280; font-size: 14px;">
-                Ďakujeme za tvoju prácu a pokračuj v skvelom tempe!
+                Thank you for your work and keep up the great pace!
               </p>
             </td>
           </tr>
@@ -144,7 +144,7 @@ export function getReviewNotificationEmail(params: {
           <tr>
             <td style="background-color: #f9fafb; padding: 20px 30px; text-align: center;">
               <p style="margin: 0; color: #9ca3af; font-size: 12px;">
-                AI Academy Dashboard | Kyndryl
+                AI Academy Dashboard
               </p>
             </td>
           </tr>
@@ -169,14 +169,14 @@ export function getAchievementNotificationEmail(params: {
   const { participantName, achievementName, achievementDescription, achievementIcon, bonusPoints, dashboardUrl = `${APP_URL}/my-dashboard` } = params;
 
   return {
-    subject: `Nový achievement odomknutý: ${achievementName}!`,
+    subject: `New achievement unlocked: ${achievementName}!`,
     html: `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nový Achievement</title>
+  <title>New Achievement</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f5; padding: 40px 20px;">
@@ -196,7 +196,7 @@ export function getAchievementNotificationEmail(params: {
           <tr>
             <td style="padding: 40px 30px; text-align: center;">
               <p style="margin: 0 0 20px; color: #374151; font-size: 16px;">
-                Gratulujeme, <strong>${participantName}</strong>!
+                Congratulations, <strong>${participantName}</strong>!
               </p>
 
               <!-- Achievement Badge -->
@@ -218,19 +218,19 @@ export function getAchievementNotificationEmail(params: {
               <!-- Bonus Points -->
               <div style="background-color: #ecfdf5; border-radius: 8px; padding: 15px; margin: 20px auto; max-width: 200px;">
                 <p style="margin: 0; color: #059669; font-size: 14px;">
-                  <strong>+${bonusPoints} bonus bodov</strong>
+                  <strong>+${bonusPoints} bonus points</strong>
                 </p>
               </div>
               ` : ''}
 
               <p style="margin: 20px 0; color: #374151; font-size: 16px;">
-                Pokračuj v skvelej práci a odomkni ďalšie achievementy!
+                Keep up the great work and unlock more achievements!
               </p>
 
               <!-- CTA Button -->
               <div style="text-align: center; margin: 30px 0;">
                 <a href="${dashboardUrl}" style="display: inline-block; background-color: #f59e0b; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; font-weight: 600;">
-                  Zobraziť všetky achievementy
+                  View all achievements
                 </a>
               </div>
             </td>
@@ -240,7 +240,7 @@ export function getAchievementNotificationEmail(params: {
           <tr>
             <td style="background-color: #f9fafb; padding: 20px 30px; text-align: center;">
               <p style="margin: 0; color: #9ca3af; font-size: 12px;">
-                AI Academy Dashboard | Kyndryl
+                AI Academy Dashboard
               </p>
             </td>
           </tr>
@@ -284,7 +284,7 @@ export function getDeadlineReminderEmail(params: {
     .join('');
 
   return {
-    subject: `Pripomienka: ${assignments.length} úloh blízko deadline`,
+    subject: `Reminder: ${assignments.length} assignments near deadline`,
     html: `
 <!DOCTYPE html>
 <html>
@@ -311,19 +311,19 @@ export function getDeadlineReminderEmail(params: {
           <tr>
             <td style="padding: 40px 30px;">
               <p style="margin: 0 0 20px; color: #374151; font-size: 16px;">
-                Ahoj <strong>${participantName}</strong>,
+                Hello <strong>${participantName}</strong>,
               </p>
 
               <p style="margin: 0 0 20px; color: #374151; font-size: 16px;">
-                Máš <strong>${assignments.length} ${assignments.length === 1 ? 'úlohu' : assignments.length < 5 ? 'úlohy' : 'úloh'}</strong> s blížiacim sa deadline:
+                You have <strong>${assignments.length} ${assignments.length === 1 ? 'assignment' : 'assignments'}</strong> with an approaching deadline:
               </p>
 
               <!-- Assignments Table -->
               <table width="100%" cellpadding="0" cellspacing="0" style="border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; margin: 20px 0;">
                 <thead>
                   <tr style="background-color: #f9fafb;">
-                    <th style="padding: 12px; text-align: left; color: #6b7280; font-size: 12px; text-transform: uppercase;">Úloha</th>
-                    <th style="padding: 12px; text-align: right; color: #6b7280; font-size: 12px; text-transform: uppercase;">Zostáva</th>
+                    <th style="padding: 12px; text-align: left; color: #6b7280; font-size: 12px; text-transform: uppercase;">Assignment</th>
+                    <th style="padding: 12px; text-align: right; color: #6b7280; font-size: 12px; text-transform: uppercase;">Remaining</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -334,12 +334,12 @@ export function getDeadlineReminderEmail(params: {
               <!-- CTA Button -->
               <div style="text-align: center; margin: 30px 0;">
                 <a href="${dashboardUrl}" style="display: inline-block; background-color: #0062FF; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; font-weight: 600;">
-                  Pozrieť si chýbajúce úlohy
+                  View missing assignments
                 </a>
               </div>
 
               <p style="margin: 20px 0 0; color: #6b7280; font-size: 14px; text-align: center;">
-                Nezabudni odovzdať včas!
+                Don't forget to submit on time!
               </p>
             </td>
           </tr>
@@ -348,7 +348,7 @@ export function getDeadlineReminderEmail(params: {
           <tr>
             <td style="background-color: #f9fafb; padding: 20px 30px; text-align: center;">
               <p style="margin: 0; color: #9ca3af; font-size: 12px;">
-                AI Academy Dashboard | Kyndryl
+                AI Academy Dashboard
               </p>
             </td>
           </tr>
