@@ -69,6 +69,12 @@ export function Navigation() {
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
+  // Hide navigation completely for unauthenticated users on public pages
+  const isPublicPage = pathname === '/' || pathname === '/login';
+  if (!user && !isLoading && isPublicPage) {
+    return null;
+  }
+
   // Filter nav items based on user access
   const filteredNavItems = navItems.filter((item) => {
     // Admin-only items

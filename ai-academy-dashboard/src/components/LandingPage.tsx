@@ -26,15 +26,11 @@ export function LandingPage() {
   }
 
   return (
-    <div className="min-h-[60vh] flex flex-col items-center justify-center">
-      <div className="flex flex-col items-center gap-6">
-        <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-[#0062FF]">
-          <span className="text-2xl font-bold text-white">AI</span>
+    <div className="min-h-screen flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center gap-8">
+        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#0062FF]">
+          <span className="text-3xl font-bold text-white">AI</span>
         </div>
-
-        <h1 className="text-2xl font-semibold text-muted-foreground">
-          Dashboard
-        </h1>
 
         <div className="flex flex-col sm:flex-row gap-3">
           <Link href="/login">
