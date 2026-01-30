@@ -15,10 +15,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Vercel CLI checks HEAD commit author; it must be a team member.
+      # Create a local empty commit with the team email so deploy succeeds (do not push).
       - name: Set Git author for Vercel (must match team member)
         run: |
           git config user.email "${{ secrets.VERCEL_GIT_EMAIL }}"
           git config user.name "Vercel Deploy"
+          git commit --allow-empty -m "ci: trigger Vercel deploy" --author="Vercel Deploy <${{ secrets.VERCEL_GIT_EMAIL }}>"
 
       - name: Deploy to Vercel
         env:
