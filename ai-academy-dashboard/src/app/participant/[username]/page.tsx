@@ -128,10 +128,22 @@ export default async function ParticipantPage({ params }: ParticipantPageProps) 
               <p className="text-muted-foreground flex items-center gap-2 mt-1">
                 <Github className="h-4 w-4" />@{p.github_username}
               </p>
-              <div className="flex items-center gap-2 mt-3">
-                <Badge variant="outline">{p.role}</Badge>
-                <Badge variant="secondary">Team {p.team}</Badge>
-                <Badge>{p.stream}</Badge>
+              <div className="flex items-center gap-2 mt-3 flex-wrap">
+                {p.role ? (
+                  <Badge variant="outline">{p.role}</Badge>
+                ) : (
+                  <Badge variant="outline" className="border-dashed text-muted-foreground">No Role</Badge>
+                )}
+                {p.team ? (
+                  <Badge variant="secondary">Team {p.team}</Badge>
+                ) : (
+                  <Badge variant="secondary" className="border-dashed text-muted-foreground">No Team</Badge>
+                )}
+                {p.stream ? (
+                  <Badge>{p.stream}</Badge>
+                ) : (
+                  <Badge className="border-dashed text-muted-foreground bg-muted">No Stream</Badge>
+                )}
               </div>
             </div>
 

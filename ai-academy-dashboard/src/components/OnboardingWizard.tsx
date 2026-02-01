@@ -12,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Rocket,
   User,
-  Users,  // Still used in the welcome step
+  Users,
   CheckCircle,
   ArrowRight,
   ArrowLeft,
