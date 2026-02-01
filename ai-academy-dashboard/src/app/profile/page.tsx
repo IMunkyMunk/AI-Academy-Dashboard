@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthProvider';
 import { getSupabaseClient } from '@/lib/supabase';
@@ -22,6 +22,14 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import {
   Github,
   User,
   Mail,
@@ -35,16 +43,88 @@ import {
   Webhook,
   Trash2,
   AlertTriangle,
+  Save,
+  Target,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import type { RoleType, TeamType, StreamType } from '@/lib/types';
+
+const ROLES: RoleType[] = ['FDE', 'AI-SE', 'AI-PM', 'AI-DA', 'AI-DS', 'AI-SEC', 'AI-FE'];
+const TEAMS: TeamType[] = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta'];
+const STREAMS: StreamType[] = ['Tech', 'Business'];
+
+const ROLE_DESCRIPTIONS: Record<RoleType, string> = {
+  'FDE': 'Forward Deployed Engineer',
+  'AI-SE': 'AI Software Engineer',
+  'AI-PM': 'AI Product Manager',
+  'AI-DA': 'AI Data Analyst',
+  'AI-DS': 'AI Data Scientist',
+  'AI-SEC': 'AI Security Consultant',
+  'AI-FE': 'AI Front-End Developer',
+};
 
 export default function ProfilePage() {
-  const { user, participant, isLoading, signOut } = useAuth();
+  const { participant, isLoading, signOut, refreshParticipant } = useAuth();
   const router = useRouter();
   const [isConnecting, setIsConnecting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isSavingAssignment, setIsSavingAssignment] = useState(false);
   const [showWebhookSetup, setShowWebhookSetup] = useState(false);
+
+  // Academy assignment state
+  const [assignmentData, setAssignmentData] = useState({
+    role: '' as RoleType | '',
+    team: '' as TeamType | '',
+    stream: '' as StreamType | '',
+  });
+
+  // Initialize assignment data from participant
+  useEffect(() => {
+    if (participant) {
+      setAssignmentData({
+        role: participant.role,
+        team: participant.team,
+        stream: participant.stream,
+      });
+    }
+  }, [participant]);
+
+  const hasAssignmentChanges = participant && (
+    assignmentData.role !== participant.role ||
+    assignmentData.team !== participant.team ||
+    assignmentData.stream !== participant.stream
+  );
+
+  const handleSaveAssignment = async () => {
+    if (!participant || !assignmentData.role || !assignmentData.team || !assignmentData.stream) {
+      toast.error('Please select all fields');
+      return;
+    }
+
+    setIsSavingAssignment(true);
+    const supabase = getSupabaseClient();
+
+    try {
+      const { error } = await supabase
+        .from('participants')
+        .update({
+          role: assignmentData.role,
+          team: assignmentData.team,
+          stream: assignmentData.stream,
+        })
+        .eq('id', participant.id);
+
+      if (error) throw error;
+
+      await refreshParticipant();
+      toast.success('Assignment updated successfully');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to update assignment');
+    } finally {
+      setIsSavingAssignment(false);
+    }
+  };
 
   const handleDeleteAccount = async () => {
     setIsDeleting(true);
@@ -227,7 +307,7 @@ export default function ProfilePage() {
                     <p className="font-medium">Set up webhook for automatic submissions:</p>
                     <ol className="list-decimal list-inside space-y-2 text-muted-foreground">
                       <li>Go to your repository Settings → Webhooks</li>
-                      <li>Click "Add webhook"</li>
+                      <li>Click &quot;Add webhook&quot;</li>
                       <li>
                         Payload URL:
                         <div className="flex items-center gap-2 mt-1">
@@ -244,7 +324,7 @@ export default function ProfilePage() {
                         </div>
                       </li>
                       <li>Content type: application/json</li>
-                      <li>Select "Just the push event"</li>
+                      <li>Select &quot;Just the push event&quot;</li>
                     </ol>
                   </div>
                 )}
@@ -278,6 +358,104 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Academy Assignment */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Target className="h-5 w-5" />
+            Academy Assignment
+          </CardTitle>
+          <CardDescription>
+            Set your role, team, and learning stream
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-3">
+            {/* Role Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="role">Role</Label>
+              <Select
+                value={assignmentData.role}
+                onValueChange={(value: RoleType) => setAssignmentData({ ...assignmentData, role: value })}
+              >
+                <SelectTrigger id="role">
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ROLES.map((role) => (
+                    <SelectItem key={role} value={role}>
+                      <div className="flex flex-col">
+                        <span className="font-medium">{role}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {ROLE_DESCRIPTIONS[role]}
+                        </span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Team Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="team">Team</Label>
+              <Select
+                value={assignmentData.team}
+                onValueChange={(value: TeamType) => setAssignmentData({ ...assignmentData, team: value })}
+              >
+                <SelectTrigger id="team">
+                  <SelectValue placeholder="Select team" />
+                </SelectTrigger>
+                <SelectContent>
+                  {TEAMS.map((team) => (
+                    <SelectItem key={team} value={team}>
+                      Team {team}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Stream Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="stream">Stream</Label>
+              <Select
+                value={assignmentData.stream}
+                onValueChange={(value: StreamType) => setAssignmentData({ ...assignmentData, stream: value })}
+              >
+                <SelectTrigger id="stream">
+                  <SelectValue placeholder="Select stream" />
+                </SelectTrigger>
+                <SelectContent>
+                  {STREAMS.map((stream) => (
+                    <SelectItem key={stream} value={stream}>
+                      {stream}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {hasAssignmentChanges && (
+            <div className="flex justify-end pt-2">
+              <Button
+                onClick={handleSaveAssignment}
+                disabled={isSavingAssignment}
+                className="bg-[#0062FF] hover:bg-[#0052D9]"
+              >
+                {isSavingAssignment ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="mr-2 h-4 w-4" />
+                )}
+                Save Changes
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Account Settings */}
       <Card>

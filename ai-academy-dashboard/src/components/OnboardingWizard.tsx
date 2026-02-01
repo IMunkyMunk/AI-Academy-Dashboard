@@ -7,19 +7,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Rocket,
   User,
-  Users,
+  Users,  // Still used in the welcome step
   CheckCircle,
   ArrowRight,
   ArrowLeft,
@@ -31,21 +24,6 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
-import type { RoleType, TeamType, StreamType } from '@/lib/types';
-
-const ROLES: RoleType[] = ['FDE', 'AI-SE', 'AI-PM', 'AI-DA', 'AI-DS', 'AI-SEC', 'AI-FE'];
-const TEAMS: TeamType[] = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta'];
-const STREAMS: StreamType[] = ['Tech', 'Business'];
-
-const ROLE_DESCRIPTIONS: Record<RoleType, string> = {
-  'FDE': 'Forward Deployed Engineer',
-  'AI-SE': 'AI Software Engineer',
-  'AI-PM': 'AI Product Manager',
-  'AI-DA': 'AI Data Analyst',
-  'AI-DS': 'AI Data Scientist',
-  'AI-SEC': 'AI Security Consultant',
-  'AI-FE': 'AI Front-End Developer',
-};
 
 // Predefined avatar colors for selection
 const AVATAR_COLORS = [
@@ -59,9 +37,9 @@ const AVATAR_COLORS = [
   { bg: '84CC16', name: 'Lime' },
 ];
 
-type Step = 'welcome' | 'profile' | 'assignment' | 'complete';
+type Step = 'welcome' | 'profile' | 'complete';
 
-const STEPS: Step[] = ['welcome', 'profile', 'assignment', 'complete'];
+const STEPS: Step[] = ['welcome', 'profile', 'complete'];
 
 export function OnboardingWizard() {
   const { user, participant, isLoading: authLoading, refreshParticipant } = useAuth();
@@ -74,9 +52,6 @@ export function OnboardingWizard() {
     name: '',
     nickname: '',
     email: '',
-    role: '',
-    team: '',
-    stream: '',
   });
 
   // Pre-fill from user metadata if available
@@ -125,7 +100,7 @@ export function OnboardingWizard() {
   };
 
   const handleSubmitProfile = async () => {
-    if (!formData.name || !formData.nickname || !formData.role || !formData.team || !formData.stream) {
+    if (!formData.name || !formData.nickname) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -151,12 +126,10 @@ export function OnboardingWizard() {
           name: formData.name,
           nickname: formData.nickname,
           email: formData.email || user?.email,
-          role: formData.role,
-          team: formData.team,
-          stream: formData.stream,
+          // Role, team, stream will use defaults (FDE, Alpha, Tech)
+          // User can change them later from their profile
           avatar_url: getAvatarUrl(),
           auth_user_id: user?.id,
-          // GitHub is optional - not included
         }),
       });
 
@@ -199,7 +172,6 @@ export function OnboardingWizard() {
             const icons = {
               welcome: Rocket,
               profile: User,
-              assignment: Users,
               complete: CheckCircle,
             };
             const Icon = icons[step];
@@ -373,107 +345,8 @@ export function OnboardingWizard() {
                   Back
                 </Button>
                 <Button
-                  onClick={goNext}
-                  disabled={!formData.name || !formData.nickname}
-                  className="bg-[#0062FF] hover:bg-[#0052D9]"
-                >
-                  Continue
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {/* Assignment Step - Role/Team Selection */}
-          {currentStep === 'assignment' && (
-            <div className="space-y-6">
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/10 mb-4">
-                  <Users className="h-8 w-8 text-green-500" />
-                </div>
-                <h2 className="text-2xl font-bold mb-2">Your Assignment</h2>
-                <p className="text-muted-foreground">
-                  Select your role and team for the academy.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                {/* Role Selection */}
-                <div className="space-y-2">
-                  <Label>Role <span className="text-red-500">*</span></Label>
-                  <Select
-                    value={formData.role}
-                    onValueChange={(value) => setFormData({ ...formData, role: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {ROLES.map((role) => (
-                        <SelectItem key={role} value={role}>
-                          <div className="flex flex-col">
-                            <span className="font-medium">{role}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {ROLE_DESCRIPTIONS[role]}
-                            </span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Team Selection */}
-                <div className="space-y-2">
-                  <Label>Team <span className="text-red-500">*</span></Label>
-                  <Select
-                    value={formData.team}
-                    onValueChange={(value) => setFormData({ ...formData, team: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your team" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {TEAMS.map((team) => (
-                        <SelectItem key={team} value={team}>
-                          Team {team}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Stream Selection */}
-                <div className="space-y-2">
-                  <Label>Stream <span className="text-red-500">*</span></Label>
-                  <Select
-                    value={formData.stream}
-                    onValueChange={(value) => setFormData({ ...formData, stream: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your stream" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {STREAMS.map((stream) => (
-                        <SelectItem key={stream} value={stream}>
-                          {stream}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <Separator />
-
-              <div className="flex justify-between">
-                <Button variant="ghost" onClick={goBack}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back
-                </Button>
-                <Button
                   onClick={handleSubmitProfile}
-                  disabled={isSubmitting || !formData.role || !formData.team || !formData.stream}
+                  disabled={isSubmitting || !formData.name || !formData.nickname}
                   className="bg-[#0062FF] hover:bg-[#0052D9]"
                 >
                   {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -508,6 +381,10 @@ export function OnboardingWizard() {
               <div className="bg-gradient-to-r from-[#0062FF]/10 to-purple-500/10 rounded-lg p-6">
                 <h3 className="font-semibold mb-3">What&apos;s Next?</h3>
                 <ul className="text-sm text-muted-foreground space-y-2 text-left">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    Set your Role, Team, and Stream in your Profile
+                  </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
                     Explore your dashboard and track your progress
