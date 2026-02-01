@@ -87,21 +87,18 @@ function LoginForm() {
 
     const supabase = getSupabaseClient();
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
     });
 
     if (error) {
       setLoginError(error.message);
       setIsLoading(false);
-    } else {
-      setSuccessMessage('Account created! Check your email to confirm, then complete your profile.');
-      setIsLoading(false);
-      // After email confirmation, user will be redirected to onboarding
+    } else if (data.user) {
+      // Auto-confirm is enabled, so user is automatically signed in
+      // Redirect to onboarding to complete profile
+      router.push('/onboarding');
     }
   };
 
@@ -296,12 +293,7 @@ function LoginForm() {
             </form>
 
             <div className="text-center text-sm text-muted-foreground">
-              <p>After creating your account:</p>
-              <ul className="mt-2 space-y-1 text-xs">
-                <li>• Confirm your email</li>
-                <li>• Complete your profile</li>
-                <li>• Start learning!</li>
-              </ul>
+              <p>After creating your account, you&apos;ll complete your profile and start learning!</p>
             </div>
           </TabsContent>
         </Tabs>

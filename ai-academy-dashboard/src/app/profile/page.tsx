@@ -1,16 +1,26 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthProvider';
 import { getSupabaseClient } from '@/lib/supabase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import {
   Github,
   User,
@@ -23,14 +33,39 @@ import {
   ExternalLink,
   Copy,
   Webhook,
+  Trash2,
+  AlertTriangle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
 
 export default function ProfilePage() {
-  const { user, participant, isLoading, refreshParticipant } = useAuth();
+  const { user, participant, isLoading, signOut } = useAuth();
+  const router = useRouter();
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [showWebhookSetup, setShowWebhookSetup] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    try {
+      const response = await fetch('/api/account/delete', {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to delete account');
+      }
+
+      toast.success('Account deleted successfully');
+      await signOut();
+      router.push('/');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to delete account');
+      setIsDeleting(false);
+    }
+  };
 
   const handleConnectGitHub = async () => {
     setIsConnecting(true);
@@ -277,6 +312,56 @@ export default function ProfilePage() {
             >
               {participant.status}
             </Badge>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Danger Zone */}
+      <Card className="border-red-500/50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-red-600 dark:text-red-400">
+            <AlertTriangle className="h-5 w-5" />
+            Danger Zone
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">Delete Account</p>
+              <p className="text-sm text-muted-foreground">
+                Permanently delete your account and all associated data. This action cannot be undone.
+              </p>
+            </div>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" disabled={isDeleting}>
+                  {isDeleting ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Trash2 className="mr-2 h-4 w-4" />
+                  )}
+                  Delete Account
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete your account
+                    and remove all your data including submissions, achievements, and progress.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteAccount}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    Yes, delete my account
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </CardContent>
       </Card>
