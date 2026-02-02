@@ -757,7 +757,7 @@ Explain AI agents in **3 paragraphs**:
         className="min-h-screen flex flex-col justify-center px-8 py-24"
       >
         <div className="max-w-[1400px] mx-auto w-full">
-          <SectionHeader number="09" title="Kyndryl Generative AI Project Structure" subtitle="Standard folder organization for production AI projects" />
+          <SectionHeader number="09" title="Generative AI Project Structure" subtitle="Standard folder organization for production AI projects" />
 
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Folder Tree */}
