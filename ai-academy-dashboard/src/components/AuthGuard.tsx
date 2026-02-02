@@ -41,19 +41,21 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    if (isLoading) return;
+  // Calculate route types once
+  const isPublicRoute = PUBLIC_ROUTES.includes(pathname) ||
+    PUBLIC_PREFIXES.some(prefix => pathname.startsWith(prefix));
+  const isAuthOnlyRoute = AUTH_ONLY_ROUTES.some(route => pathname.startsWith(route));
+  const isAdminRoute = ADMIN_ROUTES.some(route => pathname.startsWith(route));
 
-    const isPublicRoute = PUBLIC_ROUTES.includes(pathname) ||
-      PUBLIC_PREFIXES.some(prefix => pathname.startsWith(prefix));
-    const isAuthOnlyRoute = AUTH_ONLY_ROUTES.some(route => pathname.startsWith(route));
-    const isAdminRoute = ADMIN_ROUTES.some(route => pathname.startsWith(route));
+  useEffect(() => {
+    // For public routes, no redirect logic needed
+    if (isPublicRoute) return;
+
+    if (isLoading) return;
 
     // Not logged in
     if (!user) {
-      if (!isPublicRoute) {
-        router.push('/login');
-      }
+      router.push('/login');
       return;
     }
 
@@ -76,7 +78,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
     // User has no profile yet - send to onboarding
     if (userStatus === 'no_profile') {
-      if (pathname !== '/onboarding' && !isPublicRoute) {
+      if (pathname !== '/onboarding') {
         router.push('/onboarding');
       }
       return;
@@ -84,7 +86,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
     // User is pending approval
     if (userStatus === 'pending') {
-      if (pathname !== '/pending' && !isPublicRoute && !isAuthOnlyRoute) {
+      if (pathname !== '/pending' && !isAuthOnlyRoute) {
         router.push('/pending');
       }
       return;
@@ -92,7 +94,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
     // User is rejected
     if (userStatus === 'rejected') {
-      if (pathname !== '/pending' && !isPublicRoute) {
+      if (pathname !== '/pending') {
         router.push('/pending');
       }
       return;
@@ -105,9 +107,14 @@ export function AuthGuard({ children }: AuthGuardProps) {
       }
       return;
     }
-  }, [user, isLoading, isAdmin, userStatus, pathname, router, participant]);
+  }, [user, isLoading, isAdmin, userStatus, pathname, router, participant, isPublicRoute, isAuthOnlyRoute, isAdminRoute]);
 
-  // Show loading state
+  // PUBLIC ROUTES: Render immediately without waiting for auth
+  if (isPublicRoute) {
+    return <>{children}</>;
+  }
+
+  // Show loading state for protected routes
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -119,14 +126,8 @@ export function AuthGuard({ children }: AuthGuardProps) {
     );
   }
 
-  // Check access
-  const isPublicRoute = PUBLIC_ROUTES.includes(pathname) ||
-    PUBLIC_PREFIXES.some(prefix => pathname.startsWith(prefix));
-  const isAuthOnlyRoute = AUTH_ONLY_ROUTES.some(route => pathname.startsWith(route));
-  const isAdminRoute = ADMIN_ROUTES.some(route => pathname.startsWith(route));
-
-  // Not logged in - only show public routes
-  if (!user && !isPublicRoute) {
+  // Not logged in - show spinner while redirecting
+  if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-[#0062FF]" />
@@ -143,9 +144,9 @@ export function AuthGuard({ children }: AuthGuardProps) {
     );
   }
 
-  // Pending/rejected users can only access auth-only and public routes
-  if (user && !isAdmin && (userStatus === 'pending' || userStatus === 'rejected' || userStatus === 'no_profile')) {
-    if (!isPublicRoute && !isAuthOnlyRoute) {
+  // Pending/rejected users can only access auth-only routes
+  if (!isAdmin && (userStatus === 'pending' || userStatus === 'rejected' || userStatus === 'no_profile')) {
+    if (!isAuthOnlyRoute) {
       return (
         <div className="min-h-screen flex items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-[#0062FF]" />
