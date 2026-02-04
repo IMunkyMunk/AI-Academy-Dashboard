@@ -195,6 +195,8 @@ const isPublicRoute = createRouteMatcher([
   '/presentations(.*)',
   '/api/register',
   '/api/cron(.*)',
+  '/api/webhook(.*)',  // GitHub webhooks - no Clerk session
+  '/api/participant',  // Participant lookup API for authenticated users
 ]);
 
 // ============================================================================

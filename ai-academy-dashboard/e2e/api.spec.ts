@@ -6,8 +6,8 @@ test.describe('API Endpoints', () => {
     expect(response.status()).toBeLessThan(500);
   });
 
-  test('login page returns 200', async ({ request }) => {
-    const response = await request.get('/login');
+  test('sign-in page returns 200', async ({ request }) => {
+    const response = await request.get('/sign-in');
     expect(response.status()).toBe(200);
   });
 
@@ -56,10 +56,10 @@ test.describe('API Endpoints', () => {
     expect([200, 400, 401, 500]).toContain(response.status());
   });
 
-  test('auth callback route exists', async ({ request }) => {
-    const response = await request.get('/auth/callback');
-    // Should redirect to login with error (no code provided)
-    expect([302, 307, 200]).toContain(response.status());
+  test('API participant endpoint requires auth', async ({ request }) => {
+    const response = await request.get('/api/participant');
+    // Should return 401 for unauthenticated requests
+    expect(response.status()).toBe(401);
   });
 });
 

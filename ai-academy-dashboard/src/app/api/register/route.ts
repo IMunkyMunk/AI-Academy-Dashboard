@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { createServiceSupabaseClient } from '@/lib/supabase';
-import { createServerSupabaseClient } from '@/lib/supabase-server';
 import { registerSchema, validateInput, formatValidationErrors } from '@/lib/validation';
 import { logger, logApiRequest, logSecurityEvent } from '@/lib/logger';
 
@@ -10,14 +10,14 @@ export async function POST(request: NextRequest) {
 
   try {
     // Security: Require authentication for registration
-    // Users must first authenticate via OAuth (GitHub) before registering as participants
-    const supabaseAuth = await createServerSupabaseClient();
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+    // Users must first authenticate via OAuth (GitHub/Google) through Clerk before registering
+    const { userId } = await auth();
+    const clerkUser = await currentUser();
 
-    if (authError || !user) {
+    if (!userId || !clerkUser) {
       logSecurityEvent('registration_unauthenticated', {
         correlationId,
-        reason: authError?.message || 'No authenticated session',
+        reason: 'No Clerk authenticated session',
       });
       logApiRequest('POST', '/api/register', 401, Date.now() - startTime, { correlationId });
       return NextResponse.json(
@@ -25,6 +25,9 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
+
+    // Get user email from Clerk
+    const userEmail = clerkUser.primaryEmailAddress?.emailAddress;
 
     const body = await request.json();
 
@@ -46,11 +49,11 @@ export async function POST(request: NextRequest) {
 
     // Security: If auth_user_id is provided, it MUST match the authenticated user
     // This prevents users from registering on behalf of others
-    if (auth_user_id && auth_user_id !== user.id) {
+    if (auth_user_id && auth_user_id !== userId) {
       logSecurityEvent('registration_id_mismatch', {
         correlationId,
         providedId: auth_user_id,
-        actualId: user.id,
+        actualId: userId,
       });
       logApiRequest('POST', '/api/register', 403, Date.now() - startTime, { correlationId });
       return NextResponse.json(
@@ -60,11 +63,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Security: Email must match authenticated user's email (if available)
-    if (user.email && email !== user.email) {
+    if (userEmail && email !== userEmail) {
       logSecurityEvent('registration_email_mismatch', {
         correlationId,
         providedEmail: email,
-        actualEmail: user.email,
+        actualEmail: userEmail,
       });
       logApiRequest('POST', '/api/register', 403, Date.now() - startTime, { correlationId });
       return NextResponse.json(
@@ -140,8 +143,8 @@ export async function POST(request: NextRequest) {
 
     // Add new fields if provided (they may fail if columns don't exist yet)
     if (nickname) insertData.nickname = nickname;
-    // Always use the authenticated user's ID for auth_user_id
-    insertData.auth_user_id = user.id;
+    // Always use the authenticated Clerk user's ID for auth_user_id
+    insertData.auth_user_id = userId;
 
     // Insert participant
     const { data: participant, error } = await supabase

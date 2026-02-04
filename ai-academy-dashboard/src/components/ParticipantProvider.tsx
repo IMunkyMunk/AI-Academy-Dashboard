@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { createBrowserClient } from '@supabase/ssr';
 import type { Participant, UserStatus } from '@/lib/types';
 
 interface ParticipantContextType {
@@ -27,13 +26,6 @@ const ParticipantContext = createContext<ParticipantContextType>({
   refreshParticipant: async () => {},
 });
 
-function createSupabaseClient() {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-}
-
 export function ParticipantProvider({ children }: { children: React.ReactNode }) {
   const { user: clerkUser, isLoaded: clerkLoaded } = useUser();
   const [participant, setParticipant] = useState<Participant | null>(null);
@@ -41,96 +33,54 @@ export function ParticipantProvider({ children }: { children: React.ReactNode })
   const [isActualAdmin, setIsActualAdmin] = useState(false);
   const [viewAsUser, setViewAsUser] = useState(false);
   const [userStatus, setUserStatus] = useState<UserStatus | 'no_profile' | null>(null);
-  const [supabase] = useState(() => createSupabaseClient());
 
   const isAdmin = isActualAdmin && !viewAsUser;
 
-  // Fetch participant by email, github_username, or auth_user_id
+  // Fetch participant via API (uses service role, bypasses RLS)
   const fetchParticipant = useCallback(async (): Promise<Participant | null> => {
     if (!clerkUser) return null;
 
     try {
-      const email = clerkUser.primaryEmailAddress?.emailAddress;
-      const githubUsername = clerkUser.externalAccounts?.find(
-        (acc) => acc.provider === 'github'
-      )?.username;
-      const clerkUserId = clerkUser.id;
-
-      // Try by email first
-      if (email) {
-        const { data } = await supabase
-          .from('participants')
-          .select('*')
-          .eq('email', email)
-          .single();
-        if (data) return data as Participant;
+      const response = await fetch('/api/participant');
+      if (!response.ok) {
+        if (response.status === 401) return null;
+        throw new Error('Failed to fetch participant');
       }
-
-      // Try by github_username
-      if (githubUsername) {
-        const { data } = await supabase
-          .from('participants')
-          .select('*')
-          .eq('github_username', githubUsername)
-          .single();
-        if (data) return data as Participant;
-      }
-
-      // Try by auth_user_id (Clerk user ID)
-      const { data } = await supabase
-        .from('participants')
-        .select('*')
-        .eq('auth_user_id', clerkUserId)
-        .single();
-      return data as Participant | null;
+      const data = await response.json();
+      return data.participant as Participant | null;
     } catch (error) {
       console.error('fetchParticipant error:', error);
       return null;
     }
-  }, [clerkUser, supabase]);
+  }, [clerkUser]);
 
-  // Check admin status in admin_users table
+  // Check admin status via API
   const checkAdminUser = useCallback(async (): Promise<boolean> => {
     if (!clerkUser) return false;
 
     try {
-      const { data } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('user_id', clerkUser.id)
-        .eq('is_active', true)
-        .single();
-      return !!data;
+      const response = await fetch('/api/participant', { method: 'HEAD' });
+      const isAdminHeader = response.headers.get('X-Is-Admin');
+      return isAdminHeader === 'true';
     } catch {
       return false;
     }
-  }, [clerkUser, supabase]);
+  }, [clerkUser]);
 
-  // Link Clerk user ID to participant if not already linked
+  // Link Clerk user ID to participant via API
   const linkParticipant = useCallback(async (participantData: Participant) => {
     if (!clerkUser || participantData.auth_user_id === clerkUser.id) return;
 
-    const githubUsername = clerkUser.externalAccounts?.find(
-      (acc) => acc.provider === 'github'
-    )?.username;
-
-    const updates: Record<string, string> = {
-      auth_user_id: clerkUser.id,
-    };
-
-    if (githubUsername && !participantData.github_username) {
-      updates.github_username = githubUsername;
+    try {
+      await fetch('/api/participant', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ participant_id: participantData.id }),
+      });
+    } catch (error) {
+      console.error('linkParticipant error:', error);
     }
-
-    if (clerkUser.imageUrl && !participantData.avatar_url) {
-      updates.avatar_url = clerkUser.imageUrl;
-    }
-
-    await supabase
-      .from('participants')
-      .update(updates)
-      .eq('id', participantData.id);
-  }, [clerkUser, supabase]);
+  }, [clerkUser]);
 
   const refreshParticipant = useCallback(async () => {
     const participantData = await fetchParticipant();
