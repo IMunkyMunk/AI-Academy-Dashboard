@@ -159,12 +159,12 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
   //
   const cspDirectives = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://clerk.com https://*.clerk.accounts.dev https://*.clerk.com https://*.kyndrylai.online",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://clerk.com https://*.clerk.accounts.dev https://*.clerk.com https://*.kyndrylai.online https://vercel.live https://*.vercel.live",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com",
+    "font-src 'self' data: https://fonts.gstatic.com",
     "img-src 'self' data: blob: https: http:",
-    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://clerk.com https://*.clerk.accounts.dev https://*.clerk.com https://*.kyndrylai.online https://api.github.com",
-    "frame-src 'self' https://clerk.com https://*.clerk.accounts.dev https://*.clerk.com https://*.kyndrylai.online",
+    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://clerk.com https://*.clerk.accounts.dev https://*.clerk.com https://*.kyndrylai.online https://api.github.com https://vercel.live https://*.vercel.live",
+    "frame-src 'self' https://clerk.com https://*.clerk.accounts.dev https://*.clerk.com https://*.kyndrylai.online https://vercel.live",
     "frame-ancestors 'none'",
     "form-action 'self'",
     "base-uri 'self'",
