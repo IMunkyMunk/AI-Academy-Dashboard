@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { getSupabaseClient } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -118,53 +117,27 @@ export default function AdminPage() {
   const [isBulkSubmitting, setIsBulkSubmitting] = useState(false);
 
   const fetchAllSubmissions = async () => {
-    const supabase = getSupabaseClient();
+    try {
+      const response = await fetch('/api/admin/data');
 
-    const [submissionsResult, participantsResult, intelResult, sessionsResult, taskForcesResult] = await Promise.all([
-      supabase
-        .from('submissions')
-        .select('*, participants(name, github_username, avatar_url, role, team), assignments(title, day, type)')
-        .order('submitted_at', { ascending: false }),
-      supabase
-        .from('participants')
-        .select('id, name, github_username, avatar_url, role')
-        .order('name'),
-      // Pending intel count
-      supabase
-        .from('intel_drops')
-        .select('id', { count: 'exact', head: true })
-        .eq('is_released', false),
-      // Active sessions count
-      supabase
-        .from('live_sessions')
-        .select('id', { count: 'exact', head: true })
-        .eq('is_active', true),
-      // Task force overall readiness
-      supabase
-        .from('task_forces')
-        .select('overall_readiness'),
-    ]);
+      if (!response.ok) {
+        console.error('Failed to fetch admin data:', response.status);
+        setIsLoading(false);
+        setIsRefreshing(false);
+        return;
+      }
 
-    if (!submissionsResult.error && submissionsResult.data) {
-      setAllSubmissions(submissionsResult.data as SubmissionWithDetails[]);
+      const data = await response.json();
+
+      setAllSubmissions(data.submissions as SubmissionWithDetails[]);
+      setParticipants(data.participants as typeof participants);
+      setMissionStats(data.missionStats);
+    } catch (error) {
+      console.error('Error fetching admin data:', error);
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
     }
-    if (!participantsResult.error && participantsResult.data) {
-      setParticipants(participantsResult.data as typeof participants);
-    }
-
-    // Calculate mission stats
-    const avgReadiness = taskForcesResult.data
-      ? taskForcesResult.data.reduce((sum, tf) => sum + (tf.overall_readiness || 0), 0) / Math.max(taskForcesResult.data.length, 1)
-      : 0;
-
-    setMissionStats({
-      pendingIntel: intelResult.count || 0,
-      activeSessions: sessionsResult.count || 0,
-      taskForceReadiness: Math.round(avgReadiness),
-    });
-
-    setIsLoading(false);
-    setIsRefreshing(false);
   };
 
   useEffect(() => {

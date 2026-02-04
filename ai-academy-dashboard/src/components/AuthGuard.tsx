@@ -6,7 +6,7 @@ import { useAuth } from '@clerk/nextjs';
 import { useParticipant } from '@/components/ParticipantProvider';
 import { Loader2 } from 'lucide-react';
 
-// Routes that don't require authentication
+// Routes that don't require authentication (must match middleware isPublicRoute)
 const PUBLIC_ROUTES = [
   '/',
   '/sign-in',
@@ -14,13 +14,18 @@ const PUBLIC_ROUTES = [
   '/offline',
   '/help',
   '/register',
+  '/leaderboard',
+  '/progress',
+  '/teams',
 ];
 
-// Routes that are public but checked by prefix
+// Routes that are public but checked by prefix (must match middleware isPublicRoute)
 const PUBLIC_PREFIXES = [
   '/presentations',
   '/sign-in',
   '/sign-up',
+  '/participant',
+  '/team',
 ];
 
 // Routes that only require authentication (not approval)

@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { createServiceSupabaseClient } from '@/lib/supabase';
 
+// Valid values for profile fields
+const VALID_ROLES = ['FDE', 'AI-SE', 'AI-PM', 'AI-DA', 'AI-DS', 'AI-SEC', 'AI-FE'];
+const VALID_TEAMS = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta'];
+const VALID_STREAMS = ['Tech', 'Business'];
+
 // GET /api/participant - Get current user's participant data
 export async function GET(request: NextRequest) {
   try {
@@ -61,7 +66,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PATCH /api/participant - Update participant (link Clerk user ID)
+// PATCH /api/participant - Update participant profile
 export async function PATCH(request: NextRequest) {
   try {
     const { userId } = await auth();
@@ -72,7 +77,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { participant_id } = body;
+    const { participant_id, role, team, stream } = body;
 
     if (!participant_id) {
       return NextResponse.json({ error: 'participant_id required' }, { status: 400 });
@@ -80,39 +85,81 @@ export async function PATCH(request: NextRequest) {
 
     const supabase = createServiceSupabaseClient();
 
-    // Build updates
-    const updates: Record<string, string> = {
-      auth_user_id: userId,
-    };
+    // Verify this participant belongs to the authenticated user
+    const { data: existingParticipant } = await supabase
+      .from('participants')
+      .select('id, auth_user_id, github_username, avatar_url')
+      .eq('id', participant_id)
+      .single();
 
+    if (!existingParticipant) {
+      return NextResponse.json({ error: 'Participant not found' }, { status: 404 });
+    }
+
+    // Security: Only allow updating own participant record
+    // Allow if auth_user_id matches, or if it's not set yet (first link)
+    if (existingParticipant.auth_user_id && existingParticipant.auth_user_id !== userId) {
+      return NextResponse.json({ error: 'Not authorized to update this participant' }, { status: 403 });
+    }
+
+    // Build updates
+    const updates: Record<string, string | null> = {};
+
+    // Always link auth_user_id if not already linked
+    if (!existingParticipant.auth_user_id) {
+      updates.auth_user_id = userId;
+    }
+
+    // Update role if provided and valid
+    if (role !== undefined) {
+      if (role === '' || role === null) {
+        updates.role = null;
+      } else if (VALID_ROLES.includes(role)) {
+        updates.role = role;
+      } else {
+        return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
+      }
+    }
+
+    // Update team if provided and valid
+    if (team !== undefined) {
+      if (team === '' || team === null) {
+        updates.team = null;
+      } else if (VALID_TEAMS.includes(team)) {
+        updates.team = team;
+      } else {
+        return NextResponse.json({ error: 'Invalid team' }, { status: 400 });
+      }
+    }
+
+    // Update stream if provided and valid
+    if (stream !== undefined) {
+      if (stream === '' || stream === null) {
+        updates.stream = null;
+      } else if (VALID_STREAMS.includes(stream)) {
+        updates.stream = stream;
+      } else {
+        return NextResponse.json({ error: 'Invalid stream' }, { status: 400 });
+      }
+    }
+
+    // Link GitHub username if available and not already set
     const githubUsername = clerkUser.externalAccounts?.find(
       (acc) => acc.provider === 'github'
     )?.username;
 
-    if (githubUsername) {
-      // Only update github_username if not already set
-      const { data: existing } = await supabase
-        .from('participants')
-        .select('github_username')
-        .eq('id', participant_id)
-        .single();
-
-      if (!existing?.github_username) {
-        updates.github_username = githubUsername;
-      }
+    if (githubUsername && !existingParticipant.github_username) {
+      updates.github_username = githubUsername;
     }
 
-    if (clerkUser.imageUrl) {
-      // Only update avatar_url if not already set
-      const { data: existing } = await supabase
-        .from('participants')
-        .select('avatar_url')
-        .eq('id', participant_id)
-        .single();
+    // Link avatar if available and not already set
+    if (clerkUser.imageUrl && !existingParticipant.avatar_url) {
+      updates.avatar_url = clerkUser.imageUrl;
+    }
 
-      if (!existing?.avatar_url) {
-        updates.avatar_url = clerkUser.imageUrl;
-      }
+    // Perform update if there are changes
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json({ success: true, message: 'No changes' });
     }
 
     const { error } = await supabase
@@ -132,8 +179,8 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
-// GET /api/participant/admin - Check if user is admin
-export async function HEAD(request: NextRequest) {
+// HEAD /api/participant - Check if user is admin
+export async function HEAD() {
   try {
     const { userId } = await auth();
 

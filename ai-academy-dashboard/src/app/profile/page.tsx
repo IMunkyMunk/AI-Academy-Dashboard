@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useClerk } from '@clerk/nextjs';
 import { useParticipant } from '@/components/ParticipantProvider';
-import { getSupabaseClient } from '@/lib/supabase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -105,19 +104,23 @@ export default function ProfilePage() {
     }
 
     setIsSavingAssignment(true);
-    const supabase = getSupabaseClient();
 
     try {
-      const { error } = await supabase
-        .from('participants')
-        .update({
+      const response = await fetch('/api/participant', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          participant_id: participant.id,
           role: assignmentData.role,
           team: assignmentData.team,
           stream: assignmentData.stream,
-        })
-        .eq('id', participant.id);
+        }),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to update assignment');
+      }
 
       await refreshParticipant();
       toast.success('Assignment updated successfully');

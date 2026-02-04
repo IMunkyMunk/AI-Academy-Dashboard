@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getSupabaseClient } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -56,17 +55,24 @@ export default function AdminUsersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchParticipants = async () => {
-    const supabase = getSupabaseClient();
-    const { data, error } = await supabase
-      .from('participants')
-      .select('*')
-      .order('created_at', { ascending: false });
+    try {
+      const response = await fetch('/api/admin/users');
 
-    if (!error && data) {
-      setParticipants(data as Participant[]);
+      if (!response.ok) {
+        console.error('Failed to fetch participants:', response.status);
+        setIsLoading(false);
+        setIsRefreshing(false);
+        return;
+      }
+
+      const data = await response.json();
+      setParticipants(data.participants as Participant[]);
+    } catch (error) {
+      console.error('Error fetching participants:', error);
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
     }
-    setIsLoading(false);
-    setIsRefreshing(false);
   };
 
   useEffect(() => {
@@ -78,17 +84,23 @@ export default function AdminUsersPage() {
     fetchParticipants();
   };
 
-  const handleStatusChange = async (userId: string, newStatus: UserStatus) => {
+  const handleStatusChange = async (participantId: string, newStatus: UserStatus) => {
     setIsSubmitting(true);
 
     try {
-      const supabase = getSupabaseClient();
-      const { error } = await supabase
-        .from('participants')
-        .update({ status: newStatus })
-        .eq('id', userId);
+      const response = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          participant_id: participantId,
+          status: newStatus,
+        }),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to update status');
+      }
 
       toast.success(
         newStatus === 'approved'
@@ -98,13 +110,13 @@ export default function AdminUsersPage() {
 
       // Update local state
       setParticipants((prev) =>
-        prev.map((p) => (p.id === userId ? { ...p, status: newStatus } : p))
+        prev.map((p) => (p.id === participantId ? { ...p, status: newStatus } : p))
       );
 
       setSelectedUser(null);
       setActionType(null);
-    } catch {
-      toast.error('Failed to change user status');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to change user status');
     } finally {
       setIsSubmitting(false);
     }

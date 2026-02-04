@@ -193,10 +193,17 @@ const isPublicRoute = createRouteMatcher([
   '/help',
   '/register',
   '/presentations(.*)',
+  // Leaderboard, progress, teams, participant - public for transparency (data is public in DB)
+  '/leaderboard',
+  '/progress',
+  '/teams',
+  '/participant(.*)',
+  '/team(.*)',
   '/api/register',
   '/api/cron(.*)',
   '/api/webhook(.*)',  // GitHub webhooks - no Clerk session
-  '/api/participant',  // Participant lookup API for authenticated users
+  '/api/participant',  // Participant lookup (checks Clerk auth internally)
+  '/api/content(.*)',  // Mission content for offline caching
 ]);
 
 // ============================================================================
