@@ -15,7 +15,8 @@
     "test:chrome": "playwright test --project=chromium",
     "test:firefox": "playwright test --project=firefox",
     "test:mobile": "playwright test --project=mobile-chrome --project=mobile-safari",
-    "test:ci": "playwright test --reporter=github"
+    "test:ci": "playwright test --reporter=github",
+    "set-predefined-admin": "node --env-file=.env.local scripts/set-predefined-admin.mjs"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.37.2",

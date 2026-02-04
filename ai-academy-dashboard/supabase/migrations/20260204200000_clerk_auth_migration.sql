@@ -26,6 +26,20 @@ ALTER TABLE admin_users
 -- PART 2: Update participants.auth_user_id for Clerk user IDs
 -- ============================================================================
 
+-- Drop RLS policies that depend on auth_user_id (must be done before ALTER COLUMN)
+DROP POLICY IF EXISTS "Participants can view own prerequisites" ON participant_prerequisites;
+DROP POLICY IF EXISTS "Participants can update own prerequisites" ON participant_prerequisites;
+DROP POLICY IF EXISTS "Admins can view all prerequisites" ON participant_prerequisites;
+
+-- Drop participants policies that use auth_user_id
+DROP POLICY IF EXISTS "Users read own participant" ON participants;
+DROP POLICY IF EXISTS "Users update own participant" ON participants;
+DROP POLICY IF EXISTS "Authenticated read participants" ON participants;
+DROP POLICY IF EXISTS "Admins and mentors read all participants" ON participants;
+DROP POLICY IF EXISTS "Admins update participants" ON participants;
+DROP POLICY IF EXISTS "Users can view own profile" ON participants;
+DROP POLICY IF EXISTS "Users can update own profile" ON participants;
+
 -- Change auth_user_id column type to TEXT (from UUID)
 -- First drop the index
 DROP INDEX IF EXISTS idx_participants_auth_user_id;
@@ -36,6 +50,30 @@ ALTER TABLE participants
 
 -- Recreate index
 CREATE INDEX IF NOT EXISTS idx_participants_auth_user_id ON participants(auth_user_id);
+
+-- Recreate participant_prerequisites policies (using auth.uid()::TEXT for Clerk compatibility)
+CREATE POLICY "Participants can view own prerequisites" ON participant_prerequisites
+  FOR SELECT USING (
+    participant_id IN (
+      SELECT id FROM participants WHERE auth_user_id = COALESCE(auth.uid()::TEXT, current_setting('request.jwt.claims', true)::json->>'sub')
+    )
+  );
+
+CREATE POLICY "Participants can update own prerequisites" ON participant_prerequisites
+  FOR ALL USING (
+    participant_id IN (
+      SELECT id FROM participants WHERE auth_user_id = COALESCE(auth.uid()::TEXT, current_setting('request.jwt.claims', true)::json->>'sub')
+    )
+  );
+
+CREATE POLICY "Admins can view all prerequisites" ON participant_prerequisites
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM participants
+      WHERE auth_user_id = COALESCE(auth.uid()::TEXT, current_setting('request.jwt.claims', true)::json->>'sub')
+        AND (is_admin = true OR is_mentor = true)
+    )
+  );
 
 -- ============================================================================
 -- PART 3: Update RLS helper functions
