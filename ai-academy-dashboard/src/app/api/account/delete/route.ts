@@ -1,16 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { auth } from '@clerk/nextjs/server';
 import { createServiceSupabaseClient } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function DELETE(_request: NextRequest) {
   try {
-    // Get authenticated user
-    const supabase = await createServerSupabaseClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Get authenticated user from Clerk
+    const { userId } = await auth();
 
-    if (authError || !user) {
+    if (!userId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -19,11 +18,11 @@ export async function DELETE(_request: NextRequest) {
 
     const serviceSupabase = createServiceSupabaseClient();
 
-    // Find participant record
+    // Find participant record by Clerk user ID
     const { data: participant } = await serviceSupabase
       .from('participants')
-      .select('id')
-      .or(`auth_user_id.eq.${user.id},email.eq.${user.email}`)
+      .select('id, email')
+      .eq('auth_user_id', userId)
       .single();
 
     if (participant) {
@@ -80,18 +79,10 @@ export async function DELETE(_request: NextRequest) {
         .eq('id', participant.id);
     }
 
-    // Delete auth user using admin API
-    const { error: deleteError } = await serviceSupabase.auth.admin.deleteUser(user.id);
+    // Note: Clerk user deletion should be handled separately via Clerk Admin API
+    // The participant data in Supabase has been deleted above
 
-    if (deleteError) {
-      logger.error('Failed to delete auth user', { userId: user.id }, deleteError);
-      return NextResponse.json(
-        { error: 'Failed to delete account' },
-        { status: 500 }
-      );
-    }
-
-    logger.info('User account deleted', { userId: user.id, email: user.email });
+    logger.info('User participant data deleted', { userId, email: participant?.email });
 
     return NextResponse.json({ success: true });
   } catch (error) {

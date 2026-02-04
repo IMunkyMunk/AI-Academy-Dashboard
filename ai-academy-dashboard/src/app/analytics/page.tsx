@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnalyticsDashboard } from '@/components/AnalyticsDashboard';
-import { useAuth } from '@/components/AuthProvider';
+import { useAuth } from '@clerk/nextjs';
+import { useParticipant } from '@/components/ParticipantProvider';
 import { Skeleton } from '@/components/ui/skeleton';
 import type {
   Participant,
@@ -50,8 +51,10 @@ interface AnalyticsData {
 }
 
 export default function AnalyticsPage() {
-  const { user, isAdmin, userStatus, isLoading: authLoading } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
+  const { isAdmin, userStatus, isLoading: participantLoading } = useParticipant();
   const router = useRouter();
+  const authLoading = !isLoaded || participantLoading;
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,8 +62,8 @@ export default function AnalyticsPage() {
     if (authLoading) return;
 
     // Analytics requires admin or mentor (API enforces requireAdminOrMentor)
-    if (!user) {
-      router.push('/login');
+    if (!isSignedIn) {
+      router.push('/sign-in');
       return;
     }
 
@@ -69,7 +72,7 @@ export default function AnalyticsPage() {
         const res = await fetch('/api/analytics');
         if (!res.ok) {
           if (res.status === 401 || res.status === 403) {
-            router.push('/login');
+            router.push('/sign-in');
             return;
           }
           throw new Error('Failed to fetch analytics');
@@ -82,7 +85,7 @@ export default function AnalyticsPage() {
     };
 
     fetchData();
-  }, [user, isAdmin, userStatus, authLoading, router]);
+  }, [isSignedIn, isAdmin, userStatus, authLoading, router]);
 
   if (authLoading || !data) {
     return (

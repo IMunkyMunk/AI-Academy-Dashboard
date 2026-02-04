@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/components/AuthProvider';
+import { useAuth } from '@clerk/nextjs';
+import { useParticipant } from '@/components/ParticipantProvider';
 import {
   LayoutDashboard,
   Trophy,
@@ -22,11 +23,13 @@ const navItems = [
 
 export function MobileBottomNav() {
   const pathname = usePathname();
-  const { user, participant, isLoading } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
+  const { participant, isLoading: participantLoading } = useParticipant();
+  const isLoading = !isLoaded || participantLoading;
 
   // Hide for unauthenticated users on public pages
-  const isPublicPage = pathname === '/' || pathname === '/login';
-  if (!user && !isLoading && isPublicPage) {
+  const isPublicPage = pathname === '/' || pathname === '/sign-in' || pathname === '/sign-up';
+  if (!isSignedIn && !isLoading && isPublicPage) {
     return null;
   }
 

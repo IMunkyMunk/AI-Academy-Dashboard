@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/components/AuthProvider';
+import { useParticipant } from '@/components/ParticipantProvider';
 import { getSupabaseClient } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -60,7 +60,7 @@ export function MyDashboardClient({
   allAchievements,
   teamProgress,
 }: MyDashboardClientProps) {
-  const { participant, isLoading: authLoading } = useAuth();
+  const { participant, isLoading: authLoading } = useParticipant();
   const [submissions, setSubmissions] = useState<SubmissionWithDetails[]>([]);
   const [earnedAchievements, setEarnedAchievements] = useState<
     (ParticipantAchievement & { achievements: Achievement })[]

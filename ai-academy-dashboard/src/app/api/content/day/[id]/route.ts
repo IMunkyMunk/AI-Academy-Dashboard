@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { createServiceSupabaseClient } from '@/lib/supabase';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -286,17 +288,17 @@ export async function GET(
   }
 
   // Check if user is admin/instructor and get their role
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { userId } = await auth();
 
   let isAdmin = false;
   let userRole: string | undefined;
 
-  if (user) {
-    const { data: participant } = await supabase
+  if (userId) {
+    const serviceSupabase = createServiceSupabaseClient();
+    const { data: participant } = await serviceSupabase
       .from('participants')
       .select('is_admin, role')
-      .eq('email', user.email)
+      .eq('auth_user_id', userId)
       .single();
     isAdmin = participant?.is_admin ?? false;
     userRole = participant?.role ?? undefined;

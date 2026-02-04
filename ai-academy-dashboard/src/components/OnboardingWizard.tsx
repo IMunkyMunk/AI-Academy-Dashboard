@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/components/AuthProvider';
+import { useUser } from '@clerk/nextjs';
+import { useParticipant } from '@/components/ParticipantProvider';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,8 +43,10 @@ type Step = 'welcome' | 'profile' | 'complete';
 const STEPS: Step[] = ['welcome', 'profile', 'complete'];
 
 export function OnboardingWizard() {
-  const { user, participant, isLoading: authLoading, refreshParticipant } = useAuth();
+  const { user: clerkUser, isLoaded: clerkLoaded } = useUser();
+  const { participant, isLoading: participantLoading, refreshParticipant } = useParticipant();
   const router = useRouter();
+  const authLoading = !clerkLoaded || participantLoading;
 
   const [currentStep, setCurrentStep] = useState<Step>('welcome');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,14 +67,14 @@ export function OnboardingWizard() {
       return;
     }
 
-    if (user) {
+    if (clerkUser) {
       setFormData((prev) => ({
         ...prev,
-        name: user.user_metadata?.name || user.user_metadata?.full_name || '',
-        email: user.email || '',
+        name: clerkUser.fullName || '',
+        email: clerkUser.primaryEmailAddress?.emailAddress || '',
       }));
     }
-  }, [authLoading, user, participant, router]);
+  }, [authLoading, clerkUser, participant, router]);
 
   const currentStepIndex = STEPS.indexOf(currentStep);
 
@@ -125,11 +128,11 @@ export function OnboardingWizard() {
         body: JSON.stringify({
           name: formData.name,
           nickname: formData.nickname,
-          email: formData.email || user?.email,
+          email: formData.email || clerkUser?.primaryEmailAddress?.emailAddress,
           // Role, team, stream will use defaults (FDE, Alpha, Tech)
           // User can change them later from their profile
           avatar_url: getAvatarUrl(),
-          auth_user_id: user?.id,
+          auth_user_id: clerkUser?.id,
         }),
       });
 
@@ -141,7 +144,7 @@ export function OnboardingWizard() {
 
       toast.success('Profile created!');
 
-      if (user) {
+      if (clerkUser) {
         await refreshParticipant();
       }
 

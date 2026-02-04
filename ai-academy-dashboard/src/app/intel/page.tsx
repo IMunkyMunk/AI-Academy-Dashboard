@@ -1,4 +1,5 @@
-import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { createServerSupabaseClient, createServiceSupabaseClient } from '@/lib/supabase-server';
+import { auth } from '@clerk/nextjs/server';
 import { IntelDropsPage } from '@/components/IntelDropsPage';
 import type { IntelDrop } from '@/lib/types';
 
@@ -15,16 +16,17 @@ export default async function IntelPage() {
     .order('day', { ascending: false });
 
   // Get user's task force for filtering
-  const { data: { user } } = await supabase.auth.getUser();
+  const { userId } = await auth();
 
   let userTaskForce: string | null = null;
-  if (user) {
-    const { data: participant } = await supabase
+  if (userId) {
+    const serviceSupabase = createServiceSupabaseClient();
+    const { data: participant } = await serviceSupabase
       .from('participants')
       .select(`
         task_force_members(task_forces(name))
       `)
-      .eq('email', user.email)
+      .eq('auth_user_id', userId)
       .single();
 
     // Extract task force name from nested structure

@@ -1,6 +1,7 @@
 'use client';
 
-import { useAuth } from '@/components/AuthProvider';
+import { useAuth } from '@clerk/nextjs';
+import { useParticipant } from '@/components/ParticipantProvider';
 import { LandingPage } from '@/components/LandingPage';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ActivityFeed } from '@/components/ActivityFeed';
@@ -25,7 +26,10 @@ export function HomePage({
   assignments,
   completionRate,
 }: HomePageProps) {
-  const { user, isLoading, isAdmin, userStatus } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
+  const { isLoading: participantLoading, isAdmin, userStatus } = useParticipant();
+
+  const isLoading = !isLoaded || participantLoading;
 
   if (isLoading) {
     return (
@@ -36,7 +40,7 @@ export function HomePage({
   }
 
   // Not logged in - show landing page
-  if (!user) {
+  if (!isSignedIn) {
     return <LandingPage />;
   }
 

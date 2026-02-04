@@ -35,7 +35,7 @@ import {
 } from '@/components/ui/dialog';
 import { ReviewForm } from '@/components/ReviewForm';
 import { SubmissionComments } from '@/components/SubmissionComments';
-import { useAuth } from '@/components/AuthProvider';
+import { useParticipant } from '@/components/ParticipantProvider';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatDistanceToNow, format } from 'date-fns';
 import {
@@ -86,7 +86,7 @@ interface MissionStats {
 }
 
 export default function AdminPage() {
-  const { participant } = useAuth();
+  const { participant } = useParticipant();
   const [allSubmissions, setAllSubmissions] = useState<SubmissionWithDetails[]>([]);
   const [participants, setParticipants] = useState<{ id: string; name: string; github_username: string; avatar_url: string | null; role: RoleType }[]>([]);
   const [isLoading, setIsLoading] = useState(true);

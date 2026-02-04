@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { auth } from '@clerk/nextjs/server';
+import { createServiceSupabaseClient } from '@/lib/supabase';
 import { logSecurityEvent } from '@/lib/logger';
 
 /**
  * API Authentication Utilities
  * Provides authentication and authorization checks for API routes
+ * Uses Clerk for authentication and Supabase for participant data
  */
 
 export interface AuthenticatedUser {
@@ -33,17 +35,12 @@ export async function requireAuth(
   request: NextRequest
 ): Promise<AuthResult | AuthError> {
   try {
-    const supabase = await createServerSupabaseClient();
+    const { userId } = await auth();
 
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-
-    if (error || !user) {
+    if (!userId) {
       logSecurityEvent('auth_failure', {
         path: request.nextUrl.pathname,
-        reason: error?.message || 'No user session',
+        reason: 'No authenticated user',
       });
 
       return {
@@ -55,23 +52,45 @@ export async function requireAuth(
       };
     }
 
-    // Get participant details (is_mentor may not exist in older schemas)
-    const { data: participant } = await supabase
+    const supabase = createServiceSupabaseClient();
+
+    // Get participant details by auth_user_id (Clerk user ID)
+    let participant = null;
+
+    // First try by auth_user_id
+    const { data: byAuthId } = await supabase
       .from('participants')
-      .select('id, is_admin, is_mentor')
-      .eq('email', user.email)
+      .select('id, email, is_admin, is_mentor')
+      .eq('auth_user_id', userId)
       .single();
 
+    if (byAuthId) {
+      participant = byAuthId;
+    }
+
+    // If not found, check admin_users table
+    let isAdminUser = false;
+    const { data: adminUser } = await supabase
+      .from('admin_users')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .single();
+
+    if (adminUser) {
+      isAdminUser = true;
+    }
+
     const authUser: AuthenticatedUser = {
-      id: user.id,
-      email: user.email || '',
-      isAdmin: participant?.is_admin || false,
+      id: userId,
+      email: participant?.email || '',
+      isAdmin: participant?.is_admin || isAdminUser || false,
       isMentor: participant?.is_mentor || false,
       participantId: participant?.id,
     };
 
     logSecurityEvent('auth_success', {
-      userId: user.id,
+      userId: userId,
       path: request.nextUrl.pathname,
     });
 

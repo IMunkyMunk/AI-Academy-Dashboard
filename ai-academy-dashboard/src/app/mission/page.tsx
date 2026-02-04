@@ -1,4 +1,5 @@
-import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { createServerSupabaseClient, createServiceSupabaseClient } from '@/lib/supabase-server';
+import { auth } from '@clerk/nextjs/server';
 import { MissionHub } from '@/components/MissionHub';
 import type {
   MissionDay,
@@ -13,9 +14,10 @@ export const revalidate = 0;
 
 export default async function MissionPage() {
   const supabase = await createServerSupabaseClient();
+  const serviceSupabase = createServiceSupabaseClient();
 
-  // Get current user
-  const { data: { user } } = await supabase.auth.getUser();
+  // Get current user from Clerk
+  const { userId } = await auth();
 
   // Fetch all mission data in parallel
   const [
@@ -40,14 +42,14 @@ export default async function MissionPage() {
       .select('*')
       .eq('is_released', true)
       .order('day', { ascending: false }),
-    user ? supabase
+    userId ? serviceSupabase
       .from('participants')
       .select(`
         *,
         participant_mastery(*),
         task_force_members(*, task_forces(*))
       `)
-      .eq('email', user.email)
+      .eq('auth_user_id', userId)
       .single() : Promise.resolve({ data: null }),
   ]);
 

@@ -1,5 +1,6 @@
-import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { createServerSupabaseClient, createServiceSupabaseClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
+import { auth } from '@clerk/nextjs/server';
 import { MyProgressDashboard } from '@/components/MyProgressDashboard';
 import type {
   Participant,
@@ -14,20 +15,19 @@ import type {
 export const revalidate = 0;
 
 export default async function MyProgressPage() {
-  const supabase = await createServerSupabaseClient();
+  const { userId } = await auth();
 
-  // Get current user
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect('/login');
+  if (!userId) {
+    redirect('/sign-in');
   }
 
-  // Fetch participant with all related data
+  const supabase = createServiceSupabaseClient();
+
+  // Fetch participant by auth_user_id (Clerk user ID)
   const { data: participant, error } = await supabase
     .from('participants')
     .select('*')
-    .eq('email', user.email)
+    .eq('auth_user_id', userId)
     .single();
 
   if (error || !participant) {

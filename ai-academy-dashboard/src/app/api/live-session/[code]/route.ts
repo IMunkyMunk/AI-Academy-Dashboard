@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { auth } from '@clerk/nextjs/server';
+import { createServiceSupabaseClient } from '@/lib/supabase';
 
 // GET /api/live-session/[code] - Get session state
 export async function GET(
@@ -8,13 +9,14 @@ export async function GET(
 ) {
   try {
     const { code } = await params;
-    const supabase = await createServerSupabaseClient();
 
     // Security: Require authentication to view session details
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
+    const { userId } = await auth();
+    if (!userId) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
+
+    const supabase = createServiceSupabaseClient();
 
     const { data: session, error } = await supabase
       .from('live_sessions')
@@ -64,19 +66,20 @@ export async function PATCH(
 ) {
   try {
     const { code } = await params;
-    const supabase = await createServerSupabaseClient();
 
-    // Get current user
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    // Get current user from Clerk
+    const { userId } = await auth();
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const supabase = createServiceSupabaseClient();
 
     // Get participant
     const { data: participant } = await supabase
       .from('participants')
       .select('id')
-      .eq('email', user.email)
+      .eq('auth_user_id', userId)
       .single();
 
     if (!participant) {
@@ -174,19 +177,20 @@ export async function DELETE(
 ) {
   try {
     const { code } = await params;
-    const supabase = await createServerSupabaseClient();
 
-    // Get current user
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    // Get current user from Clerk
+    const { userId } = await auth();
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const supabase = createServiceSupabaseClient();
 
     // Get participant
     const { data: participant } = await supabase
       .from('participants')
       .select('id')
-      .eq('email', user.email)
+      .eq('auth_user_id', userId)
       .single();
 
     if (!participant) {

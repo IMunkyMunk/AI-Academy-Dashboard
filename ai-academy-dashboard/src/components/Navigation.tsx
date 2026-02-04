@@ -4,17 +4,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/components/AuthProvider';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useAuth, useUser, UserButton } from '@clerk/nextjs';
+import { useParticipant } from '@/components/ParticipantProvider';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import {
   Sheet,
   SheetContent,
@@ -32,8 +24,6 @@ import {
   UserPlus,
   User,
   LogIn,
-  LogOut,
-  Settings,
   Loader2,
   BarChart3,
   Menu,
@@ -42,6 +32,7 @@ import {
   Eye,
   EyeOff,
   HelpCircle,
+  Settings,
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { CommandPalette } from '@/components/CommandPalette';
@@ -71,15 +62,19 @@ const navItems: NavItem[] = [
 
 export function Navigation() {
   const pathname = usePathname();
-  const { user, participant, isLoading, isAdmin, isActualAdmin, viewAsUser, setViewAsUser, userStatus, signOut } = useAuth();
+  const { isSignedIn, isLoaded: authLoaded } = useAuth();
+  const { user: clerkUser } = useUser();
+  const { participant, isLoading: participantLoading, isAdmin, isActualAdmin, viewAsUser, setViewAsUser, userStatus } = useParticipant();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const unreadIntelCount = useUnreadIntelCount();
+
+  const isLoading = !authLoaded || participantLoading;
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
   // Hide navigation completely for unauthenticated users on public pages
-  const isPublicPage = pathname === '/' || pathname === '/login';
-  if (!user && !isLoading && isPublicPage) {
+  const isPublicPage = pathname === '/' || pathname === '/sign-in' || pathname === '/sign-up';
+  if (!isSignedIn && !isLoading && isPublicPage) {
     return null;
   }
 
@@ -95,7 +90,7 @@ export function Navigation() {
     }
     // Items requiring auth
     if (item.requiresAuth) {
-      return !!user;
+      return !!isSignedIn;
     }
     // Public items
     return true;
@@ -177,138 +172,90 @@ export function Navigation() {
                 <Button variant="ghost" size="sm" disabled>
                   <Loader2 className="h-4 w-4 animate-spin" />
                 </Button>
-              ) : user ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                      <Avatar className="h-9 w-9">
-                        <AvatarImage
-                          src={user.user_metadata?.avatar_url}
-                          alt={participant?.name || user.user_metadata?.user_name}
+              ) : isSignedIn ? (
+                <div className="flex items-center gap-2">
+                  {/* Admin Controls */}
+                  {isActualAdmin && (
+                    <div className="hidden sm:flex items-center gap-2 mr-2">
+                      <div className="flex items-center gap-2 px-2 py-1 rounded-md bg-orange-500/10">
+                        {viewAsUser ? (
+                          <Eye className="h-4 w-4 text-orange-500" />
+                        ) : (
+                          <EyeOff className="h-4 w-4 text-orange-500" />
+                        )}
+                        <span className="text-xs text-orange-500">View as User</span>
+                        <Switch
+                          checked={viewAsUser}
+                          onCheckedChange={setViewAsUser}
+                          className="data-[state=checked]:bg-orange-500"
                         />
-                        <AvatarFallback>
-                          {(participant?.name || user.user_metadata?.user_name || '?')
-                            .split(' ')
-                            .map((n: string) => n[0])
-                            .join('')
-                            .toUpperCase()
-                            .slice(0, 2)}
-                        </AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end">
-                    <DropdownMenuLabel>
-                      <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium">
-                          {participant?.name || user.user_metadata?.name || 'User'}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          @{user.user_metadata?.user_name}
-                        </p>
-                        {participant && (
-                          <div className="flex gap-1 mt-1">
-                            <span className="text-xs bg-accent px-1.5 py-0.5 rounded">
-                              {participant.role}
-                            </span>
-                            <span className="text-xs bg-accent px-1.5 py-0.5 rounded">
-                              Team {participant.team}
-                            </span>
-                          </div>
-                        )}
                       </div>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href="/my-dashboard" className="cursor-pointer">
-                        <User className="mr-2 h-4 w-4" />
-                        My Dashboard
-                      </Link>
-                    </DropdownMenuItem>
-                    {participant && (
-                      <DropdownMenuItem asChild>
-                        <Link
+                    </div>
+                  )}
+                  {/* Clerk UserButton */}
+                  <UserButton
+                    appearance={{
+                      elements: {
+                        avatarBox: 'h-9 w-9',
+                        userButtonPopoverCard: 'bg-card border border-border',
+                        userButtonPopoverText: 'text-foreground',
+                        userButtonPopoverActionButton: 'text-foreground hover:bg-accent',
+                        userButtonPopoverActionButtonText: 'text-foreground',
+                        userButtonPopoverFooter: 'hidden',
+                      },
+                    }}
+                    afterSignOutUrl="/"
+                  >
+                    <UserButton.MenuItems>
+                      <UserButton.Link
+                        label="My Dashboard"
+                        labelIcon={<User className="h-4 w-4" />}
+                        href="/my-dashboard"
+                      />
+                      {participant && (
+                        <UserButton.Link
+                          label="Public Profile"
+                          labelIcon={<Settings className="h-4 w-4" />}
                           href={`/participant/${participant.nickname || participant.github_username || participant.id}`}
-                          className="cursor-pointer"
-                        >
-                          <Settings className="mr-2 h-4 w-4" />
-                          Public Profile
-                        </Link>
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuItem asChild>
-                      <Link href="/profile" className="cursor-pointer">
-                        <User className="mr-2 h-4 w-4" />
-                        My Profile
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/help" className="cursor-pointer">
-                        <HelpCircle className="mr-2 h-4 w-4" />
-                        Help
-                      </Link>
-                    </DropdownMenuItem>
-                    {!participant && !isAdmin && (
-                      <DropdownMenuItem asChild>
-                        <Link href="/onboarding?from=github" className="cursor-pointer">
-                          <UserPlus className="mr-2 h-4 w-4" />
-                          Complete Registration
-                        </Link>
-                      </DropdownMenuItem>
-                    )}
-                    {isActualAdmin && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuLabel className="text-xs text-orange-500">
-                          Admin
-                        </DropdownMenuLabel>
-                        {/* View as User Toggle */}
-                        <div className="flex items-center justify-between px-2 py-2">
-                          <div className="flex items-center gap-2">
-                            {viewAsUser ? (
-                              <Eye className="h-4 w-4 text-muted-foreground" />
-                            ) : (
-                              <EyeOff className="h-4 w-4 text-muted-foreground" />
-                            )}
-                            <span className="text-sm">View as User</span>
-                          </div>
-                          <Switch
-                            checked={viewAsUser}
-                            onCheckedChange={setViewAsUser}
-                            className="data-[state=checked]:bg-orange-500"
+                        />
+                      )}
+                      <UserButton.Link
+                        label="My Profile"
+                        labelIcon={<User className="h-4 w-4" />}
+                        href="/profile"
+                      />
+                      <UserButton.Link
+                        label="Help"
+                        labelIcon={<HelpCircle className="h-4 w-4" />}
+                        href="/help"
+                      />
+                      {!participant && !isAdmin && (
+                        <UserButton.Link
+                          label="Complete Registration"
+                          labelIcon={<UserPlus className="h-4 w-4" />}
+                          href="/onboarding?from=github"
+                        />
+                      )}
+                      {isActualAdmin && !viewAsUser && (
+                        <>
+                          <UserButton.Link
+                            label="User Management"
+                            labelIcon={<Users className="h-4 w-4" />}
+                            href="/admin/users"
                           />
-                        </div>
-                        {!viewAsUser && (
-                          <>
-                            <DropdownMenuItem asChild>
-                              <Link href="/admin/users" className="cursor-pointer">
-                                <Users className="mr-2 h-4 w-4" />
-                                User Management
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <Link href="/admin" className="cursor-pointer">
-                                <ShieldCheck className="mr-2 h-4 w-4" />
-                                Submissions
-                              </Link>
-                            </DropdownMenuItem>
-                          </>
-                        )}
-                      </>
-                    )}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => signOut()}
-                      className="cursor-pointer text-red-500 focus:text-red-500"
-                    >
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Sign Out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                          <UserButton.Link
+                            label="Submissions"
+                            labelIcon={<ShieldCheck className="h-4 w-4" />}
+                            href="/admin"
+                          />
+                        </>
+                      )}
+                    </UserButton.MenuItems>
+                  </UserButton>
+                </div>
               ) : (
                 <div className="hidden sm:flex items-center gap-2">
-                  <Link href="/login">
+                  <Link href="/sign-in">
                     <Button size="sm" className="bg-[#0062FF] hover:bg-[#0052D9]">
                       <LogIn className="h-4 w-4 sm:mr-2" />
                       <span className="hidden sm:inline">Sign In</span>
@@ -364,9 +311,9 @@ export function Navigation() {
                 <Separator className="my-4" />
 
                 {/* Mobile Auth Section */}
-                {!user && (
+                {!isSignedIn && (
                   <div className="flex flex-col gap-2">
-                    <Link href="/login" onClick={closeMobileMenu}>
+                    <Link href="/sign-in" onClick={closeMobileMenu}>
                       <Button className="w-full justify-start bg-[#0062FF] hover:bg-[#0052D9]" size="lg">
                         <LogIn className="mr-3 h-5 w-5" />
                         Sign In
@@ -375,30 +322,25 @@ export function Navigation() {
                   </div>
                 )}
 
-                {user && (
+                {isSignedIn && clerkUser && (
                   <div className="space-y-4">
                     {/* User Info */}
                     <div className="flex items-center gap-3 px-2">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage
-                          src={user.user_metadata?.avatar_url}
-                          alt={participant?.name || user.user_metadata?.user_name}
-                        />
-                        <AvatarFallback>
-                          {(participant?.name || user.user_metadata?.user_name || '?')
-                            .split(' ')
-                            .map((n: string) => n[0])
-                            .join('')
-                            .toUpperCase()
-                            .slice(0, 2)}
-                        </AvatarFallback>
-                      </Avatar>
+                      <div className="h-12 w-12 rounded-full overflow-hidden bg-accent">
+                        {clerkUser.imageUrl && (
+                          <img
+                            src={clerkUser.imageUrl}
+                            alt={participant?.name || clerkUser.firstName || 'User'}
+                            className="h-full w-full object-cover"
+                          />
+                        )}
+                      </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate">
-                          {participant?.name || user.user_metadata?.name || 'User'}
+                          {participant?.name || clerkUser.fullName || 'User'}
                         </p>
                         <p className="text-sm text-muted-foreground truncate">
-                          @{user.user_metadata?.user_name}
+                          {clerkUser.primaryEmailAddress?.emailAddress}
                         </p>
                         {participant && (
                           <div className="flex gap-1 mt-1">
@@ -460,20 +402,30 @@ export function Navigation() {
                       )}
                     </div>
 
-                    <Separator />
-
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-red-500 hover:text-red-500 hover:bg-red-500/10"
-                      size="lg"
-                      onClick={() => {
-                        signOut();
-                        closeMobileMenu();
-                      }}
-                    >
-                      <LogOut className="mr-3 h-5 w-5" />
-                      Sign Out
-                    </Button>
+                    {/* Admin toggle for mobile */}
+                    {isActualAdmin && (
+                      <>
+                        <Separator />
+                        <div className="px-3">
+                          <p className="text-xs text-orange-500 mb-2">Admin</p>
+                          <div className="flex items-center justify-between py-2">
+                            <div className="flex items-center gap-2">
+                              {viewAsUser ? (
+                                <Eye className="h-4 w-4 text-muted-foreground" />
+                              ) : (
+                                <EyeOff className="h-4 w-4 text-muted-foreground" />
+                              )}
+                              <span className="text-sm">View as User</span>
+                            </div>
+                            <Switch
+                              checked={viewAsUser}
+                              onCheckedChange={setViewAsUser}
+                              className="data-[state=checked]:bg-orange-500"
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
               </SheetContent>
@@ -483,7 +435,7 @@ export function Navigation() {
       </div>
 
       {/* Intel Drop Notification Listener */}
-      {user && <IntelDropNotification />}
+      {isSignedIn && <IntelDropNotification />}
     </nav>
     </>
   );

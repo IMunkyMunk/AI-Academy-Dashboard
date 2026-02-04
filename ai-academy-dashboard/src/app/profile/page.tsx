@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/components/AuthProvider';
+import { useClerk } from '@clerk/nextjs';
+import { useParticipant } from '@/components/ParticipantProvider';
 import { getSupabaseClient } from '@/lib/supabase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -65,7 +66,8 @@ const ROLE_DESCRIPTIONS: Record<RoleType, string> = {
 };
 
 export default function ProfilePage() {
-  const { participant, isLoading, signOut, refreshParticipant } = useAuth();
+  const { signOut } = useClerk();
+  const { participant, isLoading, refreshParticipant } = useParticipant();
   const router = useRouter();
   const [isConnecting, setIsConnecting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -139,31 +141,17 @@ export default function ProfilePage() {
       }
 
       toast.success('Account deleted successfully');
-      await signOut();
-      router.push('/');
+      await signOut({ redirectUrl: '/' });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to delete account');
       setIsDeleting(false);
     }
   };
 
-  const handleConnectGitHub = async () => {
-    setIsConnecting(true);
-    const supabase = getSupabaseClient();
-
-    // Link GitHub account to existing user
-    const { error } = await supabase.auth.linkIdentity({
-      provider: 'github',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/profile`,
-        scopes: 'read:user user:email',
-      },
-    });
-
-    if (error) {
-      toast.error(error.message);
-      setIsConnecting(false);
-    }
+  const handleConnectGitHub = () => {
+    // GitHub connection is now handled through Clerk's user profile
+    // Users can add GitHub as a social connection in their Clerk profile
+    window.location.href = '/sign-in';
   };
 
   const copyToClipboard = (text: string) => {

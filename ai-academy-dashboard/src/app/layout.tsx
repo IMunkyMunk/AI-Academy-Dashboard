@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
 import { Navigation } from "@/components/Navigation";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
-import { AuthProvider } from "@/components/AuthProvider";
+import { ParticipantProvider } from "@/components/ParticipantProvider";
 import { AuthGuard } from "@/components/AuthGuard";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -42,16 +43,18 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background`}
       >
-        <AuthProvider>
-          <AuthGuard>
-            <Navigation />
-            <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 pb-20 lg:pb-6">
-              {children}
-            </main>
-            <MobileBottomNav />
-            <Toaster />
-          </AuthGuard>
-        </AuthProvider>
+        <ClerkProvider>
+          <ParticipantProvider>
+            <AuthGuard>
+              <Navigation />
+              <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 pb-20 lg:pb-6">
+                {children}
+              </main>
+              <MobileBottomNav />
+              <Toaster />
+            </AuthGuard>
+          </ParticipantProvider>
+        </ClerkProvider>
       </body>
     </html>
   );

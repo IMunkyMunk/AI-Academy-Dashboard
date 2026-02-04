@@ -1,4 +1,5 @@
-import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { createServerSupabaseClient, createServiceSupabaseClient } from '@/lib/supabase-server';
+import { auth } from '@clerk/nextjs/server';
 import { notFound } from 'next/navigation';
 import { DayBriefing } from '@/components/DayBriefing';
 import type { MissionDay, Assignment } from '@/lib/types';
@@ -24,27 +25,28 @@ export default async function MissionDayPage({ params }: PageProps) {
   const today = new Date();
 
   // Get current user and check admin status first
-  const { data: { user } } = await supabase.auth.getUser();
+  const { userId } = await auth();
   let userRole: string | undefined;
   let isAdmin = false;
 
-  if (user) {
+  if (userId) {
+    const serviceSupabase = createServiceSupabaseClient();
     // Check participants table
-    const { data: participant } = await supabase
+    const { data: participant } = await serviceSupabase
       .from('participants')
       .select('role, is_admin')
-      .eq('email', user.email)
+      .eq('auth_user_id', userId)
       .single();
 
     userRole = participant?.role ?? undefined;
     isAdmin = participant?.is_admin ?? false;
 
-    // Also check admin_users table for email-authenticated admins
+    // Also check admin_users table for Clerk-authenticated admins
     if (!isAdmin) {
-      const { data: adminUser } = await supabase
+      const { data: adminUser } = await serviceSupabase
         .from('admin_users')
         .select('id')
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .eq('is_active', true)
         .single();
 

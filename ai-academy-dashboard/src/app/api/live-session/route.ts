@@ -1,23 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { auth } from '@clerk/nextjs/server';
+import { createServiceSupabaseClient } from '@/lib/supabase';
 import crypto from 'crypto';
 
 // POST /api/live-session - Create a new live session
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createServerSupabaseClient();
-
-    // Get current user
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    // Get current user from Clerk
+    const { userId } = await auth();
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const supabase = createServiceSupabaseClient();
 
     // Check if user is instructor/admin
     const { data: participant } = await supabase
       .from('participants')
       .select('id, is_admin')
-      .eq('email', user.email)
+      .eq('auth_user_id', userId)
       .single();
 
     if (!participant?.is_admin) {

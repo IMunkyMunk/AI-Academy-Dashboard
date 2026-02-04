@@ -15,7 +15,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { getSupabaseClient } from '@/lib/supabase';
-import { useAuth } from '@/components/AuthProvider';
+import { useAuth } from '@clerk/nextjs';
+import { useParticipant } from '@/components/ParticipantProvider';
 import {
   LayoutDashboard,
   Trophy,
@@ -44,7 +45,7 @@ const PAGES = [
   { name: 'Analytics', href: '/analytics', icon: BarChart3, keywords: ['statistics', 'graphs', 'analysis'] },
   { name: 'Admin Panel', href: '/admin', icon: ShieldCheck, keywords: ['admin', 'review', 'manage'] },
   { name: 'Onboarding', href: '/onboarding', icon: Rocket, keywords: ['register', 'start', 'new'] },
-  { name: 'Sign In', href: '/login', icon: LogIn, keywords: ['login', 'sign in'] },
+  { name: 'Sign In', href: '/sign-in', icon: LogIn, keywords: ['login', 'sign in'] },
 ];
 
 const QUICK_ACTIONS = [
@@ -57,10 +58,11 @@ export function CommandPalette() {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { user, isAdmin, userStatus } = useAuth();
+  const { isSignedIn } = useAuth();
+  const { isAdmin, userStatus } = useParticipant();
 
   // Only show for authenticated and approved users
-  const canShowSearch = user && (isAdmin || userStatus === 'approved');
+  const canShowSearch = isSignedIn && (isAdmin || userStatus === 'approved');
 
   // Keyboard shortcut listener
   useEffect(() => {

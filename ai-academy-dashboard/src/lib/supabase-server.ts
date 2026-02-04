@@ -1,6 +1,9 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
+// Re-export service client for convenience
+export { createServiceSupabaseClient } from './supabase';
+
 function getRequiredEnv(name: string): string {
   const value = process.env[name];
   if (!value?.trim()) {

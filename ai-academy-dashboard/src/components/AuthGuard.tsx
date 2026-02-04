@@ -2,14 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useAuth } from '@/components/AuthProvider';
+import { useAuth } from '@clerk/nextjs';
+import { useParticipant } from '@/components/ParticipantProvider';
 import { Loader2 } from 'lucide-react';
 
 // Routes that don't require authentication
 const PUBLIC_ROUTES = [
   '/',
-  '/login',
-  '/auth/callback',
+  '/sign-in',
+  '/sign-up',
   '/offline',
   '/help',
   '/register',
@@ -18,6 +19,8 @@ const PUBLIC_ROUTES = [
 // Routes that are public but checked by prefix
 const PUBLIC_PREFIXES = [
   '/presentations',
+  '/sign-in',
+  '/sign-up',
 ];
 
 // Routes that only require authentication (not approval)
@@ -31,21 +34,18 @@ const ADMIN_ROUTES = [
   '/admin',
 ];
 
-// Check sessionStorage for auth hint
-function hasStoredAuth(): boolean {
-  if (typeof window === 'undefined') return false;
-  return !!sessionStorage.getItem('ai-academy-auth');
-}
-
 interface AuthGuardProps {
   children: React.ReactNode;
 }
 
 export function AuthGuard({ children }: AuthGuardProps) {
-  const { user, isLoading, isAdmin, userStatus } = useAuth();
+  const { isSignedIn, isLoaded: authLoaded } = useAuth();
+  const { isLoading: participantLoading, isAdmin, userStatus } = useParticipant();
   const router = useRouter();
   const pathname = usePathname();
   const [waitCount, setWaitCount] = useState(0);
+
+  const isLoading = !authLoaded || participantLoading;
 
   // Calculate route types
   const isPublicRoute = PUBLIC_ROUTES.includes(pathname) ||
@@ -54,8 +54,8 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const isAdminRoute = ADMIN_ROUTES.some(route => pathname.startsWith(route));
 
   // Determine if we need to wait before redirecting
-  const needsWait = !isPublicRoute && !isLoading && !user;
-  const maxWait = hasStoredAuth() ? 5 : 3;
+  const needsWait = !isPublicRoute && !isLoading && !isSignedIn;
+  const maxWait = 3;
 
   // Wait counter for redirect delay
   useEffect(() => {
@@ -88,8 +88,8 @@ export function AuthGuard({ children }: AuthGuardProps) {
     // Still loading - wait
     if (isLoading) return;
 
-    // User exists - handle status redirects
-    if (user) {
+    // User is signed in - handle status redirects
+    if (isSignedIn) {
       if (isAdminRoute && !isAdmin) {
         router.push('/');
         return;
@@ -115,19 +115,18 @@ export function AuthGuard({ children }: AuthGuardProps) {
         return;
       }
 
-      if (userStatus === 'approved' && (pathname === '/login' || pathname === '/pending')) {
+      if (userStatus === 'approved' && (pathname === '/sign-in' || pathname === '/sign-up' || pathname === '/pending')) {
         router.push('/my-dashboard');
       }
       return;
     }
 
-    // No user - check if we should redirect
-    const maxWait = hasStoredAuth() ? 5 : 3;
+    // Not signed in - check if we should redirect
     if (waitCount >= maxWait) {
-      console.log('[AuthGuard] Redirecting to login after waiting', waitCount, 'seconds');
-      router.push('/login');
+      console.log('[AuthGuard] Redirecting to sign-in after waiting', waitCount, 'seconds');
+      router.push('/sign-in');
     }
-  }, [user, isLoading, isAdmin, userStatus, pathname, router, isPublicRoute, isAuthOnlyRoute, isAdminRoute, waitCount]);
+  }, [isSignedIn, isLoading, isAdmin, userStatus, pathname, router, isPublicRoute, isAuthOnlyRoute, isAdminRoute, waitCount]);
 
   // === RENDER ===
 
@@ -146,7 +145,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
     );
   }
 
-  if (user) {
+  if (isSignedIn) {
     if (isAdminRoute && !isAdmin) {
       return (
         <div className="min-h-screen flex items-center justify-center">
@@ -173,14 +172,12 @@ export function AuthGuard({ children }: AuthGuardProps) {
     return <>{children}</>;
   }
 
-  // No user yet - waiting
+  // Not signed in yet - waiting
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-[#0062FF]" />
-        <p className="text-muted-foreground">
-          {hasStoredAuth() ? 'Restoring session...' : 'Checking authentication...'}
-        </p>
+        <p className="text-muted-foreground">Checking authentication...</p>
       </div>
     </div>
   );

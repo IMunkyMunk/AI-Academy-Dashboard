@@ -1,6 +1,6 @@
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
 import { logSecurityEvent, generateCorrelationId } from '@/lib/logger';
 
 // ============================================================================
@@ -182,65 +182,26 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
 }
 
 // ============================================================================
-// Supabase Session Refresh
+// Public Routes Configuration
 // ============================================================================
 
-async function updateSession(request: NextRequest): Promise<NextResponse> {
-  // Create a response that we'll modify
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  });
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  // If env vars are missing, just continue without session refresh
-  if (!supabaseUrl || !supabaseAnonKey) {
-    return response;
-  }
-
-  const supabase = createServerClient(
-    supabaseUrl,
-    supabaseAnonKey,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          // Update request cookies
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
-          // Create new response with updated request
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          });
-          // Set cookies on the response
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          );
-        },
-      },
-    }
-  );
-
-  // This refreshes the session if expired - REQUIRED for Server Components
-  // https://supabase.com/docs/guides/auth/server-side/nextjs
-  await supabase.auth.getUser();
-
-  return response;
-}
+const isPublicRoute = createRouteMatcher([
+  '/',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/offline',
+  '/help',
+  '/register',
+  '/presentations(.*)',
+  '/api/register',
+  '/api/cron(.*)',
+]);
 
 // ============================================================================
-// Middleware Function
+// Clerk Middleware with Rate Limiting and Security Headers
 // ============================================================================
 
-export async function middleware(request: NextRequest) {
+export default clerkMiddleware(async (auth, request) => {
   const { pathname } = request.nextUrl;
 
   // Skip middleware completely for static files
@@ -255,9 +216,17 @@ export async function middleware(request: NextRequest) {
   // Generate correlation ID for request tracing
   const correlationId = generateCorrelationId();
 
-  // IMPORTANT: Refresh Supabase session for ALL routes (pages and API)
-  // This ensures the session cookie is refreshed before it expires
-  const response = await updateSession(request);
+  // Protect non-public routes
+  if (!isPublicRoute(request)) {
+    await auth.protect();
+  }
+
+  // Create response
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
 
   // Get client IP for rate limiting
   const clientIp = getClientIp(request);
@@ -304,7 +273,7 @@ export async function middleware(request: NextRequest) {
   // Add correlation ID and security headers to all responses
   response.headers.set('X-Correlation-Id', correlationId);
   return addSecurityHeaders(response);
-}
+});
 
 // Configure which routes the middleware runs on
 export const config = {

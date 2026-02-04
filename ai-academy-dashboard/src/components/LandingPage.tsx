@@ -1,14 +1,16 @@
 'use client';
 
-import { useAuth } from '@/components/AuthProvider';
+import { useAuth } from '@clerk/nextjs';
+import { useParticipant } from '@/components/ParticipantProvider';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Loader2, ShieldCheck, LogIn, UserPlus } from 'lucide-react';
 
 export function LandingPage() {
-  const { user, isLoading, isAdmin, userStatus } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
+  const { isLoading: participantLoading, isAdmin, userStatus } = useParticipant();
 
-  if (isLoading) {
+  if (!isLoaded || participantLoading) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-[#0062FF]" />
@@ -17,7 +19,7 @@ export function LandingPage() {
   }
 
   // If user is logged in and approved, redirect happens via AuthGuard
-  if (user && (isAdmin || userStatus === 'approved')) {
+  if (isSignedIn && (isAdmin || userStatus === 'approved')) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-[#0062FF]" />
@@ -38,19 +40,19 @@ export function LandingPage() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
-          <Link href="/login?tab=signup">
+          <Link href="/sign-up">
             <Button size="lg" className="bg-[#0062FF] hover:bg-[#0052D9] text-white min-w-[140px]">
               <UserPlus className="mr-2 h-5 w-5" />
               Sign Up
             </Button>
           </Link>
-          <Link href="/login?tab=signin">
+          <Link href="/sign-in">
             <Button size="lg" variant="outline" className="min-w-[140px]">
               <LogIn className="mr-2 h-5 w-5" />
               Sign In
             </Button>
           </Link>
-          <Link href="/login?admin=true">
+          <Link href="/sign-in">
             <Button size="lg" variant="ghost" className="min-w-[140px]">
               <ShieldCheck className="mr-2 h-5 w-5" />
               Admin

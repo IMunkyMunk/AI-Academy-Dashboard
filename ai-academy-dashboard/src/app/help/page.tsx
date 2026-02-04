@@ -1,6 +1,7 @@
 'use client';
 
-import { useAuth } from '@/components/AuthProvider';
+import { useAuth } from '@clerk/nextjs';
+import { useParticipant } from '@/components/ParticipantProvider';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -317,15 +318,17 @@ Your Profile contains your personal information and account settings.
 ];
 
 export default function HelpPage() {
-  const { user, isLoading, userStatus, isAdmin } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
+  const { isLoading: participantLoading, userStatus, isAdmin } = useParticipant();
   const router = useRouter();
+  const isLoading = !isLoaded || participantLoading;
 
   // Redirect if not authenticated or not approved
   useEffect(() => {
-    if (!isLoading && (!user || (!isAdmin && userStatus !== 'approved'))) {
-      router.push('/login');
+    if (!isLoading && (!isSignedIn || (!isAdmin && userStatus !== 'approved'))) {
+      router.push('/sign-in');
     }
-  }, [user, isLoading, userStatus, isAdmin, router]);
+  }, [isSignedIn, isLoading, userStatus, isAdmin, router]);
 
   if (isLoading) {
     return (
@@ -335,7 +338,7 @@ export default function HelpPage() {
     );
   }
 
-  if (!user || (!isAdmin && userStatus !== 'approved')) {
+  if (!isSignedIn || (!isAdmin && userStatus !== 'approved')) {
     return null;
   }
 

@@ -2,7 +2,8 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/components/AuthProvider';
+import { useAuth, useClerk } from '@clerk/nextjs';
+import { useParticipant } from '@/components/ParticipantProvider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -10,21 +11,24 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, Clock, XCircle, LogOut, RefreshCw, Github, Mail } from 'lucide-react';
 
 export default function PendingPage() {
-  const { user, participant, isLoading, isAdmin, userStatus, signOut, refreshParticipant } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
+  const { signOut } = useClerk();
+  const { participant, isLoading: participantLoading, isAdmin, userStatus, refreshParticipant } = useParticipant();
   const router = useRouter();
+  const isLoading = !isLoaded || participantLoading;
 
   // Redirect if approved or admin
   useEffect(() => {
     if (!isLoading) {
-      if (!user) {
-        router.push('/login');
+      if (!isSignedIn) {
+        router.push('/sign-in');
       } else if (isAdmin || userStatus === 'approved') {
         router.push('/my-dashboard');
       } else if (userStatus === 'no_profile') {
         router.push('/onboarding');
       }
     }
-  }, [user, isLoading, isAdmin, userStatus, router]);
+  }, [isSignedIn, isLoading, isAdmin, userStatus, router]);
 
   if (isLoading) {
     return (
@@ -34,7 +38,7 @@ export default function PendingPage() {
     );
   }
 
-  if (!user || isAdmin || userStatus === 'approved') {
+  if (!isSignedIn || isAdmin || userStatus === 'approved') {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-[#0062FF]" />
@@ -109,10 +113,10 @@ export default function PendingPage() {
           )}
 
           {/* Email info */}
-          {user.email && (
+          {participant?.email && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Mail className="h-4 w-4" />
-              <span>{user.email}</span>
+              <span>{participant.email}</span>
             </div>
           )}
 
