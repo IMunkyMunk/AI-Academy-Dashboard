@@ -5,6 +5,7 @@ import { useParticipant } from '@/components/ParticipantProvider';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Loader2, ShieldCheck, LogIn, UserPlus } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export function LandingPage() {
   const { isSignedIn, isLoaded } = useAuth();
@@ -28,7 +29,12 @@ export function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
+    <div className="min-h-screen flex flex-col items-center justify-center relative">
+      {/* Theme Toggle - Top Right */}
+      <div className="absolute top-4 right-4">
+        <ThemeToggle variant="outline" />
+      </div>
+
       <div className="flex flex-col items-center gap-8">
         <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#0062FF]">
           <span className="text-3xl font-bold text-white">AI</span>

@@ -33,10 +33,13 @@ import {
   EyeOff,
   HelpCircle,
   Settings,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { CommandPalette } from '@/components/CommandPalette';
 import { IntelDropNotification, useUnreadIntelCount, IntelBadge } from '@/components/IntelDropNotification';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface NavItem {
   href: string;
@@ -161,10 +164,13 @@ export function Navigation() {
             })}
           </div>
 
-          {/* Right Side - Search, Auth & Mobile Menu */}
+          {/* Right Side - Search, Theme, Auth & Mobile Menu */}
           <div className="flex items-center gap-2">
             {/* Command Palette / Search */}
             <CommandPalette />
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* Auth Section - Always visible */}
             <div className="flex items-center">
@@ -275,11 +281,14 @@ export function Navigation() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[280px] sm:w-[320px]">
                 <SheetHeader>
-                  <SheetTitle className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0062FF]">
-                      <span className="text-lg font-bold text-white">AI</span>
+                  <SheetTitle className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0062FF]">
+                        <span className="text-lg font-bold text-white">AI</span>
+                      </div>
+                      Dashboard
                     </div>
-                    Dashboard
+                    <ThemeToggle variant="outline" size="sm" />
                   </SheetTitle>
                 </SheetHeader>
 

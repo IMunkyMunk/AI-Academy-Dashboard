@@ -6,6 +6,7 @@ import { Navigation } from "@/components/Navigation";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { ParticipantProvider } from "@/components/ParticipantProvider";
 import { AuthGuard } from "@/components/AuthGuard";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
@@ -39,22 +40,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background`}
       >
-        <ClerkProvider>
-          <ParticipantProvider>
-            <AuthGuard>
-              <Navigation />
-              <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 pb-20 lg:pb-6">
-                {children}
-              </main>
-              <MobileBottomNav />
-              <Toaster />
-            </AuthGuard>
-          </ParticipantProvider>
-        </ClerkProvider>
+        <ThemeProvider>
+          <ClerkProvider>
+            <ParticipantProvider>
+              <AuthGuard>
+                <Navigation />
+                <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 pb-20 lg:pb-6">
+                  {children}
+                </main>
+                <MobileBottomNav />
+                <Toaster />
+              </AuthGuard>
+            </ParticipantProvider>
+          </ClerkProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
