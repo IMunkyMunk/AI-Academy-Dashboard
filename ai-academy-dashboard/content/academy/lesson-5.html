@@ -1,0 +1,2343 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Academy | From Governance to Agent Design Patterns</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Theme Variables */
+        :root {
+            --transition-speed: 0.3s;
+        }
+
+        /* Dark Theme (default) */
+        [data-theme="dark"] {
+            --bg-primary: #0f1419;
+            --bg-secondary: #1a1f26;
+            --bg-tertiary: #242b35;
+            --bg-card: #1a1f26;
+            --bg-card-hover: #242b35;
+            --bg-code: #0d1117;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #2d3748;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.5);
+            --nav-bg: rgba(15, 20, 25, 0.9);
+            --hero-gradient: radial-gradient(ellipse at top, rgba(16, 185, 129, 0.15) 0%, transparent 60%);
+        }
+
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --bg-code: #1e293b;
+            --accent-blue: #2563eb;
+            --accent-green: #059669;
+            --accent-orange: #d97706;
+            --accent-purple: #7c3aed;
+            --accent-red: #dc2626;
+            --accent-cyan: #0891b2;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --hero-gradient: linear-gradient(180deg, #ecfdf5 0%, #ffffff 100%);
+        }
+
+        :root {
+            --gradient-1: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+            --gradient-2: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+            transition: background var(--transition-speed), color var(--transition-speed);
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--accent-green);
+            color: white;
+            padding: 8px 16px;
+            z-index: 10000;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 0 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 0;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 0.5rem;
+            list-style: none;
+            overflow-x: auto;
+            padding: 0.25rem 0;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.35rem;
+        }
+
+        .theme-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle-btn.active {
+            background: var(--accent-green);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: var(--hero-gradient);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-badge span {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .time-box {
+            display: inline-flex;
+            gap: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+        }
+
+        .time-item {
+            text-align: center;
+        }
+
+        .time-item .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .time-item .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 5rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2 .number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 10px;
+            font-size: 1rem;
+            color: white;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--accent-green);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Week Timeline */
+        .week-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .timeline-day {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .timeline-day:hover {
+            background: var(--bg-secondary);
+        }
+
+        .timeline-day.current {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--accent-green);
+        }
+
+        .timeline-day .day-num {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .timeline-day:nth-child(1) .day-num { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); }
+        .timeline-day:nth-child(2) .day-num { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+        .timeline-day:nth-child(3) .day-num { background: rgba(6, 182, 212, 0.2); color: var(--accent-cyan); }
+        .timeline-day:nth-child(4) .day-num { background: rgba(139, 92, 246, 0.2); color: var(--accent-purple); }
+        .timeline-day:nth-child(5) .day-num { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+
+        .timeline-day .day-question {
+            font-weight: 600;
+            color: var(--text-primary);
+            min-width: 200px;
+        }
+
+        .timeline-day .day-topic {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Pattern Cards */
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .pattern-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .pattern-card:hover {
+            border-color: var(--accent-green);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .pattern-card-header {
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pattern-card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .pattern-card-title {
+            flex: 1;
+        }
+
+        .pattern-card-title h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        .pattern-card-title p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .pattern-card-expand {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .pattern-card.expanded .pattern-card-expand {
+            transform: rotate(180deg);
+        }
+
+        .pattern-card-preview {
+            padding: 1rem 1.25rem;
+            background: var(--bg-secondary);
+        }
+
+        .pattern-card-detail {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+
+        .pattern-card.expanded .pattern-card-detail {
+            max-height: 2000px;
+        }
+
+        .pattern-card-content {
+            padding: 1.5rem;
+        }
+
+        /* Visual Diagrams */
+        .visual-diagram {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 1px solid var(--border);
+        }
+
+        .diagram-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .code-header {
+            background: #1a1f26;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-header span {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        pre {
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+            margin: 0;
+        }
+
+        .code-comment { color: #6b7280; }
+        .code-keyword { color: #f472b6; }
+        .code-string { color: #86efac; }
+        .code-function { color: #c4b5fd; }
+
+        /* Flow Diagram */
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            padding: 1.5rem;
+        }
+
+        .flow-step {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .flow-step .emoji {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .flow-step .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .flow-arrow {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+        }
+
+        /* Use Case Tags */
+        .use-case-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .use-case-tag {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 0.35rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+        }
+
+        /* Governance Connection */
+        .governance-connection {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .governance-connection h5 {
+            color: var(--accent-purple);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .governance-connection ul {
+            margin: 0;
+            padding-left: 1.25rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .governance-connection li {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Mapping Table */
+        .mapping-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .mapping-table th,
+        .mapping-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mapping-table th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .mapping-table td {
+            color: var(--text-secondary);
+        }
+
+        .mapping-table tr:hover td {
+            background: var(--bg-secondary);
+        }
+
+        .mapping-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .governance-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--accent-purple);
+        }
+
+        .arch-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+        }
+
+        /* Decision Tree */
+        .decision-tree {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .decision-node {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            position: relative;
+        }
+
+        .decision-node.question {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .decision-node.answer {
+            border-color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.1);
+            margin-left: 2rem;
+        }
+
+        .decision-node .node-label {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .decision-node .node-pattern {
+            display: inline-block;
+            background: var(--accent-green);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        /* Scenario Cards */
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .scenario-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .scenario-card:hover {
+            border-color: var(--accent-cyan);
+        }
+
+        .scenario-card h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-cyan);
+        }
+
+        .scenario-card .description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Exercise Box */
+        .exercise-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exercise-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-green);
+        }
+
+        .exercise-steps {
+            list-style: none;
+            counter-reset: step;
+        }
+
+        .exercise-steps li {
+            counter-increment: step;
+            padding: 0.75rem 0;
+            padding-left: 3rem;
+            position: relative;
+            color: var(--text-secondary);
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .exercise-steps li:last-child {
+            border-bottom: none;
+        }
+
+        .exercise-steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0.75rem;
+            width: 28px;
+            height: 28px;
+            background: var(--accent-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .info-box .icon { font-size: 1.25rem; }
+        .info-box p { margin: 0; color: var(--accent-blue); font-size: 0.9rem; }
+
+        /* Warning Box */
+        .warning-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .warning-box .icon { font-size: 1.25rem; }
+        .warning-box p { margin: 0; color: var(--accent-orange); font-size: 0.9rem; }
+
+        /* Critical Box */
+        .critical-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .critical-box .icon { font-size: 1.25rem; }
+        .critical-box p { margin: 0; color: var(--accent-red); font-size: 0.9rem; }
+
+        /* Pattern Combination Table */
+        .combination-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .combination-table th,
+        .combination-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .combination-table th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        .combination-table .pattern-tag {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin: 0.1rem;
+        }
+
+        .pattern-tag.react { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); }
+        .pattern-tag.tool { background: rgba(245, 158, 11, 0.2); color: var(--accent-orange); }
+        .pattern-tag.rag { background: rgba(139, 92, 246, 0.2); color: var(--accent-purple); }
+        .pattern-tag.planning { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+
+        /* Week 2 Preview */
+        .week2-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .role-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .role-card:hover {
+            border-color: var(--accent-green);
+            transform: translateY(-2px);
+        }
+
+        .role-card .role-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .role-card .role-focus {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+
+        /* Decision Flowchart */
+        .decision-flowchart {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+        }
+
+        .flow-start {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .flow-node {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .start-node {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(59, 130, 246, 0.2));
+            border: 2px solid var(--accent-green);
+            min-width: 200px;
+        }
+
+        .start-node .node-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .start-node .node-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .start-node .node-subtext {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .flow-connector-down {
+            width: 2px;
+            height: 30px;
+            background: var(--border);
+            margin: 0 auto;
+        }
+
+        .flow-connector-down.small {
+            height: 20px;
+        }
+
+        .flow-question {
+            margin: 1rem 0;
+        }
+
+        .question-node {
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid var(--accent-blue);
+            max-width: 500px;
+            margin: 0 auto 1rem;
+            cursor: pointer;
+        }
+
+        .question-node:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .question-node .node-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-node .node-text {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .flow-branches {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 0.5rem;
+        }
+
+        .flow-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 150px;
+        }
+
+        .branch-label {
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .flow-branch.yes .branch-label {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-green);
+        }
+
+        .flow-branch.no .branch-label {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+        }
+
+        .pattern-node {
+            border: 2px solid;
+            min-width: 160px;
+        }
+
+        .pattern-node.rag {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: var(--accent-purple);
+        }
+
+        .pattern-node.tool {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--accent-orange);
+        }
+
+        .pattern-node.react {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--accent-blue);
+        }
+
+        .pattern-node.planning {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--accent-green);
+        }
+
+        .pattern-node.simple {
+            background: rgba(100, 116, 139, 0.1);
+            border-color: var(--text-muted);
+        }
+
+        .pattern-node .pattern-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .pattern-node .pattern-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .pattern-node .pattern-plus {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Discovery Questions */
+        .discovery-questions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .question-category-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .question-category-box:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .category-header {
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            border-left: 4px solid;
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+        }
+
+        .category-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .category-questions {
+            padding: 1rem;
+            margin: 0;
+            padding-left: 2rem;
+        }
+
+        .category-questions li {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .category-questions li:last-child {
+            margin-bottom: 0;
+        }
+
+        .pattern-indicator {
+            padding: 0.75rem 1rem;
+            background: var(--bg-secondary);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            nav ul {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .time-box {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .timeline-day {
+                flex-wrap: wrap;
+            }
+
+            .pattern-grid, .scenario-grid, .discovery-questions {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-branches {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .question-node {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <nav>
+        <div class="nav-container">
+            <ul>
+                <li><a href="#homework" class="active">Homework</a></li>
+                <li><a href="#recap">Recap</a></li>
+                <li><a href="#mapping">Gov &#8594; Arch</a></li>
+                <li><a href="#patterns">4 Patterns</a></li>
+                <li><a href="#decision">Decision Tree</a></li>
+                <li><a href="#exercise">Exercise</a></li>
+                <li><a href="#wrapup">Week 2</a></li>
+            </ul>
+            <div class="theme-toggle">
+                <button class="theme-toggle-btn" id="theme-light" aria-label="Light theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                </button>
+                <button class="theme-toggle-btn active" id="theme-dark" aria-label="Dark theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-badge">
+            <span></span>
+            AI Academy 2026 &bull; Day 5
+        </div>
+        <h1>From Governance to Agent Design Patterns</h1>
+        <p>Bridging governance knowledge into concrete architecture decisions. Learn WHICH agent pattern to choose and WHY based on your governance requirements.</p>
+        <div class="time-box">
+            <div class="time-item">
+                <div class="value">90</div>
+                <div class="label">Minutes</div>
+            </div>
+            <div class="time-item">
+                <div class="value">4</div>
+                <div class="label">Patterns</div>
+            </div>
+            <div class="time-item">
+                <div class="value">3</div>
+                <div class="label">Scenarios</div>
+            </div>
+            <div class="time-item">
+                <div class="value">Week 1</div>
+                <div class="label">Finale</div>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <!-- SECTION 0: Homework Check -->
+        <section id="homework">
+            <h2><span class="number">0</span> Homework Check: Governance Document</h2>
+
+            <div class="card" style="border-color: var(--accent-orange);">
+                <h3 style="margin-top: 0;">&#128221; Day 4 Assignment Review</h3>
+                <p>Yesterday you created a 2-page Governance Document for the Incident Triage Agent. Before we continue, let's validate your work with a quick AI-assisted review.</p>
+            </div>
+
+            <div class="exercise-box">
+                <h4>&#129302; Quick Validation (5 minutes)</h4>
+                <ol class="exercise-steps">
+                    <li>Open your AI Tutor (ChatGPT Enterprise or Copilot)</li>
+                    <li>Paste the prompt below along with your governance document</li>
+                    <li>Review the feedback and note any gaps</li>
+                    <li>Be ready to discuss one thing you would improve</li>
+                </ol>
+            </div>
+
+            <div class="prompt-box">
+                <h4>&#129302; Governance Review Prompt</h4>
+                <div class="prompt-content">I created a Governance Document for an Incident Triage Agent as part of AI Academy training. Please review it against these criteria:
+
+**MUST HAVE (Critical):**
+1. Clear decision authority (what can agent do autonomously vs needs human approval)
+2. Explicit prohibited actions (what agent must NEVER do)
+3. Failure handling (what happens when LLM/DB/API fails)
+4. Trust boundaries (which data sources are authoritative vs advisory)
+5. Kill switch (who can disable the agent immediately)
+
+**SHOULD HAVE:**
+6. Confidence thresholds (when to escalate based on uncertainty)
+7. Audit trail requirements (what to log for EU AI Act)
+8. Change control process (how updates are tested and deployed)
+
+For each criterion:
+- ✅ Present and specific
+- ⚠️ Present but vague
+- ❌ Missing
+
+End with: "Top 2 improvements needed: ..."
+
+Here is my document:
+[PASTE YOUR GOVERNANCE DOCUMENT HERE]</div>
+                <button class="copy-btn" onclick="copyPrompt(this)" style="margin-top: 1rem;">Copy prompt</button>
+            </div>
+
+            <div class="visual-diagram">
+                <div class="diagram-title">Expected Results</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; text-align: center;">
+                    <div style="padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: 12px; border: 1px solid var(--accent-green);">
+                        <div style="font-size: 1.5rem;">&#9989;</div>
+                        <div style="font-weight: 600; color: var(--accent-green);">Strong</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">7-8 criteria met</div>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(245, 158, 11, 0.1); border-radius: 12px; border: 1px solid var(--accent-orange);">
+                        <div style="font-size: 1.5rem;">&#9888;</div>
+                        <div style="font-weight: 600; color: var(--accent-orange);">Needs Work</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">5-6 criteria met</div>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(239, 68, 68, 0.1); border-radius: 12px; border: 1px solid var(--accent-red);">
+                        <div style="font-size: 1.5rem;">&#10060;</div>
+                        <div style="font-weight: 600; color: var(--accent-red);">Redo</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">&lt;5 criteria met</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <span class="icon">&#128161;</span>
+                <p><strong>Why this matters:</strong> Today we'll see how governance decisions directly determine architecture choices. If your governance doc is vague, your architecture will be too.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 1: Recap & Bridge -->
+        <section id="recap">
+            <h2><span class="number">1</span> Week 1 Recap & Bridge</h2>
+
+            <div class="card" style="border-color: var(--accent-green);">
+                <h3 style="margin-top: 0;">&#127919; The Journey So Far</h3>
+                <p>This week you went from understanding what AI is, through securing it, giving it data, and defining who controls it. But we haven't answered the most important question a client will ask:</p>
+                <p style="font-size: 1.2rem; color: var(--text-primary); margin-bottom: 0;"><strong>"How should we build it?"</strong></p>
+            </div>
+
+            <h3>Week 1 Timeline</h3>
+            <div class="week-timeline">
+                <div class="timeline-day">
+                    <div class="day-num">1</div>
+                    <div class="day-question"><strong>WHAT</strong> is AI?</div>
+                    <div class="day-topic">Tools, KAF, AI landscape</div>
+                </div>
+                <div class="timeline-day">
+                    <div class="day-num">2</div>
+                    <div class="day-question"><strong>HOW</strong> to protect it?</div>
+                    <div class="day-topic">Security, code analysis, Clerk</div>
+                </div>
+                <div class="timeline-day">
+                    <div class="day-num">3</div>
+                    <div class="day-question"><strong>WHERE</strong> does it get data?</div>
+                    <div class="day-topic">Databases, vectors, Supabase</div>
+                </div>
+                <div class="timeline-day">
+                    <div class="day-num">4</div>
+                    <div class="day-question"><strong>WHO</strong> controls it?</div>
+                    <div class="day-topic">Governance, 6 elements, MVD</div>
+                </div>
+                <div class="timeline-day current">
+                    <div class="day-num">5</div>
+                    <div class="day-question"><strong>WHICH</strong> pattern to use?</div>
+                    <div class="day-topic">Design patterns, architecture decisions</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <span class="icon">&#128161;</span>
+                <p><strong>Bridge Question:</strong> Yesterday you created governance documents. You defined trust boundaries, failure protocols, role models. But how does that translate into actual architecture? If your governance says "agent must never access production database directly" &mdash; what does that mean for the design?</p>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Governance → Architecture Mapping -->
+        <section id="mapping">
+            <h2><span class="number">2</span> Governance &#8594; Architecture Mapping</h2>
+
+            <div class="card" style="border-color: var(--accent-purple);">
+                <h3 style="margin-top: 0;">&#128273; Key Insight</h3>
+                <p style="margin-bottom: 0; font-size: 1.1rem;"><strong>Your governance document is not just paperwork. It is your architecture specification.</strong> Every governance decision eliminates or requires certain design patterns.</p>
+            </div>
+
+            <h3>1. Role Model &#8594; Agent Topology</h3>
+            <p>How you define roles in governance directly determines your system's structure.</p>
+
+            <table class="mapping-table">
+                <thead>
+                    <tr>
+                        <th>Governance Decision</th>
+                        <th>Architecture Consequence</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="governance-badge">ROLE</span> "Human must approve every action"</td>
+                        <td><span class="arch-badge">&#8594;</span> Human-in-the-loop pattern required</td>
+                    </tr>
+                    <tr>
+                        <td><span class="governance-badge">ROLE</span> "Validation agents check before execution"</td>
+                        <td><span class="arch-badge">&#8594;</span> Multi-agent with validator layer</td>
+                    </tr>
+                    <tr>
+                        <td><span class="governance-badge">ROLE</span> "One agent handles everything"</td>
+                        <td><span class="arch-badge">&#8594;</span> Single agent with tool use</td>
+                    </tr>
+                    <tr>
+                        <td><span class="governance-badge">ROLE</span> "Agents observe each other"</td>
+                        <td><span class="arch-badge">&#8594;</span> Supervisor/worker pattern</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>2. Trust Boundaries &#8594; Data Access Patterns</h3>
+            <p>Where your agent can read/write is determined by governance constraints.</p>
+
+            <table class="mapping-table">
+                <thead>
+                    <tr>
+                        <th>Governance Decision</th>
+                        <th>Architecture Consequence</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="governance-badge">TRUST</span> "Agent cannot access customer DB directly"</td>
+                        <td><span class="arch-badge">&#8594;</span> RAG pattern (read-only vector copy)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="governance-badge">TRUST</span> "Agent can create ServiceNow tickets"</td>
+                        <td><span class="arch-badge">&#8594;</span> Tool Use pattern with API integration</td>
+                    </tr>
+                    <tr>
+                        <td><span class="governance-badge">TRUST</span> "Agent must use only approved data sources"</td>
+                        <td><span class="arch-badge">&#8594;</span> Grounding with allow-list</td>
+                    </tr>
+                    <tr>
+                        <td><span class="governance-badge">TRUST</span> "Full authority in sandbox only"</td>
+                        <td><span class="arch-badge">&#8594;</span> Separate environments, promotion flow</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info-box">
+                <span class="icon">&#128161;</span>
+                <p>This is where Day 3 connects. Your Supabase vector database &mdash; that's not just a learning exercise. It's an architectural answer to the trust boundary problem. If the agent cannot touch production data, you give it a vector copy instead.</p>
+            </div>
+
+            <h3>3. Failure Protocol &#8594; Fallback Architecture</h3>
+            <p>Your error handling architecture is literally defined by your failure protocol.</p>
+
+            <table class="mapping-table">
+                <thead>
+                    <tr>
+                        <th>Governance Decision</th>
+                        <th>Architecture Consequence</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="governance-badge">FAIL</span> "If LLM unavailable &#8594; show cached response"</td>
+                        <td><span class="arch-badge">&#8594;</span> Cache layer required</td>
+                    </tr>
+                    <tr>
+                        <td><span class="governance-badge">FAIL</span> "If confidence < 70% &#8594; escalate to human"</td>
+                        <td><span class="arch-badge">&#8594;</span> Confidence scoring + routing</td>
+                    </tr>
+                    <tr>
+                        <td><span class="governance-badge">FAIL</span> "If API fails &#8594; retry 3x then degrade"</td>
+                        <td><span class="arch-badge">&#8594;</span> Circuit breaker pattern</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="card" style="border-color: var(--accent-green); text-align: center;">
+                <p style="font-size: 1.1rem; margin: 0;"><strong>Write the governance first, the code writes itself.</strong></p>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Four Agent Design Patterns -->
+        <section id="patterns">
+            <h2><span class="number">3</span> Four Agent Design Patterns</h2>
+
+            <p>These are the four main patterns you'll use in 90% of Kyndryl AI projects. They are not theoretical &mdash; these are what FDEs deploy at client sites.</p>
+
+            <div class="info-box">
+                <span class="icon">&#128218;</span>
+                <p><strong>Note:</strong> More patterns exist (Reflection, Multi-Agent Debate, Chain-of-Thought, Tree-of-Thought, Autonomous Agents). These 4 are the enterprise foundation &mdash; you'll encounter others as you specialize.</p>
+            </div>
+
+            <div class="pattern-grid">
+                <!-- Pattern 1: ReAct -->
+                <div class="pattern-card" onclick="toggleCard(this)">
+                    <div class="pattern-card-header">
+                        <div class="pattern-card-icon" style="background: rgba(59, 130, 246, 0.15);">&#129504;</div>
+                        <div class="pattern-card-title">
+                            <h4>ReAct</h4>
+                            <p>Reason + Act</p>
+                        </div>
+                        <div class="pattern-card-expand">&#9660;</div>
+                    </div>
+                    <div class="pattern-card-preview">
+                        <small style="color: var(--text-muted);">Think step-by-step, then act, then observe</small>
+                    </div>
+                    <div class="pattern-card-detail">
+                        <div class="pattern-card-content">
+                            <div class="visual-diagram">
+                                <div class="diagram-title">ReAct Cycle</div>
+                                <div class="flow-diagram">
+                                    <div class="flow-step">
+                                        <div class="emoji">&#129504;</div>
+                                        <div class="label">THINK</div>
+                                    </div>
+                                    <div class="flow-arrow">&#8594;</div>
+                                    <div class="flow-step">
+                                        <div class="emoji">&#9889;</div>
+                                        <div class="label">ACT</div>
+                                    </div>
+                                    <div class="flow-arrow">&#8594;</div>
+                                    <div class="flow-step">
+                                        <div class="emoji">&#128065;</div>
+                                        <div class="label">OBSERVE</div>
+                                    </div>
+                                    <div class="flow-arrow">&#8634;</div>
+                                </div>
+                            </div>
+
+                            <div class="code-block">
+                                <div class="code-header"><span>ReAct Example</span></div>
+<pre><span class="code-keyword">THINK</span>   &#8594; "I need to find the user's order status"
+<span class="code-keyword">ACT</span>     &#8594; call_database(order_id=12345)
+<span class="code-keyword">OBSERVE</span> &#8594; result: {status: "shipped", tracking: "CZ123456"}
+<span class="code-keyword">THINK</span>   &#8594; "I have the info, I can respond"
+<span class="code-keyword">ACT</span>     &#8594; respond_to_user("Your order was shipped...")</pre>
+                            </div>
+
+                            <h5>When to Use</h5>
+                            <div class="use-case-tags">
+                                <span class="use-case-tag">Tasks requiring reasoning before action</span>
+                                <span class="use-case-tag">Multi-step problems</span>
+                                <span class="use-case-tag">Agent must "figure out" what to do</span>
+                            </div>
+
+                            <div class="governance-connection">
+                                <h5>&#128274; Governance Connection</h5>
+                                <ul>
+                                    <li><strong>Behavior Rules</strong> define WHAT the agent can reason about</li>
+                                    <li><strong>Trust Boundaries</strong> define WHICH actions are allowed</li>
+                                    <li><strong>Audit Mode</strong> logs each think-act-observe cycle</li>
+                                </ul>
+                            </div>
+
+                            <div class="info-box">
+                                <span class="icon">&#128218;</span>
+                                <p><strong>Real Example:</strong> A customer asks: "What's the cheapest way to migrate our Oracle DB to Azure?" The agent needs to reason: What's the DB size? SLA? Budget? ReAct lets it ask follow-up questions, search documentation, compare options, and recommend.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pattern 2: Tool Use -->
+                <div class="pattern-card" onclick="toggleCard(this)">
+                    <div class="pattern-card-header">
+                        <div class="pattern-card-icon" style="background: rgba(245, 158, 11, 0.15);">&#128295;</div>
+                        <div class="pattern-card-title">
+                            <h4>Tool Use</h4>
+                            <p>External integrations</p>
+                        </div>
+                        <div class="pattern-card-expand">&#9660;</div>
+                    </div>
+                    <div class="pattern-card-preview">
+                        <small style="color: var(--text-muted);">Access to APIs, databases, external tools</small>
+                    </div>
+                    <div class="pattern-card-detail">
+                        <div class="pattern-card-content">
+                            <div class="visual-diagram">
+                                <div class="diagram-title">Tool Use Architecture</div>
+                                <div style="text-align: center; padding: 1rem;">
+                                    <div style="display: inline-block; background: var(--bg-tertiary); border: 2px solid var(--accent-orange); border-radius: 12px; padding: 1rem 2rem; margin-bottom: 1rem;">
+                                        <div style="font-size: 1.5rem;">&#129302;</div>
+                                        <div style="font-size: 0.9rem; font-weight: 600;">AGENT</div>
+                                    </div>
+                                    <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+                                        <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid var(--accent-blue); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem;">&#128451; Database query</div>
+                                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-green); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem;">&#128231; Send email</div>
+                                        <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid var(--accent-purple); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem;">&#127915; Create ticket</div>
+                                        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid var(--accent-orange); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem;">&#129518; Calculate pricing</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5>When to Use</h5>
+                            <div class="use-case-tags">
+                                <span class="use-case-tag">Interact with external systems</span>
+                                <span class="use-case-tag">Real-time data needed</span>
+                                <span class="use-case-tag">Workflow automation</span>
+                            </div>
+
+                            <div class="governance-connection">
+                                <h5>&#128274; Governance Connection</h5>
+                                <ul>
+                                    <li><strong>Trust Boundaries</strong> define WHICH tools the agent can call</li>
+                                    <li><strong>Full Authority Zones</strong> define WHERE the agent can write data</li>
+                                    <li><strong>Failure Protocol</strong> defines what happens when a tool is unavailable</li>
+                                </ul>
+                            </div>
+
+                            <div class="info-box">
+                                <span class="icon">&#128218;</span>
+                                <p><strong>Real Example:</strong> The Praveen demo from Day 3 &mdash; his ARX agent uses Tool Use pattern. It takes raw notes, calls Power Automate to process them, calls Word Online to generate a document, calls OneDrive to save it.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pattern 3: RAG -->
+                <div class="pattern-card" onclick="toggleCard(this)">
+                    <div class="pattern-card-header">
+                        <div class="pattern-card-icon" style="background: rgba(139, 92, 246, 0.15);">&#128218;</div>
+                        <div class="pattern-card-title">
+                            <h4>RAG</h4>
+                            <p>Retrieval Augmented Generation</p>
+                        </div>
+                        <div class="pattern-card-expand">&#9660;</div>
+                    </div>
+                    <div class="pattern-card-preview">
+                        <small style="color: var(--text-muted);">Search knowledge base before generating response</small>
+                    </div>
+                    <div class="pattern-card-detail">
+                        <div class="pattern-card-content">
+                            <div class="visual-diagram">
+                                <div class="diagram-title">RAG Flow (Day 3 Supabase!)</div>
+                                <div class="flow-diagram">
+                                    <div class="flow-step">
+                                        <div class="emoji">&#10067;</div>
+                                        <div class="label">Question</div>
+                                    </div>
+                                    <div class="flow-arrow">&#8594;</div>
+                                    <div class="flow-step">
+                                        <div class="emoji">&#128290;</div>
+                                        <div class="label">Embed</div>
+                                    </div>
+                                    <div class="flow-arrow">&#8594;</div>
+                                    <div class="flow-step">
+                                        <div class="emoji">&#128269;</div>
+                                        <div class="label">Search</div>
+                                    </div>
+                                    <div class="flow-arrow">&#8594;</div>
+                                    <div class="flow-step">
+                                        <div class="emoji">&#129504;</div>
+                                        <div class="label">Generate</div>
+                                    </div>
+                                    <div class="flow-arrow">&#8594;</div>
+                                    <div class="flow-step">
+                                        <div class="emoji">&#9989;</div>
+                                        <div class="label">Answer</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="info-box" style="margin-top: 1rem;">
+                                <span class="icon">&#128161;</span>
+                                <p>This is NOT new for you. Day 3 was entirely about this. You built the data layer in Supabase. Today you see where it fits in the bigger picture.</p>
+                            </div>
+
+                            <h5>When to Use</h5>
+                            <div class="use-case-tags">
+                                <span class="use-case-tag">Answer from specific documents</span>
+                                <span class="use-case-tag">Reduce hallucination</span>
+                                <span class="use-case-tag">Knowledge changes frequently</span>
+                                <span class="use-case-tag">Proprietary data</span>
+                            </div>
+
+                            <div class="governance-connection">
+                                <h5>&#128274; Governance Connection</h5>
+                                <ul>
+                                    <li><strong>Trust Boundaries</strong> define WHICH documents go into the vector DB</li>
+                                    <li><strong>Data Trust Zones</strong> from Day 4 directly map to what gets embedded</li>
+                                    <li><strong>Audit Mode</strong> must log which chunks were retrieved (EU AI Act: explainability)</li>
+                                </ul>
+                            </div>
+
+                            <div class="warning-box">
+                                <span class="icon">&#9888;</span>
+                                <p><strong>RAG is NOT magic.</strong> If you put garbage data in, you get garbage out. If you chunk poorly, you get irrelevant results. We'll go deeper on RAG quality in Week 2.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pattern 4: Planning / Orchestration -->
+                <div class="pattern-card" onclick="toggleCard(this)">
+                    <div class="pattern-card-header">
+                        <div class="pattern-card-icon" style="background: rgba(16, 185, 129, 0.15);">&#128640;</div>
+                        <div class="pattern-card-title">
+                            <h4>Planning / Orchestration</h4>
+                            <p>Multi-agent coordination</p>
+                        </div>
+                        <div class="pattern-card-expand">&#9660;</div>
+                    </div>
+                    <div class="pattern-card-preview">
+                        <small style="color: var(--text-muted);">Break tasks into subtasks, coordinate agents</small>
+                    </div>
+                    <div class="pattern-card-detail">
+                        <div class="pattern-card-content">
+                            <div class="code-block">
+                                <div class="code-header"><span>Planning Example</span></div>
+<pre><span class="code-comment">User: "Prepare a security assessment for our new chatbot"</span>
+
+<span class="code-keyword">PLAN:</span>
+  Step 1: [AI-SEC agent] &#8594; Run OWASP checklist against the code
+  Step 2: [AI-DA agent]  &#8594; Analyze usage logs for anomalies
+  Step 3: [FDE agent]    &#8594; Test prompt injection vulnerabilities
+  Step 4: [AI-PM agent]  &#8594; Compile findings into client report
+  Step 5: [Human]        &#8594; Review and approve
+
+<span class="code-keyword">EXECUTE:</span> Steps 1-3 in parallel, Step 4 after all complete, Step 5 always last</pre>
+                            </div>
+
+                            <h5>When to Use</h5>
+                            <div class="use-case-tags">
+                                <span class="use-case-tag">Complex multi-skill tasks</span>
+                                <span class="use-case-tag">Cross-functional work</span>
+                                <span class="use-case-tag">Team project (Weeks 4-5)</span>
+                                <span class="use-case-tag">End-to-end automation</span>
+                            </div>
+
+                            <div class="governance-connection">
+                                <h5>&#128274; Governance Connection</h5>
+                                <ul>
+                                    <li><strong>Role Model</strong> from Day 4 is literally the orchestration blueprint</li>
+                                    <li>"Who does what" in governance = "which agent handles which subtask"</li>
+                                    <li><strong>Human-in-the-loop</strong> checkpoints = planning breakpoints</li>
+                                </ul>
+                            </div>
+
+                            <div class="info-box">
+                                <span class="icon">&#128161;</span>
+                                <p>This is the pattern behind KAF's AI Innovation Lab Method: Discovery &#8594; Co-Design &#8594; Build &#8594; Verify &#8594; Release &#8594; Roadmap to Operate. The governance document you created yesterday is the specification for this orchestration.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: Decision Framework -->
+        <section id="decision">
+            <h2><span class="number">4</span> Decision Framework</h2>
+
+            <div class="card" style="border-color: var(--accent-cyan);">
+                <h3 style="margin-top: 0;">&#128161; The Million-Dollar Question</h3>
+                <p style="margin-bottom: 0;">A client comes to you and says: <strong>"Build me an AI agent."</strong> Which pattern do you choose?</p>
+            </div>
+
+            <h3>Interactive Decision Flowchart</h3>
+            <p>Click through the questions to find the right pattern for your use case.</p>
+
+            <div class="decision-flowchart">
+                <!-- Start Node -->
+                <div class="flow-start">
+                    <div class="flow-node start-node">
+                        <div class="node-icon">&#128100;</div>
+                        <div class="node-text">Client Need</div>
+                        <div class="node-subtext">"Build me an AI agent"</div>
+                    </div>
+                </div>
+
+                <div class="flow-connector-down"></div>
+
+                <!-- Question 1 -->
+                <div class="flow-question">
+                    <div class="flow-node question-node" data-question="1">
+                        <div class="node-icon">&#128196;</div>
+                        <div class="node-text">Does agent need to answer from specific documents/knowledge?</div>
+                    </div>
+                    <div class="flow-branches">
+                        <div class="flow-branch yes">
+                            <span class="branch-label">YES</span>
+                            <div class="flow-node pattern-node rag">
+                                <div class="pattern-icon">&#128218;</div>
+                                <div class="pattern-name">RAG</div>
+                                <div class="pattern-plus">+ Tool Use if actions needed</div>
+                            </div>
+                        </div>
+                        <div class="flow-branch no">
+                            <span class="branch-label">NO</span>
+                            <div class="flow-connector-down small"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="flow-question">
+                    <div class="flow-node question-node" data-question="2">
+                        <div class="node-icon">&#128295;</div>
+                        <div class="node-text">Does agent need to perform actions in external systems?</div>
+                    </div>
+                    <div class="flow-branches">
+                        <div class="flow-branch yes">
+                            <span class="branch-label">YES</span>
+                            <div class="flow-node pattern-node tool">
+                                <div class="pattern-icon">&#128295;</div>
+                                <div class="pattern-name">Tool Use</div>
+                                <div class="pattern-plus">+ ReAct if complex decisions</div>
+                            </div>
+                        </div>
+                        <div class="flow-branch no">
+                            <span class="branch-label">NO</span>
+                            <div class="flow-connector-down small"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="flow-question">
+                    <div class="flow-node question-node" data-question="3">
+                        <div class="node-icon">&#129504;</div>
+                        <div class="node-text">Does agent need to reason through multi-step problems?</div>
+                    </div>
+                    <div class="flow-branches">
+                        <div class="flow-branch yes">
+                            <span class="branch-label">YES</span>
+                            <div class="flow-node pattern-node react">
+                                <div class="pattern-icon">&#129504;</div>
+                                <div class="pattern-name">ReAct</div>
+                                <div class="pattern-plus">+ RAG if knowledge needed</div>
+                            </div>
+                        </div>
+                        <div class="flow-branch no">
+                            <span class="branch-label">NO</span>
+                            <div class="flow-connector-down small"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="flow-question">
+                    <div class="flow-node question-node" data-question="4">
+                        <div class="node-icon">&#128101;</div>
+                        <div class="node-text">Does task require multiple agents or skills coordination?</div>
+                    </div>
+                    <div class="flow-branches">
+                        <div class="flow-branch yes">
+                            <span class="branch-label">YES</span>
+                            <div class="flow-node pattern-node planning">
+                                <div class="pattern-icon">&#128640;</div>
+                                <div class="pattern-name">Planning</div>
+                                <div class="pattern-plus">Multi-agent orchestration</div>
+                            </div>
+                        </div>
+                        <div class="flow-branch no">
+                            <span class="branch-label">NO</span>
+                            <div class="flow-node pattern-node simple">
+                                <div class="pattern-icon">&#129302;</div>
+                                <div class="pattern-name">Simple LLM</div>
+                                <div class="pattern-plus">Maybe no agent needed?</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Governance Questions Section -->
+            <h3>Key Discovery Questions for Clients</h3>
+            <p>Ask these questions to understand customer needs before choosing a pattern:</p>
+
+            <div class="discovery-questions">
+                <div class="question-category-box">
+                    <div class="category-header" style="background: rgba(139, 92, 246, 0.15); border-color: var(--accent-purple);">
+                        <span class="category-icon">&#128196;</span>
+                        <span class="category-title">Knowledge & Data</span>
+                    </div>
+                    <ul class="category-questions">
+                        <li>What information does the agent need to answer questions?</li>
+                        <li>Is this information in documents, databases, or APIs?</li>
+                        <li>How often does this information change?</li>
+                        <li>Is there proprietary data that cannot be in the base LLM?</li>
+                    </ul>
+                    <div class="pattern-indicator">Points to: <span class="pattern-tag rag">RAG</span></div>
+                </div>
+
+                <div class="question-category-box">
+                    <div class="category-header" style="background: rgba(245, 158, 11, 0.15); border-color: var(--accent-orange);">
+                        <span class="category-icon">&#128295;</span>
+                        <span class="category-title">Actions & Integrations</span>
+                    </div>
+                    <ul class="category-questions">
+                        <li>What systems does the agent need to interact with?</li>
+                        <li>Does it need to CREATE, UPDATE, or DELETE anything?</li>
+                        <li>What APIs/tools are available?</li>
+                        <li>What happens if an external system is unavailable?</li>
+                    </ul>
+                    <div class="pattern-indicator">Points to: <span class="pattern-tag tool">Tool Use</span></div>
+                </div>
+
+                <div class="question-category-box">
+                    <div class="category-header" style="background: rgba(59, 130, 246, 0.15); border-color: var(--accent-blue);">
+                        <span class="category-icon">&#129504;</span>
+                        <span class="category-title">Reasoning & Decisions</span>
+                    </div>
+                    <ul class="category-questions">
+                        <li>Does the agent need to make decisions based on multiple factors?</li>
+                        <li>Are there multi-step problems where each step depends on the previous?</li>
+                        <li>Does the agent need to "figure out" what to do (not just follow a script)?</li>
+                        <li>How complex is the decision logic?</li>
+                    </ul>
+                    <div class="pattern-indicator">Points to: <span class="pattern-tag react">ReAct</span></div>
+                </div>
+
+                <div class="question-category-box">
+                    <div class="category-header" style="background: rgba(16, 185, 129, 0.15); border-color: var(--accent-green);">
+                        <span class="category-icon">&#128101;</span>
+                        <span class="category-title">Complexity & Scale</span>
+                    </div>
+                    <ul class="category-questions">
+                        <li>Does this task require multiple different skills?</li>
+                        <li>Would different specialists handle different parts?</li>
+                        <li>Is there a workflow with parallel or sequential steps?</li>
+                        <li>Is this too complex for a single agent?</li>
+                    </ul>
+                    <div class="pattern-indicator">Points to: <span class="pattern-tag planning">Planning</span></div>
+                </div>
+            </div>
+
+            <h3>Patterns Combine in Production</h3>
+            <p>In reality, you almost never use just one pattern. A production agent typically combines 2-3 patterns.</p>
+
+            <table class="combination-table">
+                <thead>
+                    <tr>
+                        <th>Real-World Scenario</th>
+                        <th>Pattern Combination</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Customer support chatbot</td>
+                        <td>
+                            <span class="pattern-tag rag">RAG</span>
+                            <span class="pattern-tag tool">Tool Use</span>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">(search knowledge + create tickets)</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Code review assistant</td>
+                        <td>
+                            <span class="pattern-tag react">ReAct</span>
+                            <span class="pattern-tag tool">Tool Use</span>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">(reason about code + run tests)</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>IT incident response</td>
+                        <td>
+                            <span class="pattern-tag planning">Planning</span>
+                            <span class="pattern-tag tool">Tool Use</span>
+                            <span class="pattern-tag rag">RAG</span>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">(orchestrate investigation)</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Data analysis pipeline</td>
+                        <td>
+                            <span class="pattern-tag planning">Planning</span>
+                            <span class="pattern-tag react">ReAct</span>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">(plan analysis steps, reason about results)</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="exercise-box">
+                <h4>&#128640; Quick Interactive Exercise</h4>
+                <p style="margin-bottom: 1rem;">Which pattern(s) would you use for this scenario?</p>
+                <div class="card" style="border-color: var(--accent-cyan); margin: 0;">
+                    <p style="margin: 0;"><strong>Scenario:</strong> A Kyndryl client (European bank) wants an agent that helps their compliance team check if new product proposals violate EU regulations. The agent should search their internal policy database, flag potential issues, and create a compliance report.</p>
+                </div>
+                <div style="margin-top: 1rem; padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+                    <p style="margin: 0; font-size: 0.9rem; color: var(--text-muted);"><strong>Think about:</strong> What's the primary task? Does it need to reason? Does it need external data? Does it produce outputs?</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: Practical Exercise -->
+        <section id="exercise">
+            <h2><span class="number">5</span> Practical Exercise: 3 Client Scenarios</h2>
+
+            <div class="exercise-box">
+                <h4>&#128187; Instructions</h4>
+                <ol class="exercise-steps">
+                    <li>Open your AI Tutor (ChatGPT or Copilot)</li>
+                    <li>For each scenario, <strong>identify</strong> which pattern(s) to use</li>
+                    <li><strong>Explain</strong> why (connect to governance decisions)</li>
+                    <li><strong>Draw</strong> a simple architecture (text/ASCII is fine)</li>
+                    <li>Do this <strong>WITH</strong> your AI Tutor &mdash; but critically evaluate its recommendations!</li>
+                </ol>
+            </div>
+
+            <h3>The 3 Scenarios</h3>
+            <div class="scenario-grid">
+                <div class="scenario-card">
+                    <h4>&#129302; Scenario A: "The Forgetful HR Bot"</h4>
+                    <div class="description">
+                        <p>A German manufacturing company (500 employees) wants a chatbot for their HR department. Employees ask questions about vacation policies, sick leave, benefits, and internal regulations.</p>
+                        <p><strong>Key facts:</strong></p>
+                        <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.9rem;">
+                            <li>47 policy documents (PDF)</li>
+                            <li>Documents change quarterly</li>
+                            <li>No actions needed &mdash; just answers</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="scenario-card">
+                    <h4>&#128225; Scenario B: "The Night Shift Monitor"</h4>
+                    <div class="description">
+                        <p>A logistics company runs 3 warehouses with IoT sensors. They want an AI agent that monitors sensor data overnight, detects anomalies (temperature spikes, unusual movement), and decides whether to:</p>
+                        <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.9rem;">
+                            <li>(a) log it</li>
+                            <li>(b) alert the night shift manager</li>
+                            <li>(c) trigger emergency shutdown</li>
+                        </ul>
+                        <p style="margin-top: 0.5rem;"><strong>Constraint:</strong> Response time must be under 30 seconds.</p>
+                    </div>
+                </div>
+
+                <div class="scenario-card">
+                    <h4>&#128203; Scenario C: "The Audit Nightmare"</h4>
+                    <div class="description">
+                        <p>A financial services company faces EU AI Act compliance audit in 6 months. They have 12 AI agents already deployed across departments. None have governance documentation.</p>
+                        <p><strong>They want a system that:</strong></p>
+                        <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.9rem;">
+                            <li>Audits each agent</li>
+                            <li>Creates governance docs</li>
+                            <li>Identifies compliance gaps</li>
+                            <li>Generates remediation plan with priorities</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <span class="icon">&#128161;</span>
+                <p>Don't just accept the first answer from your AI Tutor. Ask it to explain <strong>why</strong> it chose that pattern. Connect it back to what governance constraints would apply!</p>
+            </div>
+        </section>
+
+        <!-- SECTION 6: Week 1 Wrap-up & Week 2 Preview -->
+        <section id="wrapup">
+            <h2><span class="number">6</span> Week 1 Wrap-up & Week 2 Preview</h2>
+
+            <div class="card" style="border-color: var(--accent-green);">
+                <h3 style="margin-top: 0;">&#127942; What You've Actually Learned</h3>
+                <div class="week-timeline" style="margin: 1rem 0 0 0; padding: 1rem; background: transparent; border: none;">
+                    <div class="timeline-day">
+                        <div class="day-num">1</div>
+                        <div class="day-topic" style="flex: 1;">You know <strong>WHAT</strong> AI can do and you have the tools</div>
+                    </div>
+                    <div class="timeline-day">
+                        <div class="day-num">2</div>
+                        <div class="day-topic" style="flex: 1;">You know <strong>HOW TO PROTECT</strong> it (security first!)</div>
+                    </div>
+                    <div class="timeline-day">
+                        <div class="day-num">3</div>
+                        <div class="day-topic" style="flex: 1;">You know <strong>WHERE</strong> agents get their knowledge (vector DBs)</div>
+                    </div>
+                    <div class="timeline-day">
+                        <div class="day-num">4</div>
+                        <div class="day-topic" style="flex: 1;">You know <strong>WHO</strong> controls it and HOW to document it</div>
+                    </div>
+                    <div class="timeline-day current">
+                        <div class="day-num">5</div>
+                        <div class="day-topic" style="flex: 1;">You know <strong>WHICH</strong> pattern to choose and WHY</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <span class="icon">&#128161;</span>
+                <p>That's the complete foundation. You can now have an intelligent conversation with a client about AI agents. You can ask the right questions. You can recognize patterns. <strong>You're not experts yet &mdash; but you're not beginners anymore.</strong></p>
+            </div>
+
+            <h3>Week 2 Preview: Role-Specific Deep Dives</h3>
+            <p>Next week we split into role-specific tracks. The format changes: shorter joint sessions (15 min), then role-specific deep dives.</p>
+
+            <div class="week2-grid">
+                <div class="role-card">
+                    <div class="role-name">FDE</div>
+                    <div class="role-focus">Building RAG pipelines, deploying agents, client demos</div>
+                </div>
+                <div class="role-card">
+                    <div class="role-name">AI-SE</div>
+                    <div class="role-focus">CI/CD for agents, testing, LLMOps</div>
+                </div>
+                <div class="role-card">
+                    <div class="role-name">AI-PM</div>
+                    <div class="role-focus">Use-case framing, business cases, client communication</div>
+                </div>
+                <div class="role-card">
+                    <div class="role-name">AI-DS</div>
+                    <div class="role-focus">Evaluation metrics, experiments, model comparison</div>
+                </div>
+                <div class="role-card">
+                    <div class="role-name">AI-DA</div>
+                    <div class="role-focus">KPIs, dashboards, ROI measurement</div>
+                </div>
+                <div class="role-card">
+                    <div class="role-name">AI-SEC</div>
+                    <div class="role-focus">Red teaming, OWASP for LLMs, EU AI Act compliance</div>
+                </div>
+                <div class="role-card">
+                    <div class="role-name">AI-FE</div>
+                    <div class="role-focus">Streaming UI, error states, accessibility</div>
+                </div>
+            </div>
+
+            <h3>Week 1 Capstone Assignment (Required)</h3>
+
+            <div class="card" style="border-color: var(--accent-red);">
+                <h3 style="margin-top: 0; color: var(--accent-red);">&#128680; Week 1 Capstone Assignment (Required)</h3>
+                <p><strong>Deadline:</strong> Monday, February 10, 2026 &mdash; 9:00 AM CET</p>
+                <p><strong>Estimated time:</strong> 90 minutes</p>
+                <p style="margin-bottom: 0;">This assignment integrates everything from Week 1. You must complete it to continue in Week 2.</p>
+            </div>
+
+            <div class="exercise-box" style="margin-top: 1.5rem;">
+                <h4>&#127919; Your Mission: Design an AI Agent for a Real Use Case</h4>
+                <p>Choose a use case from your own work experience (or from the list below) and create a complete agent design that demonstrates your Week 1 learning.</p>
+            </div>
+
+            <h4>Step 1: Choose Your Use Case (10 min)</h4>
+            <p>Select ONE of these scenarios or propose your own:</p>
+
+            <div class="scenario-grid" style="margin: 1rem 0;">
+                <div class="scenario-card">
+                    <h4>&#128200; A: Sales Report Generator</h4>
+                    <div class="description">
+                        <p>Agent that pulls data from CRM, analyzes sales trends, and generates weekly reports for management.</p>
+                    </div>
+                </div>
+                <div class="scenario-card">
+                    <h4>&#128231; B: Email Triage Assistant</h4>
+                    <div class="description">
+                        <p>Agent that categorizes incoming support emails, extracts key information, and routes to appropriate teams.</p>
+                    </div>
+                </div>
+                <div class="scenario-card">
+                    <h4>&#128218; C: Policy Compliance Checker</h4>
+                    <div class="description">
+                        <p>Agent that reviews documents against company policies and flags potential compliance issues.</p>
+                    </div>
+                </div>
+                <div class="scenario-card">
+                    <h4>&#128736; D: Your Own Use Case</h4>
+                    <div class="description">
+                        <p>Propose a use case from your work. Must involve real business value and be suitable for an AI agent.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h4>Step 2: Complete the Deliverables (80 min)</h4>
+            <p>Create the following artifacts for your chosen use case:</p>
+
+            <div class="visual-diagram">
+                <div class="diagram-title">Required Deliverables</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 12px; border-left: 4px solid var(--accent-blue);">
+                        <div style="font-size: 1.25rem; margin-bottom: 0.5rem;">&#128196;</div>
+                        <strong style="color: var(--accent-blue);">1. Use Case Brief</strong>
+                        <p style="font-size: 0.8rem; margin: 0.5rem 0 0 0;">Problem, users, expected value (1 paragraph)</p>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(139, 92, 246, 0.1); border-radius: 12px; border-left: 4px solid var(--accent-purple);">
+                        <div style="font-size: 1.25rem; margin-bottom: 0.5rem;">&#128295;</div>
+                        <strong style="color: var(--accent-purple);">2. Pattern Selection</strong>
+                        <p style="font-size: 0.8rem; margin: 0.5rem 0 0 0;">Which pattern(s) and WHY (with governance reasoning)</p>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: 12px; border-left: 4px solid var(--accent-green);">
+                        <div style="font-size: 1.25rem; margin-bottom: 0.5rem;">&#128737;</div>
+                        <strong style="color: var(--accent-green);">3. Governance Summary</strong>
+                        <p style="font-size: 0.8rem; margin: 0.5rem 0 0 0;">Trust boundaries, failure protocol, human-in-the-loop points</p>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(245, 158, 11, 0.1); border-radius: 12px; border-left: 4px solid var(--accent-orange);">
+                        <div style="font-size: 1.25rem; margin-bottom: 0.5rem;">&#128736;</div>
+                        <strong style="color: var(--accent-orange);">4. Architecture Diagram</strong>
+                        <p style="font-size: 0.8rem; margin: 0.5rem 0 0 0;">Visual showing components, data flow, integrations</p>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(6, 182, 212, 0.1); border-radius: 12px; border-left: 4px solid var(--accent-cyan);">
+                        <div style="font-size: 1.25rem; margin-bottom: 0.5rem;">&#129302;</div>
+                        <strong style="color: var(--accent-cyan);">5. Working Prototype</strong>
+                        <p style="font-size: 0.8rem; margin: 0.5rem 0 0 0;">Basic agent in ChatGPT/Copilot with system prompt</p>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(239, 68, 68, 0.1); border-radius: 12px; border-left: 4px solid var(--accent-red);">
+                        <div style="font-size: 1.25rem; margin-bottom: 0.5rem;">&#128269;</div>
+                        <strong style="color: var(--accent-red);">6. Security Considerations</strong>
+                        <p style="font-size: 0.8rem; margin: 0.5rem 0 0 0;">Top 3 risks and mitigations (from Day 2)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prompt-box">
+                <h4>&#129302; AI Tutor Prompt to Get Started</h4>
+                <div class="prompt-content">I need to design an AI agent for this use case: [DESCRIBE YOUR USE CASE]
+
+Help me create:
+1. A brief problem statement and expected business value
+2. Identify the best design pattern(s): ReAct, Tool Use, RAG, or Planning
+3. Key governance considerations (trust boundaries, failure handling, human oversight)
+4. A simple architecture diagram (describe components and data flow)
+5. Top 3 security risks and how to mitigate them
+
+For each decision, explain WHY based on governance principles from AI Academy Week 1.</div>
+                <button class="copy-btn" onclick="copyPrompt(this)" style="margin-top: 1rem;">Copy prompt</button>
+            </div>
+
+            <h4>Step 3: Submit Your Work</h4>
+
+            <div class="card" style="border-color: var(--accent-blue);">
+                <h3 style="margin-top: 0;">&#128229; Submission via Microsoft Forms</h3>
+                <p>Submit all deliverables through the official submission form:</p>
+                <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; margin: 1rem 0; text-align: center;">
+                    <a href="https://forms.office.com/r/z98LhnmX2D" target="_blank" style="color: var(--accent-blue); font-size: 1.1rem; font-weight: 600; text-decoration: none;">
+                        &#128279; Open Submission Form
+                    </a>
+                </div>
+                <p style="margin-bottom: 0;"><strong>What to submit:</strong></p>
+                <ul style="margin: 0.5rem 0 0 0; padding-left: 1.5rem; color: var(--text-secondary);">
+                    <li>Your name and role track</li>
+                    <li>Use case selection</li>
+                    <li>Link to your document (OneDrive/SharePoint) OR upload as attachment</li>
+                    <li>Link to your prototype (if using ChatGPT/Copilot GPT)</li>
+                    <li>Self-assessment: What was hardest? What did you learn?</li>
+                </ul>
+            </div>
+
+            <h4>Grading Criteria</h4>
+            <table class="mapping-table">
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Points</th>
+                        <th>What We're Looking For</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Pattern Selection</strong></td>
+                        <td style="color: var(--accent-green); font-weight: 600;">25 pts</td>
+                        <td>Correct pattern(s) with clear reasoning tied to use case requirements</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Governance</strong></td>
+                        <td style="color: var(--accent-green); font-weight: 600;">25 pts</td>
+                        <td>Clear trust boundaries, failure handling, and human oversight defined</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Architecture</strong></td>
+                        <td style="color: var(--accent-green); font-weight: 600;">20 pts</td>
+                        <td>Logical component structure, data flow makes sense</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Security</strong></td>
+                        <td style="color: var(--accent-green); font-weight: 600;">15 pts</td>
+                        <td>Realistic risks identified with practical mitigations</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Prototype</strong></td>
+                        <td style="color: var(--accent-green); font-weight: 600;">15 pts</td>
+                        <td>Working basic agent that demonstrates the concept</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="visual-diagram" style="margin-top: 1rem;">
+                <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; color: var(--accent-green);">&#9989;</div>
+                        <div style="font-weight: 600; color: var(--accent-green);">Pass</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">70+ points</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; color: var(--accent-orange);">&#9888;</div>
+                        <div style="font-weight: 600; color: var(--accent-orange);">Revise</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">50-69 points</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; color: var(--accent-red);">&#10060;</div>
+                        <div style="font-weight: 600; color: var(--accent-red);">Incomplete</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">&lt;50 points</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="warning-box" style="margin-top: 1.5rem;">
+                <span class="icon">&#9888;</span>
+                <p><strong>Important:</strong> This is not about creating a perfect agent. It's about demonstrating that you can apply Week 1 concepts: understand requirements, choose patterns, define governance, and think about security.</p>
+            </div>
+
+            <div class="card" style="border-color: var(--accent-green); text-align: center; margin-top: 2rem;">
+                <h3 style="margin-top: 0; color: var(--accent-green);">&#127881; Week 1 Complete!</h3>
+                <p style="font-size: 1.1rem;">Complete the assignment over the weekend.</p>
+                <p style="margin-bottom: 0;"><strong>Week 2 starts Monday with role-specific deep dives. See you there!</strong></p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>AI Academy 2026 &bull; Kyndryl &bull; Day 5: From Governance to Agent Design Patterns</p>
+    </footer>
+
+    <script>
+        // Theme handling
+        const html = document.documentElement;
+        const lightBtn = document.getElementById('theme-light');
+        const darkBtn = document.getElementById('theme-dark');
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        setTheme(savedTheme);
+
+        function setTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            if (theme === 'light') {
+                lightBtn.classList.add('active');
+                darkBtn.classList.remove('active');
+            } else {
+                darkBtn.classList.add('active');
+                lightBtn.classList.remove('active');
+            }
+        }
+
+        lightBtn.addEventListener('click', () => setTheme('light'));
+        darkBtn.addEventListener('click', () => setTheme('dark'));
+
+        // Copy prompt functionality
+        function copyPrompt(btn) {
+            const promptContent = btn.parentElement.querySelector('.prompt-content');
+            navigator.clipboard.writeText(promptContent.textContent).then(() => {
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy prompt', 2000);
+            });
+        }
+
+        // Expandable pattern cards
+        function toggleCard(card) {
+            card.classList.toggle('expanded');
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+                document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Active nav on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            let current = '';
+            sections.forEach(section => {
+                if (scrollY >= section.offsetTop - 200) current = section.getAttribute('id');
+            });
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

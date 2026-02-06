@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Academy | The New Reality - Day 1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Theme Variables */
+        :root {
+            --transition-speed: 0.3s;
+        }
+
+        /* Dark Theme (default) */
+        [data-theme="dark"] {
+            --bg-primary: #0f1419;
+            --bg-secondary: #1a1f26;
+            --bg-tertiary: #242b35;
+            --bg-card: #1a1f26;
+            --bg-card-hover: #242b35;
+            --bg-code: #0d1117;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #2d3748;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.5);
+            --nav-bg: rgba(15, 20, 25, 0.9);
+            --hero-gradient: radial-gradient(ellipse at top, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.1) 50%, transparent 70%);
+        }
+
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --bg-code: #1e293b;
+            --accent-blue: #2563eb;
+            --accent-green: #059669;
+            --accent-orange: #d97706;
+            --accent-purple: #7c3aed;
+            --accent-red: #dc2626;
+            --accent-cyan: #0891b2;
+            --accent-pink: #db2777;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --hero-gradient: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+        }
+
+        :root {
+            --gradient-1: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --gradient-2: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+            transition: background var(--transition-speed), color var(--transition-speed);
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--accent-blue);
+            color: white;
+            padding: 8px 16px;
+            z-index: 10000;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 0 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 0;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 0.5rem;
+            list-style: none;
+            overflow-x: auto;
+            padding: 0.25rem 0;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.35rem;
+        }
+
+        .theme-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle-btn.active {
+            background: var(--accent-blue);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: var(--hero-gradient);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-badge span {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .time-box {
+            display: inline-flex;
+            gap: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+        }
+
+        .time-item {
+            text-align: center;
+        }
+
+        .time-item .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        .time-item .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 5rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2 .number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 10px;
+            font-size: 1rem;
+            color: white;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 0.25rem;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            border: 3px solid var(--bg-primary);
+        }
+
+        .timeline-item .week {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-item .title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-item .desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* T-Shape Diagram */
+        .tshape-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 2rem 0;
+        }
+
+        .tshape-horizontal {
+            display: flex;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .tshape-horizontal .item {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .tshape-vertical {
+            display: flex;
+            flex-direction: column;
+            width: 200px;
+        }
+
+        .tshape-vertical .item {
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 2px solid;
+        }
+
+        .tshape-vertical .item.purple {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: var(--accent-purple);
+            color: var(--accent-purple);
+        }
+
+        .tshape-vertical .item.pink {
+            background: rgba(236, 72, 153, 0.1);
+            border-color: var(--accent-pink);
+            color: var(--accent-pink);
+        }
+
+        /* Roles Grid */
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .role-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .role-card .role-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .role-card .role-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .role-card .role-focus {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Comparison Box */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .comparison-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .comparison-box.old {
+            border-top: 3px solid var(--accent-red);
+        }
+
+        .comparison-box.new {
+            border-top: 3px solid var(--accent-green);
+        }
+
+        .comparison-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .comparison-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-box li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .comparison-box li::before {
+            content: '→';
+            color: var(--text-muted);
+        }
+
+        /* KAF Grid */
+        .kaf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .kaf-component {
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .kaf-component:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-blue);
+        }
+
+        .kaf-component .icon {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .kaf-component .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .kaf-component .desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .code-header {
+            background: #1a1f26;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-header span {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        pre {
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+            margin: 0;
+        }
+
+        .code-comment { color: #6b7280; }
+        .code-keyword { color: #f472b6; }
+        .code-string { color: #86efac; }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .tool-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .tool-card .tool-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .tool-card h4 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-card .tool-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .tool-card ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 1rem;
+        }
+
+        .tool-card li {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding: 0.25rem 0;
+        }
+
+        .tool-card li::before {
+            content: '✓ ';
+            color: var(--accent-green);
+        }
+
+        .tool-card .access {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Exercise Box */
+        .exercise-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exercise-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-green);
+        }
+
+        .exercise-steps {
+            list-style: none;
+            counter-reset: step;
+        }
+
+        .exercise-steps li {
+            counter-increment: step;
+            padding: 0.75rem 0;
+            padding-left: 3rem;
+            position: relative;
+            color: var(--text-secondary);
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .exercise-steps li:last-child {
+            border-bottom: none;
+        }
+
+        .exercise-steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0.75rem;
+            width: 28px;
+            height: 28px;
+            background: var(--accent-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* Assignment Box */
+        .assignment-box {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .assignment-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-purple);
+        }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .info-box .icon { font-size: 1.25rem; }
+        .info-box p { margin: 0; color: var(--accent-blue); font-size: 0.9rem; }
+
+        /* Warning Box */
+        .warning-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .warning-box .icon { font-size: 1.25rem; }
+        .warning-box p { margin: 0; color: var(--accent-orange); font-size: 0.9rem; }
+
+        /* Key Takeaways */
+        .takeaways {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid var(--accent-blue);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .takeaways h3 {
+            text-align: center;
+            color: var(--accent-blue);
+            margin-top: 0;
+        }
+
+        .takeaways ol {
+            list-style: none;
+            counter-reset: takeaway;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .takeaways li {
+            counter-increment: takeaway;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .takeaways li::before {
+            content: counter(takeaway);
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-1);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            nav ul {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .time-box {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .tshape-horizontal {
+                flex-wrap: wrap;
+            }
+
+            .comparison-grid, .tools-grid, .roles-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <nav>
+        <div class="nav-container">
+            <ul>
+                <li><a href="#journey" class="active">Journey</a></li>
+                <li><a href="#tshape">T-Shape</a></li>
+                <li><a href="#roles">Roles</a></li>
+                <li><a href="#landscape">AI 2026</a></li>
+                <li><a href="#kaf">KAF</a></li>
+                <li><a href="#tools">Tools</a></li>
+                <li><a href="#exercises">Exercises</a></li>
+            </ul>
+            <div class="theme-toggle">
+                <button class="theme-toggle-btn" id="theme-light" aria-label="Light theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                </button>
+                <button class="theme-toggle-btn active" id="theme-dark" aria-label="Dark theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-badge">
+            <span></span>
+            AI Academy 2026 &bull; Day 1
+        </div>
+        <h1>The New Reality</h1>
+        <p>Forget everything you knew about AI. Year 2026. Agents no longer assist. <strong style="color: var(--text-primary);">Agents act.</strong></p>
+        <div class="time-box">
+            <div class="time-item">
+                <div class="value">25</div>
+                <div class="label">Training Days</div>
+            </div>
+            <div class="time-item">
+                <div class="value">200+</div>
+                <div class="label">Participants</div>
+            </div>
+            <div class="time-item">
+                <div class="value">7</div>
+                <div class="label">AI Roles</div>
+            </div>
+            <div class="time-item">
+                <div class="value">Day 1</div>
+                <div class="label">of 25</div>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <!-- SECTION 1: Journey -->
+        <section id="journey">
+            <h2><span class="number">1</span> Your 25-Day Journey</h2>
+
+            <div class="card" style="border-left: 4px solid var(--accent-purple);">
+                <p style="font-style: italic; margin-bottom: 0.5rem;">"Europe is falling behind. Not because we lack talent. But because we're still learning AI from 2023. The world has moved on. You must move with it."</p>
+                <cite style="color: var(--accent-purple); font-size: 0.9rem;">— EU Commissioner, Opening Briefing</cite>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">25</div>
+                    <div class="stat-label">Training Days</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">200+</div>
+                    <div class="stat-label">Participants</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">AI Roles</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">Client Hackathon</div>
+                </div>
+            </div>
+
+            <h3>Program Timeline</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="week">WEEK 1 (Feb 2-8)</div>
+                    <div class="title">Foundations</div>
+                    <div class="desc">AI Landscape, Prompt Engineering, Agentic Patterns, Role Introduction</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="week">WEEK 2 (Feb 9-15)</div>
+                    <div class="title">Role Deep Dive</div>
+                    <div class="desc">Specialization in your chosen role with real scenarios</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="week">WEEK 3 (Feb 16-22)</div>
+                    <div class="title">Spring Break</div>
+                    <div class="desc">Self-paced catch-up, exploration, certification prep</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="week">WEEKS 4-5 (Feb 23-Mar 14)</div>
+                    <div class="title">Team Projects</div>
+                    <div class="desc">Cross-functional teams building production-ready AI solutions</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="week">WEEK 6 (Mar 15)</div>
+                    <div class="title">Hackathon & Graduation</div>
+                    <div class="desc">Client presentation, demo day, certification</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h4 style="margin-top: 0;">Daily Format</h4>
+                <p><strong>90 min</strong> — Live Session (mentor-facilitated)</p>
+                <p style="margin-bottom: 0;"><strong>90 min</strong> — Self-Study (with AI Tutor)</p>
+            </div>
+
+            <div class="warning-box">
+                <span class="icon">&#9888;</span>
+                <p><strong>Key Difference:</strong> No lectures. No slides (mostly). Real situations, real decisions. AI Tutor as your learning partner.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 2: T-Shape -->
+        <section id="tshape">
+            <h2><span class="number">2</span> T-Shaped Learning</h2>
+
+            <div class="card" style="border-color: var(--accent-purple);">
+                <p style="margin-bottom: 0;"><strong>Broad foundations + Deep specialization = Client-ready consultant</strong></p>
+            </div>
+
+            <div class="tshape-diagram">
+                <div class="tshape-horizontal">
+                    <div class="item">Day 1: AI Landscape</div>
+                    <div class="item">Day 2: Prompts</div>
+                    <div class="item">Day 3: Agents</div>
+                    <div class="item">Day 4-5: Role Intro</div>
+                </div>
+                <div class="tshape-vertical">
+                    <div class="item purple">Week 2: Deep Dive</div>
+                    <div class="item purple">Role-Specific Skills</div>
+                    <div class="item purple">Advanced Patterns</div>
+                    <div class="item pink">Team Projects</div>
+                    <div class="item pink">Hackathon</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <p><strong style="color: var(--accent-blue);">Horizontal Bar:</strong> <span style="color: var(--text-secondary);">Everyone learns the same foundations (Days 1-5)</span></p>
+                <p><strong style="color: var(--accent-purple);">Vertical Stem:</strong> <span style="color: var(--text-secondary);">Deep specialization in your role (Week 2+)</span></p>
+                <p><strong style="color: var(--accent-pink);">Integration:</strong> <span style="color: var(--text-secondary);">Cross-functional collaboration (Weeks 4-6)</span></p>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Roles -->
+        <section id="roles">
+            <h2><span class="number">3</span> The 7 AI Roles</h2>
+
+            <div class="card">
+                <h4 style="margin-top: 0;">Why These 7 Roles?</h4>
+                <p style="margin-bottom: 0;">Based on Forward Deployed Engineering methodology (Palantir, Scale AI) and analysis of 50+ enterprise AI projects.</p>
+            </div>
+
+            <div class="roles-grid">
+                <div class="role-card" style="border-top: 3px solid var(--accent-blue);">
+                    <div class="role-code">FDE</div>
+                    <div class="role-name">Forward Deployed Engineer</div>
+                    <div class="role-focus">End-to-end delivery, customer-facing, rapid prototyping</div>
+                </div>
+                <div class="role-card" style="border-top: 3px solid var(--accent-purple);">
+                    <div class="role-code">AI-SE</div>
+                    <div class="role-name">AI Software Engineer</div>
+                    <div class="role-focus">Platform development, CI/CD, LLMOps, production systems</div>
+                </div>
+                <div class="role-card" style="border-top: 3px solid var(--accent-cyan);">
+                    <div class="role-code">AI-PM</div>
+                    <div class="role-name">AI Product Manager</div>
+                    <div class="role-focus">Use-case framing, roadmaps, stakeholder management</div>
+                </div>
+                <div class="role-card" style="border-top: 3px solid var(--accent-red);">
+                    <div class="role-code">AI-SEC</div>
+                    <div class="role-name">AI Security Consultant</div>
+                    <div class="role-focus">Threat modeling, red teaming, guardrails, compliance</div>
+                </div>
+                <div class="role-card" style="border-top: 3px solid var(--accent-green);">
+                    <div class="role-code">AI-FE</div>
+                    <div class="role-name">AI Front-End Developer</div>
+                    <div class="role-focus">AI-native UI, streaming, accessibility</div>
+                </div>
+                <div class="role-card" style="border-top: 3px solid var(--accent-pink);">
+                    <div class="role-code">AI-DS</div>
+                    <div class="role-name">AI Data Scientist</div>
+                    <div class="role-focus">Model evaluation, experiments, bias detection</div>
+                </div>
+                <div class="role-card" style="border-top: 3px solid var(--accent-orange);">
+                    <div class="role-code">AI-DA</div>
+                    <div class="role-name">AI Data Analyst</div>
+                    <div class="role-focus">Data pipelines, KPIs, dashboards, ROI storytelling</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: AI Landscape 2026 -->
+        <section id="landscape">
+            <h2><span class="number">4</span> AI Landscape 2026</h2>
+
+            <div class="comparison-grid">
+                <div class="comparison-box old">
+                    <h4>&#10060; Year 2023</h4>
+                    <ul>
+                        <li>Human → AI → Output</li>
+                        <li>AI as assistant</li>
+                        <li>Hallucinations as main problem</li>
+                        <li>Prompt engineering is everything</li>
+                    </ul>
+                </div>
+                <div class="comparison-box new">
+                    <h4>&#9989; Year 2026</h4>
+                    <ul>
+                        <li>Agent → Agent → Agent → Output</li>
+                        <li>AI as autonomous actor</li>
+                        <li>Autonomy vs. control as challenge</li>
+                        <li>Architecture and governance matter most</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>The New Generation of Models</h3>
+            <div class="card">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <th style="text-align: left; padding: 0.75rem; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">Model</th>
+                            <th style="text-align: left; padding: 0.75rem; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">Version</th>
+                            <th style="text-align: left; padding: 0.75rem; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">What's New</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 0.75rem; font-weight: 600;">GPT</td>
+                            <td style="padding: 0.75rem; color: var(--text-secondary);">5.2 (5.3 announced)</td>
+                            <td style="padding: 0.75rem; color: var(--text-secondary);">Native multi-agent coordination</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 0.75rem; font-weight: 600;">Claude</td>
+                            <td style="padding: 0.75rem; color: var(--text-secondary);">4.5 (4.7 announced)</td>
+                            <td style="padding: 0.75rem; color: var(--text-secondary);">Constitutional AI - model has "character"</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 0.75rem; font-weight: 600;">Gemini</td>
+                            <td style="padding: 0.75rem; color: var(--text-secondary);">3.0</td>
+                            <td style="padding: 0.75rem; color: var(--text-secondary);">Unlimited context, native multimodal</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; font-weight: 600;">Llama</td>
+                            <td style="padding: 0.75rem; color: var(--text-secondary);">4</td>
+                            <td style="padding: 0.75rem; color: var(--text-secondary);">Open-source parity with closed models</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box">
+                <span class="icon">&#128161;</span>
+                <p><strong>Key Insight:</strong> Agents are easy to build. Agents that enterprises can trust are hard. That's what KAF solves.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 5: KAF -->
+        <section id="kaf">
+            <h2><span class="number">5</span> Kyndryl Agentic AI Framework</h2>
+
+            <div class="card" style="border-color: var(--accent-green);">
+                <h4 style="margin-top: 0; color: var(--accent-green);">What Customers Actually Ask</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 0.5rem 0; color: var(--text-secondary); border-left: 3px solid var(--accent-orange); padding-left: 1rem; margin-bottom: 0.5rem;">"How do I know the agent won't do something dangerous?"</li>
+                    <li style="padding: 0.5rem 0; color: var(--text-secondary); border-left: 3px solid var(--accent-orange); padding-left: 1rem; margin-bottom: 0.5rem;">"Can I audit what decisions it made?"</li>
+                    <li style="padding: 0.5rem 0; color: var(--text-secondary); border-left: 3px solid var(--accent-orange); padding-left: 1rem; margin-bottom: 0.5rem;">"How does this connect to our ServiceNow / SAP?"</li>
+                    <li style="padding: 0.5rem 0; color: var(--text-secondary); border-left: 3px solid var(--accent-orange); padding-left: 1rem;">"Who's responsible when it fails at 2 AM?"</li>
+                </ul>
+            </div>
+
+            <h3>KAF Components</h3>
+            <div class="kaf-grid">
+                <div class="kaf-component">
+                    <div class="icon">&#128295;</div>
+                    <div class="name">Agent Builder</div>
+                    <div class="desc">Design & configure</div>
+                </div>
+                <div class="kaf-component">
+                    <div class="icon">&#9881;</div>
+                    <div class="name">AI Core</div>
+                    <div class="desc">Orchestration runtime</div>
+                </div>
+                <div class="kaf-component">
+                    <div class="icon">&#128218;</div>
+                    <div class="name">Agent Registry</div>
+                    <div class="desc">Discover & reuse</div>
+                </div>
+                <div class="kaf-component">
+                    <div class="icon">&#129504;</div>
+                    <div class="name">Memory</div>
+                    <div class="desc">Context management</div>
+                </div>
+                <div class="kaf-component">
+                    <div class="icon">&#128268;</div>
+                    <div class="name">Connectors</div>
+                    <div class="desc">ServiceNow, SAP, APIs</div>
+                </div>
+                <div class="kaf-component">
+                    <div class="icon">&#128737;</div>
+                    <div class="name">Governance</div>
+                    <div class="desc">Security, audit, compliance</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <span class="icon">&#128161;</span>
+                <p><strong>KAF solves the hard part:</strong> governance, orchestration, integration, accountability.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 6: Tools -->
+        <section id="tools">
+            <h2><span class="number">6</span> Your AI Toolkit</h2>
+
+            <div class="tools-grid">
+                <div class="tool-card" style="border-top: 3px solid var(--accent-green);">
+                    <div class="tool-icon">&#128172;</div>
+                    <h4>ChatGPT Enterprise</h4>
+                    <div class="tool-desc">AI Tutors for learning, exploration, and getting unstuck.</div>
+                    <ul>
+                        <li>Custom GPTs for each role</li>
+                        <li>Enterprise security</li>
+                        <li>Conversation history</li>
+                    </ul>
+                    <div class="access" style="color: var(--accent-green);">Access: Already provisioned</div>
+                </div>
+                <div class="tool-card" style="border-top: 3px solid var(--accent-blue);">
+                    <div class="tool-icon">&#127775;</div>
+                    <h4>Google Gemini</h4>
+                    <div class="tool-desc">Via Google Partner Advantage Program. Unlimited context, multimodal.</div>
+                    <ul>
+                        <li>Gemini 3.0 Pro access</li>
+                        <li>API credits included</li>
+                        <li>Long context window</li>
+                    </ul>
+                    <div class="access" style="color: var(--accent-blue);">Access: Requires Google ID setup</div>
+                </div>
+                <div class="tool-card" style="border-top: 3px solid var(--accent-purple);">
+                    <div class="tool-icon">&#128640;</div>
+                    <h4>Google Antigravity</h4>
+                    <div class="tool-desc">AI-native IDE (VS Code alternative). Our primary coding tool.</div>
+                    <ul>
+                        <li>Gemini 3 Pro built-in</li>
+                        <li>Agentic coding</li>
+                        <li>Browser control for testing</li>
+                    </ul>
+                    <div class="access" style="color: var(--accent-purple);">Access: antigravity.google</div>
+                </div>
+            </div>
+
+            <div class="card" style="border-left: 4px solid var(--accent-blue);">
+                <h4 style="margin-top: 0; color: var(--accent-blue);">&#128273; How to Get Your Google ID (@kyndryl.com)</h4>
+                <p style="margin-bottom: 1rem;">Required for Google Gemini and Antigravity access. Complete BEFORE Day 2.</p>
+                <ol style="color: var(--text-secondary); padding-left: 1.5rem;">
+                    <li style="margin-bottom: 0.5rem;">Go to <strong>OKTA</strong>: <a href="https://kyndrylokta.at.okta.com/" target="_blank" style="color: var(--accent-cyan);">kyndrylokta.at.okta.com</a></li>
+                    <li style="margin-bottom: 0.5rem;">Search for application <code style="background: var(--bg-tertiary); padding: 0.2rem 0.5rem; border-radius: 4px;">GCP_KD</code></li>
+                    <li style="margin-bottom: 0.5rem;">Click <strong>Request access</strong></li>
+                    <li style="margin-bottom: 0.5rem;">Select <strong style="color: var(--accent-green);">Add</strong> access</li>
+                    <li style="margin-bottom: 0.5rem;">For group, select: <code style="background: var(--bg-tertiary); padding: 0.2rem 0.5rem; border-radius: 4px;">GCP_KD-partner@kyndryl.com</code></li>
+                    <li style="margin-bottom: 0.5rem;">Add justification: <em>"AI Academy 2026 - need access to Google Partner tools for training"</em></li>
+                    <li>Submit the request</li>
+                </ol>
+            </div>
+
+            <div class="warning-box">
+                <span class="icon">&#9888;</span>
+                <p><strong>Approval Process:</strong> Your manager will receive an approval request first, followed by GCP Governance team. Allow <strong>1-2 business days</strong> for both approvals.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 7: Exercises -->
+        <section id="exercises">
+            <h2><span class="number">7</span> Today's Exercises</h2>
+
+            <div class="exercise-box">
+                <h4>&#127919; Exercise: AI Tutor Exploration (20 min)</h4>
+                <p style="margin-bottom: 1rem;">Experience learning with AI — the core method of this Academy.</p>
+                <ol class="exercise-steps">
+                    <li>Open ChatGPT Enterprise or Google Gemini</li>
+                    <li>Find "AI Academy - AI Tutor" (ChatGPT) or use Gemini directly</li>
+                    <li>Paste the bank scenario context (provided by mentor)</li>
+                    <li>Discuss for 15-20 minutes</li>
+                    <li>Note down 3 key insights you discovered</li>
+                </ol>
+            </div>
+
+            <div class="assignment-box">
+                <h4>&#128221; Assignment: Create Your Own Agent</h4>
+                <p style="margin-bottom: 1rem;">Identify ONE process from your work that an agent could perform.</p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div>
+                        <h5 style="margin-bottom: 0.75rem;">Deliverables</h5>
+                        <ol style="color: var(--text-secondary); padding-left: 1.5rem;">
+                            <li style="margin-bottom: 0.5rem;">System prompt (max 500 words)</li>
+                            <li style="margin-bottom: 0.5rem;">3 input/output examples</li>
+                            <li>What agent does NOT do</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h5 style="margin-bottom: 0.75rem;">Success Criteria</h5>
+                        <div style="padding: 1rem; border: 1px dashed var(--border); border-radius: 8px;">
+                            <p style="font-size: 0.9rem; margin: 0;">
+                                &#10003; Single, clear purpose<br>
+                                &#10003; Clear boundaries<br>
+                                &#10003; Predictable output<br>
+                                &#10003; Value explainable in 30 seconds
+                            </p>
+                        </div>
+                        <p style="margin-top: 1rem; font-weight: 500; color: var(--accent-orange);">&#128197; Deadline: Tomorrow, 9:00 AM</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: Summary -->
+        <section id="summary">
+            <h2><span class="number">8</span> Key Messages</h2>
+
+            <div class="takeaways">
+                <h3>&#127919; Today's Takeaways</h3>
+                <ol>
+                    <li>AI in 2026 = Autonomously acting systems</li>
+                    <li>Your role shifts from operator to architect</li>
+                    <li>Without structure, there's no scaling</li>
+                    <li>KAF = Kyndryl's answer to enterprise AI</li>
+                    <li>The best way to learn = create</li>
+                </ol>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+                <div class="card">
+                    <h4 style="margin-top: 0;">&#128197; Tomorrow: Day 2</h4>
+                    <h5 style="color: var(--accent-blue); margin-bottom: 0.5rem;">AI Security Fundamentals</h5>
+                    <ul style="color: var(--text-secondary); padding-left: 1.25rem;">
+                        <li>OWASP Top 10 for LLMs</li>
+                        <li>Code analysis for vulnerabilities</li>
+                        <li>Secure authentication with Clerk</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4 style="margin-top: 0;">&#128218; Self-Study Tonight</h4>
+                    <ul style="color: var(--text-secondary); padding-left: 1.25rem;">
+                        <li>Complete required reading</li>
+                        <li>Complete your agent assignment</li>
+                        <li>Submit by 09:00 tomorrow</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card" style="border-color: var(--accent-blue); text-align: center; margin-top: 2rem;">
+                <p style="font-size: 1.25rem; font-style: italic; margin-bottom: 0;">"The future belongs to those who create it.<br>Not those who read about it."</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>AI Academy 2026 &bull; Kyndryl &bull; Day 1: The New Reality</p>
+        <p style="margin-top: 0.5rem;">February 2, 2026</p>
+    </footer>
+
+    <script>
+        // Theme handling
+        const html = document.documentElement;
+        const lightBtn = document.getElementById('theme-light');
+        const darkBtn = document.getElementById('theme-dark');
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        setTheme(savedTheme);
+
+        function setTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            if (theme === 'light') {
+                lightBtn.classList.add('active');
+                darkBtn.classList.remove('active');
+            } else {
+                darkBtn.classList.add('active');
+                lightBtn.classList.remove('active');
+            }
+        }
+
+        lightBtn.addEventListener('click', () => setTheme('light'));
+        darkBtn.addEventListener('click', () => setTheme('dark'));
+
+        // Smooth scroll
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+                document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Active nav on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            let current = '';
+            sections.forEach(section => {
+                if (scrollY >= section.offsetTop - 200) current = section.getAttribute('id');
+            });
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

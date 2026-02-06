@@ -20,8 +20,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Academy Dashboard",
-  description: "AI Academy Dashboard - Progress Tracking & Leaderboard",
+  title: "AI Academy",
+  description: "AI Academy - Kyndryl AI Training Portal",
   icons: {
     icon: "/icons/icon.svg",
     shortcut: "/icons/icon.svg",

@@ -1,0 +1,3646 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Academy | System Design & Governance Blueprint</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Theme Variables */
+        :root {
+            --transition-speed: 0.3s;
+        }
+
+        /* Dark Theme (default) */
+        [data-theme="dark"] {
+            --bg-primary: #0f1419;
+            --bg-secondary: #1a1f26;
+            --bg-tertiary: #242b35;
+            --bg-card: #1a1f26;
+            --bg-card-hover: #242b35;
+            --bg-code: #0d1117;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #2d3748;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.5);
+            --nav-bg: rgba(15, 20, 25, 0.9);
+            --hero-gradient: radial-gradient(ellipse at top, rgba(139, 92, 246, 0.15) 0%, transparent 60%);
+        }
+
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --bg-code: #1e293b;
+            --accent-blue: #2563eb;
+            --accent-green: #059669;
+            --accent-orange: #d97706;
+            --accent-purple: #7c3aed;
+            --accent-red: #dc2626;
+            --accent-cyan: #0891b2;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --hero-gradient: linear-gradient(180deg, #f5f3ff 0%, #ffffff 100%);
+        }
+
+        :root {
+            --gradient-1: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+            --gradient-2: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+            transition: background var(--transition-speed), color var(--transition-speed);
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--accent-purple);
+            color: white;
+            padding: 8px 16px;
+            z-index: 10000;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 0 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 0;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 0.5rem;
+            list-style: none;
+            overflow-x: auto;
+            padding: 0.25rem 0;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.35rem;
+        }
+
+        .theme-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle-btn.active {
+            background: var(--accent-purple);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: var(--hero-gradient);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-badge span {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-purple);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .time-box {
+            display: inline-flex;
+            gap: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+        }
+
+        .time-item {
+            text-align: center;
+        }
+
+        .time-item .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+        }
+
+        .time-item .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 5rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2 .number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 10px;
+            font-size: 1rem;
+            color: white;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--accent-purple);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Prompt Box */
+        .prompt-box {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .prompt-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-purple);
+        }
+
+        .prompt-content {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            color: var(--text-secondary);
+        }
+
+        /* Warning/Info Boxes */
+        .warning-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .warning-box .icon { font-size: 1.25rem; }
+        .warning-box p { margin: 0; color: var(--accent-orange); font-size: 0.9rem; }
+
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .info-box .icon { font-size: 1.25rem; }
+        .info-box p { margin: 0; color: var(--accent-blue); font-size: 0.9rem; }
+
+        .critical-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .critical-box .icon { font-size: 1.25rem; }
+        .critical-box p { margin: 0; color: var(--accent-red); font-size: 0.9rem; }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .checklist li {
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .checklist li:hover {
+            background: var(--bg-secondary);
+        }
+
+        .checklist input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent-green);
+        }
+
+        /* Copy Button */
+        .copy-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-purple);
+            border-color: var(--accent-purple);
+            color: white;
+        }
+
+        /* ==================== */
+        /* ILLUSTRATED DIAGRAMS */
+        /* ==================== */
+
+        /* Agent Lifecycle Flow - CSS Only */
+        .lifecycle-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .lifecycle-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.25rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            min-width: 100px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .lifecycle-step:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-purple);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.2);
+        }
+
+        .lifecycle-step.active {
+            border-color: var(--accent-purple);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .lifecycle-step .step-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .lifecycle-step .step-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .lifecycle-arrow {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+        }
+
+        /* KAF Architecture Diagram - CSS Only */
+        .kaf-architecture {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .kaf-layers {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .kaf-layer {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .kaf-layer-label {
+            width: 120px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .kaf-layer-content {
+            flex: 1;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .kaf-box {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .kaf-box.ingestion {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .kaf-box.knowledge {
+            background: rgba(6, 182, 212, 0.15);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .kaf-box.core {
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid var(--accent-purple);
+            color: var(--accent-purple);
+        }
+
+        .kaf-box.builder {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .kaf-box.governance {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid var(--accent-orange);
+            color: var(--accent-orange);
+        }
+
+        .kaf-connector {
+            display: flex;
+            justify-content: center;
+            padding: 0.5rem 0;
+        }
+
+        .kaf-connector-line {
+            width: 2px;
+            height: 20px;
+            background: var(--border);
+            position: relative;
+        }
+
+        .kaf-connector-line::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: -3px;
+            border: 4px solid transparent;
+            border-top-color: var(--border);
+        }
+
+        /* Interactive Governance Cards */
+        .governance-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .gov-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .gov-card:hover {
+            border-color: var(--accent-purple);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.15);
+        }
+
+        .gov-card-header {
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .gov-card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .gov-card-title {
+            flex: 1;
+        }
+
+        .gov-card-title h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        .gov-card-title p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .gov-card-expand {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .gov-card.expanded .gov-card-expand {
+            transform: rotate(180deg);
+        }
+
+        .gov-card-preview {
+            padding: 1rem 1.25rem;
+            background: var(--bg-secondary);
+        }
+
+        .gov-card-detail {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+
+        .gov-card.expanded .gov-card-detail {
+            max-height: 10000px;
+            overflow: visible;
+            overflow-x: auto;
+        }
+
+        .gov-card-content {
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .gov-card-content .prompt-box {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .gov-card-content .prompt-content {
+            max-height: none;
+            overflow-x: auto;
+        }
+
+        .gov-card-content table {
+            width: 100%;
+            min-width: 500px;
+        }
+
+        /* Responsive grids inside gov cards */
+        .gov-card-content [style*="grid-template-columns: repeat(2"] {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+        }
+
+        .gov-card-content .visual-diagram > div {
+            overflow-x: auto;
+            min-width: 0;
+        }
+
+        /* Good vs Bad Examples */
+        .example-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .example-box {
+            padding: 1rem;
+            border-radius: 12px;
+            border: 2px solid;
+            min-width: 0;
+            overflow-wrap: break-word;
+        }
+
+        .example-box.bad {
+            background: rgba(239, 68, 68, 0.05);
+            border-color: var(--accent-red);
+        }
+
+        .example-box.good {
+            background: rgba(16, 185, 129, 0.05);
+            border-color: var(--accent-green);
+        }
+
+        .example-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .example-box.bad .example-header {
+            color: var(--accent-red);
+        }
+
+        .example-box.good .example-header {
+            color: var(--accent-green);
+        }
+
+        .example-content {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .example-content code {
+            background: var(--bg-tertiary);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        /* Visual Diagram in Cards */
+        .visual-diagram {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            min-width: 0;
+        }
+
+        .diagram-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        /* Role Hierarchy Diagram */
+        .role-hierarchy {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .role-level {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .role-node {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .role-node.human {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .role-node.agent {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid var(--accent-purple);
+            color: var(--accent-purple);
+        }
+
+        .role-node.system {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .hierarchy-connector {
+            width: 2px;
+            height: 20px;
+            background: var(--border);
+            margin: 0 auto;
+        }
+
+        .hierarchy-branch {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hierarchy-branch::before,
+        .hierarchy-branch::after {
+            content: '';
+            width: 50px;
+            height: 2px;
+            background: var(--border);
+        }
+
+        /* Decision Flow */
+        .decision-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .decision-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .decision-input {
+            flex: 1;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .decision-arrow {
+            color: var(--text-muted);
+        }
+
+        .decision-output {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .decision-output.auto {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-green);
+        }
+
+        .decision-output.human {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-orange);
+        }
+
+        .decision-output.reject {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+        }
+
+        /* Failure Mode Diagram */
+        .failure-diagram {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            overflow-x: auto;
+            min-width: 0;
+        }
+
+        .failure-scenario {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 12px;
+            background: var(--bg-tertiary);
+        }
+
+        .failure-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .failure-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .failure-action {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .failure-action.stop {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+        }
+
+        .failure-action.degrade {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-orange);
+        }
+
+        .failure-action.escalate {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-blue);
+        }
+
+        /* Trust Zones Diagram */
+        .trust-zones {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .trust-zone {
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            min-width: 0;
+            overflow-wrap: break-word;
+        }
+
+        .trust-zone.authoritative {
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--accent-green);
+        }
+
+        .trust-zone.advisory {
+            background: rgba(245, 158, 11, 0.1);
+            border: 2px solid var(--accent-orange);
+        }
+
+        .trust-zone.untrusted {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid var(--accent-red);
+        }
+
+        .trust-zone-header {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .trust-zone.authoritative .trust-zone-header { color: var(--accent-green); }
+        .trust-zone.advisory .trust-zone-header { color: var(--accent-orange); }
+        .trust-zone.untrusted .trust-zone-header { color: var(--accent-red); }
+
+        .trust-item {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            padding: 0.25rem 0;
+        }
+
+        /* Audit Trail Visual */
+        .audit-trail {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .audit-entry {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+
+        .audit-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            width: 70px;
+        }
+
+        .audit-type {
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            width: 60px;
+            text-align: center;
+        }
+
+        .audit-type.input { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); }
+        .audit-type.decision { background: rgba(139, 92, 246, 0.2); color: var(--accent-purple); }
+        .audit-type.output { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+
+        .audit-detail {
+            flex: 1;
+            color: var(--text-secondary);
+        }
+
+        /* Change Process Visual */
+        .change-process {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .change-step {
+            flex: 1;
+            text-align: center;
+            padding: 0.75rem 0.5rem;
+        }
+
+        .change-step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .change-step:nth-child(1) .change-step-icon { background: rgba(59, 130, 246, 0.2); }
+        .change-step:nth-child(2) .change-step-icon { background: rgba(139, 92, 246, 0.2); }
+        .change-step:nth-child(3) .change-step-icon { background: rgba(245, 158, 11, 0.2); }
+        .change-step:nth-child(4) .change-step-icon { background: rgba(16, 185, 129, 0.2); }
+
+        .change-step-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .change-arrow {
+            color: var(--text-muted);
+        }
+
+        /* Risk Heatmap */
+        .heatmap-container {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .heatmap-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            min-width: 800px;
+        }
+
+        .heatmap-table th,
+        .heatmap-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .heatmap-table th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .heatmap-table td {
+            color: var(--text-secondary);
+        }
+
+        .heatmap-table tr:hover td {
+            background: var(--bg-secondary);
+        }
+
+        .risk-cell {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            min-width: 80px;
+            text-transform: uppercase;
+        }
+
+        .risk-critical { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .risk-high { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .risk-medium { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+
+        .question-category {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+        }
+
+        /* Risk Summary Visual */
+        .risk-summary {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .risk-bar {
+            flex: 1;
+            min-width: 200px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .risk-bar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .risk-bar-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .risk-bar-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .risk-bar-visual {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .risk-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        .risk-bar.critical .risk-bar-fill { background: var(--accent-red); width: 40%; }
+        .risk-bar.critical .risk-bar-label, .risk-bar.critical .risk-bar-value { color: var(--accent-red); }
+
+        .risk-bar.high .risk-bar-fill { background: var(--accent-orange); width: 45%; }
+        .risk-bar.high .risk-bar-label, .risk-bar.high .risk-bar-value { color: var(--accent-orange); }
+
+        .risk-bar.medium .risk-bar-fill { background: var(--accent-blue); width: 10%; }
+        .risk-bar.medium .risk-bar-label, .risk-bar.medium .risk-bar-value { color: var(--accent-blue); }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-purple);
+            background: var(--bg-secondary);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent-purple);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Exercise Box */
+        .exercise-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exercise-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-green);
+        }
+
+        .exercise-steps {
+            list-style: none;
+            counter-reset: step;
+        }
+
+        .exercise-steps li {
+            counter-increment: step;
+            padding: 0.75rem 0;
+            padding-left: 3rem;
+            position: relative;
+            color: var(--text-secondary);
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .exercise-steps li:last-child {
+            border-bottom: none;
+        }
+
+        .exercise-steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0.75rem;
+            width: 28px;
+            height: 28px;
+            background: var(--accent-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* Document Preview */
+        .doc-preview {
+            background: var(--bg-card);
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .doc-page {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .doc-page::before {
+            content: attr(data-page);
+            position: absolute;
+            top: -10px;
+            right: 1rem;
+            background: var(--accent-purple);
+            color: white;
+            padding: 0.2rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .doc-section {
+            border-left: 3px solid var(--accent-purple);
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .doc-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .doc-section h6 {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .doc-section p {
+            font-size: 0.8rem;
+            margin: 0;
+        }
+
+        /* Grading Table */
+        .grading-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .grading-table th,
+        .grading-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .grading-table th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        .points {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--accent-purple);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge.pass { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+        .badge.fail { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Final Flow */
+        .final-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .final-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            min-width: 90px;
+        }
+
+        .final-step-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .final-step-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .final-arrow {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+        }
+
+        footer a {
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; gap: 0.75rem; }
+            nav ul { width: 100%; justify-content: center; }
+            .hero { padding: 7rem 1rem 2rem; }
+            .time-box { flex-direction: column; gap: 1rem; }
+            main { padding: 1rem; }
+            .governance-cards { grid-template-columns: 1fr; }
+            .example-comparison { grid-template-columns: 1fr; }
+            .failure-diagram { grid-template-columns: 1fr; }
+            .trust-zones { grid-template-columns: 1fr; }
+            .change-process { flex-direction: column; }
+            .lifecycle-flow { flex-direction: column; }
+            .kaf-layer { flex-direction: column; align-items: flex-start; }
+            .kaf-layer-label { text-align: left; width: auto; }
+        }
+
+        @media print {
+            nav, .theme-toggle, .copy-btn { display: none !important; }
+            .hero { padding-top: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <nav>
+        <div class="nav-container">
+            <ul>
+                <li><a href="#homework" class="active">Homework</a></li>
+                <li><a href="#blueprint">Blueprint</a></li>
+                <li><a href="#kaf">KAF</a></li>
+                <li><a href="#governance-deep">Governance</a></li>
+                <li><a href="#questions">20 Questions</a></li>
+                <li><a href="#documentation">Documentation</a></li>
+                <li><a href="#exercise">Exercise</a></li>
+            </ul>
+            <div class="theme-toggle">
+                <button class="theme-toggle-btn" id="theme-light" aria-label="Light theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                </button>
+                <button class="theme-toggle-btn active" id="theme-dark" aria-label="Dark theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-badge">
+            <span></span>
+            AI Academy 2026 &bull; Day 4
+        </div>
+        <h1>System Design & Governance Blueprint</h1>
+        <p>From uncontrolled automation to enterprise-ready agentic systems. Building AI agents that can be explained, governed, trusted, and operated at scale.</p>
+        <div class="time-box">
+            <div class="time-item">
+                <div class="value">90</div>
+                <div class="label">minutes</div>
+            </div>
+            <div class="time-item">
+                <div class="value">20</div>
+                <div class="label">killer questions</div>
+            </div>
+            <div class="time-item">
+                <div class="value">1</div>
+                <div class="label">governance doc</div>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <!-- SECTION 1: Homework Review -->
+        <section id="homework">
+            <h2><span class="number">1</span> Homework Validation: Vector Database</h2>
+
+            <div class="card">
+                <p><strong>Yesterday's task:</strong> Enable <code>pgvector</code> extension, add embedding column to messages table, create similarity search function.</p>
+            </div>
+
+            <div class="prompt-box">
+                <h4>&#129302; AI Tutor: Vector Database Validation</h4>
+                <p style="margin-bottom: 1rem; color: var(--text-secondary);">Copy this prompt into ChatGPT Enterprise. The AI will verify your work.</p>
+                <div class="prompt-content">You are my mentor for database architecture. Yesterday I implemented vector database capabilities in Supabase.
+
+Your task:
+1. Ask me 5 questions about my work (one at a time)
+2. After each answer, give me brief feedback
+3. At the end, give me an overall rating (1-5 stars)
+
+Questions should cover:
+- Did I successfully enable the pgvector extension?
+- What embedding dimension did I choose and why (768, 1536, 3072)?
+- Did I encounter any errors? How did I solve them?
+- Can I explain what the <=> operator does?
+- Did I test the search function with actual data?
+
+If I didn't complete it, help me understand the key concepts in 3 minutes.
+
+Start with the first question.</div>
+                <button class="copy-btn" onclick="copyPrompt(this)" style="margin-top: 1rem;">Copy prompt</button>
+            </div>
+
+            <h3>Expected Outcomes</h3>
+            <ul class="checklist">
+                <li><input type="checkbox" id="check1"> <label for="check1">pgvector extension enabled</label></li>
+                <li><input type="checkbox" id="check2"> <label for="check2">Added <code>embedding vector(1536)</code> column</label></li>
+                <li><input type="checkbox" id="check3"> <label for="check3">Created similarity search function</label></li>
+                <li><input type="checkbox" id="check4"> <label for="check4">Tested with sample data</label></li>
+            </ul>
+
+            <div class="warning-box">
+                <span class="icon">&#9201;</span>
+                <p><strong>Time limit:</strong> 5 minutes for self-assessment. Then we move to Governance.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Governance Blueprint -->
+        <section id="blueprint">
+            <h2><span class="number">2</span> Governance Blueprint Overview</h2>
+
+            <div class="card" style="border-color: var(--accent-purple);">
+                <h3 style="margin-top: 0;">Why Governance Matters</h3>
+                <p style="margin-bottom: 0;">This blueprint ensures agentic solutions are: <strong>explainable</strong>, <strong>governable</strong>, <strong>auditable</strong>, <strong>secure</strong>, and <strong>enterprise-ready</strong>.</p>
+            </div>
+
+            <h3>The Agent Lifecycle</h3>
+
+            <div class="lifecycle-flow">
+                <div class="lifecycle-step">
+                    <div class="step-icon">&#128209;</div>
+                    <div class="step-label">Design</div>
+                </div>
+                <div class="lifecycle-arrow">&#8594;</div>
+                <div class="lifecycle-step">
+                    <div class="step-icon">&#128736;</div>
+                    <div class="step-label">Build</div>
+                </div>
+                <div class="lifecycle-arrow">&#8594;</div>
+                <div class="lifecycle-step active">
+                    <div class="step-icon">&#128737;</div>
+                    <div class="step-label">Govern</div>
+                </div>
+                <div class="lifecycle-arrow">&#8594;</div>
+                <div class="lifecycle-step">
+                    <div class="step-icon">&#9881;&#65039;</div>
+                    <div class="step-label">Operate</div>
+                </div>
+                <div class="lifecycle-arrow">&#8594;</div>
+                <div class="lifecycle-step">
+                    <div class="step-icon">&#128200;</div>
+                    <div class="step-label">Evolve</div>
+                </div>
+            </div>
+
+            <div class="critical-box">
+                <span class="icon">&#9888;</span>
+                <p><strong>Most projects fail at Govern.</strong> They build agents that work, but cannot be explained, audited, or safely operated.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 3: KAF Components -->
+        <section id="kaf">
+            <h2><span class="number">3</span> KAF Components Architecture</h2>
+
+            <div class="info-box">
+                <span class="icon">&#127919;</span>
+                <p><strong>Key Rule:</strong> Every design decision must map to a KAF component. Unmapped decisions are treated as non-existent.</p>
+            </div>
+
+            <div class="kaf-architecture">
+                <h4 style="text-align: center; margin-bottom: 1.5rem;">Kyndryl Agentic AI Framework</h4>
+                <div class="kaf-layers">
+                    <div class="kaf-layer">
+                        <div class="kaf-layer-label">DATA LAYER</div>
+                        <div class="kaf-layer-content">
+                            <div class="kaf-box ingestion">&#128229; Agentic Ingestion</div>
+                            <div class="kaf-box knowledge">&#128218; Knowledge Integration</div>
+                        </div>
+                    </div>
+                    <div class="kaf-connector">
+                        <div class="kaf-connector-line"></div>
+                    </div>
+                    <div class="kaf-layer">
+                        <div class="kaf-layer-label">INTELLIGENCE</div>
+                        <div class="kaf-layer-content">
+                            <div class="kaf-box core">&#129504; Agentic Core</div>
+                        </div>
+                    </div>
+                    <div class="kaf-connector">
+                        <div class="kaf-connector-line"></div>
+                    </div>
+                    <div class="kaf-layer">
+                        <div class="kaf-layer-label">DELIVERY</div>
+                        <div class="kaf-layer-content">
+                            <div class="kaf-box builder">&#128736; Agent Builder</div>
+                        </div>
+                    </div>
+                    <div class="kaf-layer" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 2px dashed var(--border);">
+                        <div class="kaf-layer-label">CONTROL</div>
+                        <div class="kaf-layer-content">
+                            <div class="kaf-box governance">&#128737; Responsible AI & Governance</div>
+                            <span style="color: var(--text-muted); font-size: 0.8rem; align-self: center;">&#8592; Applies policies to ALL layers</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card" style="border-color: var(--accent-red);">
+                    <div class="stat-value" style="-webkit-text-fill-color: var(--accent-red);">&#9888;</div>
+                    <div class="stat-label">Over-engineering</div>
+                    <p style="font-size: 0.75rem; margin-top: 0.5rem; color: var(--text-muted);">Everything maps to Agentic Core only</p>
+                </div>
+                <div class="stat-card" style="border-color: var(--accent-orange);">
+                    <div class="stat-value" style="-webkit-text-fill-color: var(--accent-orange);">&#9888;</div>
+                    <div class="stat-label">Over-governing</div>
+                    <p style="font-size: 0.75rem; margin-top: 0.5rem; color: var(--text-muted);">Everything maps to Responsible AI only</p>
+                </div>
+                <div class="stat-card" style="border-color: var(--accent-green);">
+                    <div class="stat-value" style="-webkit-text-fill-color: var(--accent-green);">&#10003;</div>
+                    <div class="stat-label">Balanced</div>
+                    <p style="font-size: 0.75rem; margin-top: 0.5rem; color: var(--text-muted);">Spans ALL components</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: Governance Deep Dive - INTERACTIVE CARDS -->
+        <section id="governance-deep">
+            <h2><span class="number">4</span> Governance Deep Dive</h2>
+            <p>Click each card to expand detailed illustrations, examples, and best practices.</p>
+
+            <div class="governance-cards">
+                <!-- Card 1: Agent Role Model -->
+                <div class="gov-card" onclick="toggleCard(this)">
+                    <div class="gov-card-header">
+                        <div class="gov-card-icon" style="background: rgba(59, 130, 246, 0.15);">&#128100;</div>
+                        <div class="gov-card-title">
+                            <h4>Agent Role Model</h4>
+                            <p>Who does what & authority levels</p>
+                        </div>
+                        <div class="gov-card-expand">&#9660;</div>
+                    </div>
+                    <div class="gov-card-preview">
+                        <small style="color: var(--text-muted);">Define all agent roles, responsibilities, and boundaries</small>
+                    </div>
+                    <div class="gov-card-detail">
+                        <div class="gov-card-content">
+                            <div class="visual-diagram">
+                                <div class="diagram-title">Role Hierarchy</div>
+                                <div class="role-hierarchy">
+                                    <div class="role-level">
+                                        <div class="role-node human">&#128100; Human Supervisor</div>
+                                    </div>
+                                    <div class="hierarchy-connector"></div>
+                                    <div class="hierarchy-branch">
+                                        <div style="width: 2px; height: 2px;"></div>
+                                    </div>
+                                    <div class="role-level">
+                                        <div class="role-node agent">&#129302; Decision Agent</div>
+                                        <div class="role-node agent">&#128269; Validation Agent</div>
+                                    </div>
+                                    <div class="hierarchy-connector"></div>
+                                    <div class="role-level">
+                                        <div class="role-node system">&#9881; Execution Agent</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 style="margin-top: 1.5rem; margin-bottom: 1rem;">Good vs Bad Examples</h5>
+                            <div class="example-comparison">
+                                <div class="example-box bad">
+                                    <div class="example-header">&#10060; Bad Practice</div>
+                                    <div class="example-content">
+                                        "The AI agent handles everything"<br><br>
+                                        "Team is responsible for the agent"<br><br>
+                                        No clear authority boundaries
+                                    </div>
+                                </div>
+                                <div class="example-box good">
+                                    <div class="example-header">&#9989; Good Practice</div>
+                                    <div class="example-content">
+                                        <strong>Triage Agent:</strong> Classifies P1-P4<br>
+                                        <strong>Decision Agent:</strong> Recommends actions<br>
+                                        <strong>Execution Agent:</strong> Runs approved fixes<br>
+                                        <strong>Owner:</strong> Jane Smith, Platform Lead
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="info-box" style="margin-top: 1rem;">
+                                <span class="icon">&#128161;</span>
+                                <p><strong>Rule:</strong> A role, not a team name. "DevOps" is not accountable - "John, DevOps Lead" is.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Behavior & Decision Model -->
+                <div class="gov-card" onclick="toggleCard(this)">
+                    <div class="gov-card-header">
+                        <div class="gov-card-icon" style="background: rgba(139, 92, 246, 0.15);">&#129504;</div>
+                        <div class="gov-card-title">
+                            <h4>Behavior & Decision Model</h4>
+                            <p>Autonomy levels & guardrails</p>
+                        </div>
+                        <div class="gov-card-expand">&#9660;</div>
+                    </div>
+                    <div class="gov-card-preview">
+                        <small style="color: var(--text-muted);">What can be automated vs requires human approval</small>
+                    </div>
+                    <div class="gov-card-detail">
+                        <div class="gov-card-content">
+                            <div class="visual-diagram">
+                                <div class="diagram-title">Decision Authority Matrix</div>
+                                <div class="decision-flow">
+                                    <div class="decision-row">
+                                        <div class="decision-input">P4 incident + known fix in KB</div>
+                                        <div class="decision-arrow">&#8594;</div>
+                                        <div class="decision-output auto">&#9889; AUTO-EXECUTE</div>
+                                    </div>
+                                    <div class="decision-row">
+                                        <div class="decision-input">P3 incident + high confidence</div>
+                                        <div class="decision-arrow">&#8594;</div>
+                                        <div class="decision-output auto">&#9889; AUTO-EXECUTE</div>
+                                    </div>
+                                    <div class="decision-row">
+                                        <div class="decision-input">P2 incident + any confidence</div>
+                                        <div class="decision-arrow">&#8594;</div>
+                                        <div class="decision-output human">&#128100; HUMAN APPROVAL</div>
+                                    </div>
+                                    <div class="decision-row">
+                                        <div class="decision-input">P1 incident (any)</div>
+                                        <div class="decision-arrow">&#8594;</div>
+                                        <div class="decision-output human">&#128100; HUMAN REQUIRED</div>
+                                    </div>
+                                    <div class="decision-row">
+                                        <div class="decision-input">Unknown root cause</div>
+                                        <div class="decision-arrow">&#8594;</div>
+                                        <div class="decision-output reject">&#128721; REFUSE + ESCALATE</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 style="margin-top: 1.5rem; margin-bottom: 1rem;">Good vs Bad Examples</h5>
+                            <div class="example-comparison">
+                                <div class="example-box bad">
+                                    <div class="example-header">&#10060; Bad Practice</div>
+                                    <div class="example-content">
+                                        "Agent uses best effort"<br><br>
+                                        "Agent decides as needed"<br><br>
+                                        "High-risk actions are handled carefully"
+                                    </div>
+                                </div>
+                                <div class="example-box good">
+                                    <div class="example-header">&#9989; Good Practice</div>
+                                    <div class="example-content">
+                                        <strong>MUST AUTO:</strong> P4 with KB match > 90%<br>
+                                        <strong>MUST ESCALATE:</strong> P1/P2, confidence < 70%<br>
+                                        <strong>MUST REFUSE:</strong> No KB match, unclear scope<br>
+                                        <strong>NEVER:</strong> Delete data, change configs
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="critical-box" style="margin-top: 1rem;">
+                                <span class="icon">&#9888;</span>
+                                <p><strong>"Best effort" is not a strategy.</strong> Every behavior must be explicitly defined.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Failure & Degradation -->
+                <div class="gov-card" onclick="toggleCard(this)">
+                    <div class="gov-card-header">
+                        <div class="gov-card-icon" style="background: rgba(239, 68, 68, 0.15);">&#128680;</div>
+                        <div class="gov-card-title">
+                            <h4>Failure & Degradation</h4>
+                            <p>What happens when things break</p>
+                        </div>
+                        <div class="gov-card-expand">&#9660;</div>
+                    </div>
+                    <div class="gov-card-preview">
+                        <small style="color: var(--text-muted);">Graceful degradation & stop conditions</small>
+                    </div>
+                    <div class="gov-card-detail">
+                        <div class="gov-card-content">
+                            <div class="visual-diagram">
+                                <div class="diagram-title">Failure Scenarios & Responses</div>
+                                <div class="failure-diagram">
+                                    <div class="failure-scenario">
+                                        <div class="failure-icon">&#129504;</div>
+                                        <div class="failure-name">LLM Timeout</div>
+                                        <div class="failure-action stop">STOP + QUEUE</div>
+                                    </div>
+                                    <div class="failure-scenario">
+                                        <div class="failure-icon">&#128451;</div>
+                                        <div class="failure-name">DB Unavailable</div>
+                                        <div class="failure-action degrade">READ-ONLY MODE</div>
+                                    </div>
+                                    <div class="failure-scenario">
+                                        <div class="failure-icon">&#128279;</div>
+                                        <div class="failure-name">API Failure</div>
+                                        <div class="failure-action escalate">ESCALATE</div>
+                                    </div>
+                                    <div class="failure-scenario">
+                                        <div class="failure-icon">&#128203;</div>
+                                        <div class="failure-name">Low Confidence</div>
+                                        <div class="failure-action escalate">HUMAN REVIEW</div>
+                                    </div>
+                                    <div class="failure-scenario">
+                                        <div class="failure-icon">&#128296;</div>
+                                        <div class="failure-name">Contradictory Data</div>
+                                        <div class="failure-action stop">STOP + ALERT</div>
+                                    </div>
+                                    <div class="failure-scenario">
+                                        <div class="failure-icon">&#128274;</div>
+                                        <div class="failure-name">Auth Failure</div>
+                                        <div class="failure-action stop">FULL STOP</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 style="margin-top: 1.5rem; margin-bottom: 1rem;">Good vs Bad Examples</h5>
+                            <div class="example-comparison">
+                                <div class="example-box bad">
+                                    <div class="example-header">&#10060; Bad Practice</div>
+                                    <div class="example-content">
+                                        "System retries 3 times"<br><br>
+                                        "Falls back to default behavior"<br><br>
+                                        "Logs error and continues"
+                                    </div>
+                                </div>
+                                <div class="example-box good">
+                                    <div class="example-header">&#9989; Good Practice</div>
+                                    <div class="example-content">
+                                        <strong>LLM fail:</strong> Queue incident, page on-call<br>
+                                        <strong>DB fail:</strong> Read-only, no new tickets<br>
+                                        <strong>Confidence &lt; 60%:</strong> STOP, human review<br>
+                                        <strong>Any P1:</strong> Never auto-act, always escalate
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="warning-box" style="margin-top: 1rem;">
+                                <span class="icon">&#128161;</span>
+                                <p><strong>Stopping is often safer than improvising.</strong> Define explicit halt conditions.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Trust Boundaries -->
+                <div class="gov-card" onclick="toggleCard(this)">
+                    <div class="gov-card-header">
+                        <div class="gov-card-icon" style="background: rgba(16, 185, 129, 0.15);">&#128274;</div>
+                        <div class="gov-card-title">
+                            <h4>Trust Boundaries</h4>
+                            <p>Data sources & access control</p>
+                        </div>
+                        <div class="gov-card-expand">&#9660;</div>
+                    </div>
+                    <div class="gov-card-preview">
+                        <small style="color: var(--text-muted);">Authoritative vs advisory data sources</small>
+                    </div>
+                    <div class="gov-card-detail">
+                        <div class="gov-card-content">
+                            <div class="visual-diagram">
+                                <div class="diagram-title">Data Trust Zones</div>
+                                <div class="trust-zones">
+                                    <div class="trust-zone authoritative">
+                                        <div class="trust-zone-header">&#9989; Authoritative</div>
+                                        <div class="trust-item">ServiceNow CMDB</div>
+                                        <div class="trust-item">Production DB</div>
+                                        <div class="trust-item">Identity Provider</div>
+                                    </div>
+                                    <div class="trust-zone advisory">
+                                        <div class="trust-zone-header">&#9888; Advisory</div>
+                                        <div class="trust-item">Datadog Alerts</div>
+                                        <div class="trust-item">KB Articles</div>
+                                        <div class="trust-item">Historical Logs</div>
+                                    </div>
+                                    <div class="trust-zone untrusted">
+                                        <div class="trust-zone-header">&#10060; Untrusted</div>
+                                        <div class="trust-item">User Input</div>
+                                        <div class="trust-item">External APIs</div>
+                                        <div class="trust-item">Scraped Data</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 style="margin-top: 1.5rem; margin-bottom: 1rem;">Good vs Bad Examples</h5>
+                            <div class="example-comparison">
+                                <div class="example-box bad">
+                                    <div class="example-header">&#10060; Bad Practice</div>
+                                    <div class="example-content">
+                                        "Agent accesses all data sources"<br><br>
+                                        "All inputs are validated"<br><br>
+                                        "Write access where needed"
+                                    </div>
+                                </div>
+                                <div class="example-box good">
+                                    <div class="example-header">&#9989; Good Practice</div>
+                                    <div class="example-content">
+                                        <strong>READ:</strong> CMDB, Datadog, KB<br>
+                                        <strong>WRITE:</strong> Ticket comments only<br>
+                                        <strong>NEVER WRITE:</strong> CMDB, configs, code<br>
+                                        <strong>VALIDATE:</strong> All external input sanitized
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="critical-box" style="margin-top: 1rem;">
+                                <span class="icon">&#128274;</span>
+                                <p><strong>If everything is trusted equally, nothing is trusted.</strong> Define explicit trust levels.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Explainability & Audit -->
+                <div class="gov-card" onclick="toggleCard(this)">
+                    <div class="gov-card-header">
+                        <div class="gov-card-icon" style="background: rgba(6, 182, 212, 0.15);">&#128269;</div>
+                        <div class="gov-card-title">
+                            <h4>Explainability & Audit</h4>
+                            <p>Decision trails & evidence</p>
+                        </div>
+                        <div class="gov-card-expand">&#9660;</div>
+                    </div>
+                    <div class="gov-card-preview">
+                        <small style="color: var(--text-muted);">Every decision must be explainable after the fact</small>
+                    </div>
+                    <div class="gov-card-detail">
+                        <div class="gov-card-content">
+                            <div class="visual-diagram">
+                                <div class="diagram-title">Audit Trail Structure</div>
+                                <div class="audit-trail">
+                                    <div class="audit-entry">
+                                        <div class="audit-time">10:23:01</div>
+                                        <div class="audit-type input">INPUT</div>
+                                        <div class="audit-detail">Incident INC001234 received from ServiceNow</div>
+                                    </div>
+                                    <div class="audit-entry">
+                                        <div class="audit-time">10:23:02</div>
+                                        <div class="audit-type decision">DECISION</div>
+                                        <div class="audit-detail">Classified as P3 | Confidence: 87% | Reason: CPU pattern match</div>
+                                    </div>
+                                    <div class="audit-entry">
+                                        <div class="audit-time">10:23:03</div>
+                                        <div class="audit-type decision">DECISION</div>
+                                        <div class="audit-detail">Action: Restart service | KB match: KB0012345 (92%)</div>
+                                    </div>
+                                    <div class="audit-entry">
+                                        <div class="audit-time">10:23:05</div>
+                                        <div class="audit-type output">OUTPUT</div>
+                                        <div class="audit-detail">Executed restart via Ansible | Result: SUCCESS</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 style="margin-top: 1.5rem; margin-bottom: 1rem;">Good vs Bad Examples</h5>
+                            <div class="example-comparison">
+                                <div class="example-box bad">
+                                    <div class="example-header">&#10060; Bad Practice</div>
+                                    <div class="example-content">
+                                        <code>log.info("Action completed")</code><br><br>
+                                        <code>log.debug("Processing...")</code><br><br>
+                                        No decision rationale captured
+                                    </div>
+                                </div>
+                                <div class="example-box good">
+                                    <div class="example-header">&#9989; Good Practice</div>
+                                    <div class="example-content">
+                                        <code>decision_id: uuid</code><br>
+                                        <code>input_hash: sha256</code><br>
+                                        <code>confidence: 0.87</code><br>
+                                        <code>rationale: "CPU > 90% for 5min"</code><br>
+                                        <code>kb_reference: KB0012345</code>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="info-box" style="margin-top: 1rem;">
+                                <span class="icon">&#128161;</span>
+                                <p><strong>Logs without intent are useless.</strong> Every log must answer: WHY was this decision made?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Change & Evolution -->
+                <div class="gov-card" onclick="toggleCard(this)">
+                    <div class="gov-card-header">
+                        <div class="gov-card-icon" style="background: rgba(245, 158, 11, 0.15);">&#128260;</div>
+                        <div class="gov-card-title">
+                            <h4>Change & Evolution</h4>
+                            <p>Safe updates & rollback</p>
+                        </div>
+                        <div class="gov-card-expand">&#9660;</div>
+                    </div>
+                    <div class="gov-card-preview">
+                        <small style="color: var(--text-muted);">Managing prompts, policies, and model changes</small>
+                    </div>
+                    <div class="gov-card-detail">
+                        <div class="gov-card-content">
+                            <div class="visual-diagram">
+                                <div class="diagram-title">Change Control Process</div>
+                                <div class="change-process">
+                                    <div class="change-step">
+                                        <div class="change-step-icon">&#128221;</div>
+                                        <div class="change-step-label">Propose</div>
+                                    </div>
+                                    <div class="change-arrow">&#8594;</div>
+                                    <div class="change-step">
+                                        <div class="change-step-icon">&#128269;</div>
+                                        <div class="change-step-label">Review</div>
+                                    </div>
+                                    <div class="change-arrow">&#8594;</div>
+                                    <div class="change-step">
+                                        <div class="change-step-icon">&#128295;</div>
+                                        <div class="change-step-label">Test (24h)</div>
+                                    </div>
+                                    <div class="change-arrow">&#8594;</div>
+                                    <div class="change-step">
+                                        <div class="change-step-icon">&#128640;</div>
+                                        <div class="change-step-label">Deploy</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 style="margin-top: 1.5rem; margin-bottom: 1rem;">What Can Change</h5>
+                            <div class="visual-diagram" style="padding: 1rem;">
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.85rem;">
+                                    <div style="padding: 0.5rem; background: rgba(245, 158, 11, 0.1); border-radius: 6px; border-left: 3px solid var(--accent-orange);">
+                                        <strong style="color: var(--accent-orange);">HIGH IMPACT</strong><br>
+                                        <span style="color: var(--text-secondary);">Prompts, Policies, Models</span>
+                                    </div>
+                                    <div style="padding: 0.5rem; background: rgba(59, 130, 246, 0.1); border-radius: 6px; border-left: 3px solid var(--accent-blue);">
+                                        <strong style="color: var(--accent-blue);">MEDIUM IMPACT</strong><br>
+                                        <span style="color: var(--text-secondary);">Thresholds, Integrations</span>
+                                    </div>
+                                    <div style="padding: 0.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 6px; border-left: 3px solid var(--accent-green);">
+                                        <strong style="color: var(--accent-green);">LOW IMPACT</strong><br>
+                                        <span style="color: var(--text-secondary);">Logging, Metrics</span>
+                                    </div>
+                                    <div style="padding: 0.5rem; background: rgba(239, 68, 68, 0.1); border-radius: 6px; border-left: 3px solid var(--accent-red);">
+                                        <strong style="color: var(--accent-red);">ALWAYS ROLLBACK</strong><br>
+                                        <span style="color: var(--text-secondary);">Keep last 3 versions</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 style="margin-top: 1.5rem; margin-bottom: 1rem;">Good vs Bad Examples</h5>
+                            <div class="example-comparison">
+                                <div class="example-box bad">
+                                    <div class="example-header">&#10060; Bad Practice</div>
+                                    <div class="example-content">
+                                        "We'll test it in prod"<br><br>
+                                        "Prompt updated, deploying now"<br><br>
+                                        No rollback plan
+                                    </div>
+                                </div>
+                                <div class="example-box good">
+                                    <div class="example-header">&#9989; Good Practice</div>
+                                    <div class="example-content">
+                                        <strong>1.</strong> PR with prompt diff<br>
+                                        <strong>2.</strong> Peer review required<br>
+                                        <strong>3.</strong> 24h staging bake time<br>
+                                        <strong>4.</strong> 10% canary rollout<br>
+                                        <strong>5.</strong> Auto-rollback on error spike
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="warning-box" style="margin-top: 1rem;">
+                                <span class="icon">&#9888;</span>
+                                <p><strong>"We'll test it" is not a process.</strong> Define explicit change control procedures.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: 20 Killer Questions -->
+        <section id="questions">
+            <h2><span class="number">5</span> 20 Killer Questions</h2>
+
+            <div class="card" style="border-color: var(--accent-red);">
+                <h3 style="margin-top: 0; color: var(--accent-red);">&#9888; Final Warning</h3>
+                <p style="margin-bottom: 0;"><strong>If a team cannot answer these questions clearly, they are not building an agentic system - they are deploying uncontrolled automation.</strong></p>
+            </div>
+
+            <h3>Risk Summary</h3>
+            <div class="risk-summary">
+                <div class="risk-bar critical">
+                    <div class="risk-bar-header">
+                        <span class="risk-bar-label">CRITICAL</span>
+                        <span class="risk-bar-value">8</span>
+                    </div>
+                    <div class="risk-bar-visual">
+                        <div class="risk-bar-fill"></div>
+                    </div>
+                </div>
+                <div class="risk-bar high">
+                    <div class="risk-bar-header">
+                        <span class="risk-bar-label">HIGH</span>
+                        <span class="risk-bar-value">10</span>
+                    </div>
+                    <div class="risk-bar-visual">
+                        <div class="risk-bar-fill"></div>
+                    </div>
+                </div>
+                <div class="risk-bar medium">
+                    <div class="risk-bar-header">
+                        <span class="risk-bar-label">MEDIUM</span>
+                        <span class="risk-bar-value">2</span>
+                    </div>
+                    <div class="risk-bar-visual">
+                        <div class="risk-bar-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showTab('tab-all')">All Questions</button>
+                <button class="tab-btn" onclick="showTab('tab-critical')">Critical Only</button>
+            </div>
+
+            <div id="tab-all" class="tab-content active">
+                <div class="heatmap-container">
+                    <table class="heatmap-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">#</th>
+                                <th style="width: 55%;">Question</th>
+                                <th style="width: 20%;">KAF Component</th>
+                                <th style="width: 20%;">Risk</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>1</strong></td>
+                                <td><span class="question-category">Authority</span>What decision authority does the agent have?<br><small style="color: var(--text-muted);">If "none", this is not an agent.</small></td>
+                                <td>Agentic Core</td>
+                                <td><span class="risk-cell risk-critical">Critical</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>2</strong></td>
+                                <td><span class="question-category">Authority</span>Which decisions is the agent prohibited from making?<br><small style="color: var(--text-muted);">If not documented, governance doesn't exist.</small></td>
+                                <td>Responsible AI</td>
+                                <td><span class="risk-cell risk-critical">Critical</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>3</strong></td>
+                                <td><span class="question-category">Authority</span>Who is accountable for wrong decisions?<br><small style="color: var(--text-muted);">A role, not a team name.</small></td>
+                                <td>Responsible AI</td>
+                                <td><span class="risk-cell risk-critical">Critical</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>4</strong></td>
+                                <td><span class="question-category">Behavior</span>How does the agent handle incomplete/ambiguous data?<br><small style="color: var(--text-muted);">"Best effort" is not a strategy.</small></td>
+                                <td>Agentic Core</td>
+                                <td><span class="risk-cell risk-high">High</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>5</strong></td>
+                                <td><span class="question-category">Behavior</span>What is the agent's risk posture?<br><small style="color: var(--text-muted);">Risk tolerance must be designed, not assumed.</small></td>
+                                <td>Responsible AI</td>
+                                <td><span class="risk-cell risk-high">High</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>6</strong></td>
+                                <td><span class="question-category">Behavior</span>When must the agent refuse to act?<br><small style="color: var(--text-muted);">If refusal logic is missing, the agent is unsafe.</small></td>
+                                <td>Responsible AI</td>
+                                <td><span class="risk-cell risk-critical">Critical</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>7</strong></td>
+                                <td><span class="question-category">Behavior</span>How does the agent distinguish recommendation vs decision?<br><small style="color: var(--text-muted);">If users can't tell, you've created hidden autonomy.</small></td>
+                                <td>Agentic Core</td>
+                                <td><span class="risk-cell risk-high">High</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>8</strong></td>
+                                <td><span class="question-category">Orchestration</span>Which agent has final decision authority?<br><small style="color: var(--text-muted);">Distributed responsibility = no responsibility.</small></td>
+                                <td>Agentic Core</td>
+                                <td><span class="risk-cell risk-high">High</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>9</strong></td>
+                                <td><span class="question-category">Orchestration</span>Can agents override each other?<br><small style="color: var(--text-muted);">How is conflict resolved?</small></td>
+                                <td>Agentic Core</td>
+                                <td><span class="risk-cell risk-medium">Medium</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>10</strong></td>
+                                <td><span class="question-category">Memory</span>What context persists across executions?<br><small style="color: var(--text-muted);">Persistent memory without justification = compliance risk.</small></td>
+                                <td>Knowledge Int.</td>
+                                <td><span class="risk-cell risk-high">High</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>11</strong></td>
+                                <td><span class="question-category">Memory</span>Can past interactions influence future decisions?<br><small style="color: var(--text-muted);">How is bias controlled?</small></td>
+                                <td>Knowledge Int.</td>
+                                <td><span class="risk-cell risk-medium">Medium</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>12</strong></td>
+                                <td><span class="question-category">Failure</span>What happens with low-confidence outputs?<br><small style="color: var(--text-muted);">Silently continuing is unacceptable.</small></td>
+                                <td>Agentic Core</td>
+                                <td><span class="risk-cell risk-critical">Critical</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>13</strong></td>
+                                <td><span class="question-category">Failure</span>How does the system degrade on failures?<br><small style="color: var(--text-muted);">Stopping is often safer than improvising.</small></td>
+                                <td>Agent Builder</td>
+                                <td><span class="risk-cell risk-high">High</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>14</strong></td>
+                                <td><span class="question-category">Trust</span>Which data sources are authoritative vs advisory?<br><small style="color: var(--text-muted);">If all trusted equally, nothing is trusted.</small></td>
+                                <td>Agentic Ingestion</td>
+                                <td><span class="risk-cell risk-high">High</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>15</strong></td>
+                                <td><span class="question-category">Trust</span>Can the agent write to production?<br><small style="color: var(--text-muted);">What prevents irreversible damage?</small></td>
+                                <td>Responsible AI</td>
+                                <td><span class="risk-cell risk-critical">Critical</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>16</strong></td>
+                                <td><span class="question-category">Audit</span>Can the agent explain decisions after the fact?<br><small style="color: var(--text-muted);">If not, it shouldn't have been automated.</small></td>
+                                <td>Responsible AI</td>
+                                <td><span class="risk-cell risk-critical">Critical</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>17</strong></td>
+                                <td><span class="question-category">Audit</span>What evidence is logged for audits?<br><small style="color: var(--text-muted);">Logs without intent are useless.</small></td>
+                                <td>Responsible AI</td>
+                                <td><span class="risk-cell risk-high">High</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>18</strong></td>
+                                <td><span class="question-category">Change</span>What happens when behavior changes?<br><small style="color: var(--text-muted);">"We'll test it" is not a process.</small></td>
+                                <td>Agent Builder</td>
+                                <td><span class="risk-cell risk-high">High</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>19</strong></td>
+                                <td><span class="question-category">Operations</span>Who can disable the agent immediately?<br><small style="color: var(--text-muted);">Every system needs a kill switch.</small></td>
+                                <td>Responsible AI</td>
+                                <td><span class="risk-cell risk-critical">Critical</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>20</strong></td>
+                                <td><span class="question-category">Value</span>How will you prove business value without risk?<br><small style="color: var(--text-muted);">If value can't be demonstrated, don't ship.</small></td>
+                                <td>Responsible AI</td>
+                                <td><span class="risk-cell risk-high">High</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="tab-critical" class="tab-content">
+                <div class="governance-cards" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                    <div class="card" style="border-color: var(--accent-red);">
+                        <h4 style="color: var(--accent-red);">#1 Decision Authority</h4>
+                        <p>What decision authority does the agent have that a traditional system does not?</p>
+                        <div class="critical-box" style="margin: 0;"><span class="icon">&#9888;</span><p>If "none", this is not an agent.</p></div>
+                    </div>
+                    <div class="card" style="border-color: var(--accent-red);">
+                        <h4 style="color: var(--accent-red);">#2 Prohibited Decisions</h4>
+                        <p>Which decisions is the agent explicitly prohibited from making?</p>
+                        <div class="critical-box" style="margin: 0;"><span class="icon">&#9888;</span><p>If not documented, governance doesn't exist.</p></div>
+                    </div>
+                    <div class="card" style="border-color: var(--accent-red);">
+                        <h4 style="color: var(--accent-red);">#3 Accountability</h4>
+                        <p>Who is accountable when the agent makes a wrong decision?</p>
+                        <div class="critical-box" style="margin: 0;"><span class="icon">&#9888;</span><p>A role, not a team name.</p></div>
+                    </div>
+                    <div class="card" style="border-color: var(--accent-red);">
+                        <h4 style="color: var(--accent-red);">#6 Refusal Logic</h4>
+                        <p>Under what conditions must the agent refuse to act?</p>
+                        <div class="critical-box" style="margin: 0;"><span class="icon">&#9888;</span><p>If missing, the agent is unsafe.</p></div>
+                    </div>
+                    <div class="card" style="border-color: var(--accent-red);">
+                        <h4 style="color: var(--accent-red);">#12 Low Confidence</h4>
+                        <p>What happens when the LLM produces low-confidence output?</p>
+                        <div class="critical-box" style="margin: 0;"><span class="icon">&#9888;</span><p>Silently continuing is unacceptable.</p></div>
+                    </div>
+                    <div class="card" style="border-color: var(--accent-red);">
+                        <h4 style="color: var(--accent-red);">#15 Production Writes</h4>
+                        <p>Can the agent write back to production systems?</p>
+                        <div class="critical-box" style="margin: 0;"><span class="icon">&#9888;</span><p>What prevents irreversible damage?</p></div>
+                    </div>
+                    <div class="card" style="border-color: var(--accent-red);">
+                        <h4 style="color: var(--accent-red);">#16 Explainability</h4>
+                        <p>Can the agent explain why it made a decision after the fact?</p>
+                        <div class="critical-box" style="margin: 0;"><span class="icon">&#9888;</span><p>If not, it shouldn't have been automated.</p></div>
+                    </div>
+                    <div class="card" style="border-color: var(--accent-red);">
+                        <h4 style="color: var(--accent-red);">#19 Kill Switch</h4>
+                        <p>Who has authority to disable the agent immediately?</p>
+                        <div class="critical-box" style="margin: 0;"><span class="icon">&#9888;</span><p>Every system needs a kill switch.</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: AI Project Documentation -->
+        <section id="documentation">
+            <h2><span class="number">6</span> Creating AI Project Documentation</h2>
+
+            <div class="card" style="border-color: var(--accent-cyan);">
+                <h3 style="margin-top: 0;">&#128218; Why Documentation Matters</h3>
+                <p>Good documentation is the difference between a demo and an enterprise product. Without it, your agent cannot be audited, maintained, handed over, or scaled.</p>
+                <p style="margin-bottom: 0;"><strong>Rule:</strong> If it's not documented, it doesn't exist. If it can't be explained, it shouldn't be deployed.</p>
+            </div>
+
+            <h3>Documentation Hierarchy</h3>
+
+            <div class="lifecycle-flow" style="flex-direction: column; gap: 1rem; align-items: stretch;">
+                <div style="display: flex; align-items: center; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <div class="lifecycle-step" style="min-width: 150px; background: rgba(139, 92, 246, 0.1); border-color: var(--accent-purple);">
+                        <div class="step-icon">&#128209;</div>
+                        <div class="step-label">Project Charter</div>
+                        <small style="color: var(--text-muted); font-size: 0.7rem;">WHY we build</small>
+                    </div>
+                    <div class="lifecycle-arrow">&#8594;</div>
+                    <div class="lifecycle-step" style="min-width: 150px; background: rgba(59, 130, 246, 0.1); border-color: var(--accent-blue);">
+                        <div class="step-icon">&#128736;</div>
+                        <div class="step-label">Architecture Doc</div>
+                        <small style="color: var(--text-muted); font-size: 0.7rem;">HOW it works</small>
+                    </div>
+                    <div class="lifecycle-arrow">&#8594;</div>
+                    <div class="lifecycle-step" style="min-width: 150px; background: rgba(16, 185, 129, 0.1); border-color: var(--accent-green);">
+                        <div class="step-icon">&#128737;</div>
+                        <div class="step-label">Governance Doc</div>
+                        <small style="color: var(--text-muted); font-size: 0.7rem;">RULES & LIMITS</small>
+                    </div>
+                    <div class="lifecycle-arrow">&#8594;</div>
+                    <div class="lifecycle-step" style="min-width: 150px; background: rgba(245, 158, 11, 0.1); border-color: var(--accent-orange);">
+                        <div class="step-icon">&#128214;</div>
+                        <div class="step-label">Operations Guide</div>
+                        <small style="color: var(--text-muted); font-size: 0.7rem;">HOW to run</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Document Templates Grid -->
+            <h3>Complete Documentation Set</h3>
+            <p>Click each document type to see the required structure and templates.</p>
+
+            <div class="governance-cards">
+                <!-- Document 1: Project Charter -->
+                <div class="gov-card" onclick="toggleCard(this)">
+                    <div class="gov-card-header">
+                        <div class="gov-card-icon" style="background: rgba(139, 92, 246, 0.15);">&#128209;</div>
+                        <div class="gov-card-title">
+                            <h4>1. Project Charter</h4>
+                            <p>Business justification & scope</p>
+                        </div>
+                        <div class="gov-card-expand">&#9660;</div>
+                    </div>
+                    <div class="gov-card-preview">
+                        <small style="color: var(--text-muted);">1-2 pages | Created at project start | Owner: Project Manager</small>
+                    </div>
+                    <div class="gov-card-detail">
+                        <div class="gov-card-content">
+                            <div class="visual-diagram">
+                                <div class="diagram-title">Required Sections</div>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; text-align: left;">
+                                    <div style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 8px; border-left: 3px solid var(--accent-purple);">
+                                        <strong style="color: var(--accent-purple); font-size: 0.8rem;">1. Executive Summary</strong>
+                                        <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0;">What, why, expected outcome</p>
+                                    </div>
+                                    <div style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 8px; border-left: 3px solid var(--accent-purple);">
+                                        <strong style="color: var(--accent-purple); font-size: 0.8rem;">2. Business Problem</strong>
+                                        <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0;">Current pain, cost of inaction</p>
+                                    </div>
+                                    <div style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 8px; border-left: 3px solid var(--accent-purple);">
+                                        <strong style="color: var(--accent-purple); font-size: 0.8rem;">3. Proposed Solution</strong>
+                                        <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0;">Agent approach, why AI/agentic</p>
+                                    </div>
+                                    <div style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 8px; border-left: 3px solid var(--accent-purple);">
+                                        <strong style="color: var(--accent-purple); font-size: 0.8rem;">4. Success Metrics</strong>
+                                        <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0;">KPIs, measurable outcomes</p>
+                                    </div>
+                                    <div style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 8px; border-left: 3px solid var(--accent-purple);">
+                                        <strong style="color: var(--accent-purple); font-size: 0.8rem;">5. Scope & Boundaries</strong>
+                                        <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0;">In scope, out of scope, constraints</p>
+                                    </div>
+                                    <div style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 8px; border-left: 3px solid var(--accent-purple);">
+                                        <strong style="color: var(--accent-purple); font-size: 0.8rem;">6. Stakeholders</strong>
+                                        <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0;">Sponsor, owner, users, approvers</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 style="margin-top: 1.5rem; margin-bottom: 1rem;">Template Example</h5>
+                            <div class="prompt-box" style="margin: 0;">
+                                <div class="prompt-content" style="font-size: 0.8rem; line-height: 1.6;">
+<strong>PROJECT CHARTER: Incident Triage Agent</strong>
+
+<strong>1. Executive Summary</strong>
+Implement an AI agent to automatically triage IT incidents,
+reducing MTTR by 40% and freeing L1 support for complex cases.
+
+<strong>2. Business Problem</strong>
+- 2,500 incidents/month, 60% are routine
+- Average triage time: 12 minutes
+- L1 team spending 70% time on repetitive classification
+- Cost: $180K/year in manual triage effort
+
+<strong>3. Proposed Solution</strong>
+Semi-autonomous agent that:
+- Classifies incidents (P1-P4) automatically
+- Matches known issues to KB articles
+- Executes approved remediation for P3/P4
+- Escalates P1/P2 to human operators
+
+<strong>4. Success Metrics</strong>
+- Reduce MTTR by 40% (from 45min to 27min)
+- Auto-resolve 50% of P3/P4 incidents
+- 95% classification accuracy
+- Zero P1 incidents auto-executed
+
+<strong>5. Scope</strong>
+IN: Infrastructure incidents, known patterns
+OUT: Security incidents, new/unknown issues
+
+<strong>6. Stakeholders</strong>
+- Sponsor: CTO
+- Owner: Platform Engineering Lead
+- Users: L1/L2 Support Team
+- Approver: Security & Compliance</div>
+                            </div>
+
+                            <div class="example-comparison" style="margin-top: 1rem;">
+                                <div class="example-box bad">
+                                    <div class="example-header">&#10060; Bad Charter</div>
+                                    <div class="example-content">
+                                        "Build an AI to help with incidents"<br><br>
+                                        No metrics defined<br><br>
+                                        "Will save time and money"
+                                    </div>
+                                </div>
+                                <div class="example-box good">
+                                    <div class="example-header">&#9989; Good Charter</div>
+                                    <div class="example-content">
+                                        Specific: "Reduce MTTR by 40%"<br><br>
+                                        Measurable: "$180K/year savings"<br><br>
+                                        Bounded: "P3/P4 only, no security"
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document 2: Architecture Document -->
+                <div class="gov-card" onclick="toggleCard(this)">
+                    <div class="gov-card-header">
+                        <div class="gov-card-icon" style="background: rgba(59, 130, 246, 0.15);">&#128736;</div>
+                        <div class="gov-card-title">
+                            <h4>2. Architecture Document</h4>
+                            <p>Technical design & components</p>
+                        </div>
+                        <div class="gov-card-expand">&#9660;</div>
+                    </div>
+                    <div class="gov-card-preview">
+                        <small style="color: var(--text-muted);">5-10 pages | Living document | Owner: Solution Architect</small>
+                    </div>
+                    <div class="gov-card-detail">
+                        <div class="gov-card-content">
+                            <div class="visual-diagram">
+                                <div class="diagram-title">Architecture Document Structure</div>
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="width: 30px; height: 30px; background: var(--accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">1</div>
+                                        <div style="flex: 1; padding: 0.5rem; background: var(--bg-tertiary); border-radius: 6px;">
+                                            <strong style="color: var(--text-primary);">System Overview</strong>
+                                            <span style="color: var(--text-muted); font-size: 0.8rem;"> - High-level diagram, components list</span>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="width: 30px; height: 30px; background: var(--accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">2</div>
+                                        <div style="flex: 1; padding: 0.5rem; background: var(--bg-tertiary); border-radius: 6px;">
+                                            <strong style="color: var(--text-primary);">Agent Design</strong>
+                                            <span style="color: var(--text-muted); font-size: 0.8rem;"> - Roles, workflows, decision trees</span>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="width: 30px; height: 30px; background: var(--accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">3</div>
+                                        <div style="flex: 1; padding: 0.5rem; background: var(--bg-tertiary); border-radius: 6px;">
+                                            <strong style="color: var(--text-primary);">Data Architecture</strong>
+                                            <span style="color: var(--text-muted); font-size: 0.8rem;"> - Sources, flows, storage, retention</span>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="width: 30px; height: 30px; background: var(--accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">4</div>
+                                        <div style="flex: 1; padding: 0.5rem; background: var(--bg-tertiary); border-radius: 6px;">
+                                            <strong style="color: var(--text-primary);">Integration Layer</strong>
+                                            <span style="color: var(--text-muted); font-size: 0.8rem;"> - APIs, connectors, protocols</span>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="width: 30px; height: 30px; background: var(--accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">5</div>
+                                        <div style="flex: 1; padding: 0.5rem; background: var(--bg-tertiary); border-radius: 6px;">
+                                            <strong style="color: var(--text-primary);">LLM & AI Components</strong>
+                                            <span style="color: var(--text-muted); font-size: 0.8rem;"> - Models, prompts, embeddings</span>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="width: 30px; height: 30px; background: var(--accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">6</div>
+                                        <div style="flex: 1; padding: 0.5rem; background: var(--bg-tertiary); border-radius: 6px;">
+                                            <strong style="color: var(--text-primary);">Security Architecture</strong>
+                                            <span style="color: var(--text-muted); font-size: 0.8rem;"> - Auth, encryption, secrets</span>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="width: 30px; height: 30px; background: var(--accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">7</div>
+                                        <div style="flex: 1; padding: 0.5rem; background: var(--bg-tertiary); border-radius: 6px;">
+                                            <strong style="color: var(--text-primary);">Deployment Architecture</strong>
+                                            <span style="color: var(--text-muted); font-size: 0.8rem;"> - Infrastructure, scaling, DR</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 style="margin-top: 1.5rem; margin-bottom: 1rem;">System Diagram Example</h5>
+                            <div class="visual-diagram" style="background: var(--bg-primary); border: 1px solid var(--border);">
+                                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                    <!-- External Layer -->
+                                    <div style="text-align: center; padding: 0.5rem; background: rgba(239, 68, 68, 0.1); border: 1px dashed var(--accent-red); border-radius: 8px;">
+                                        <small style="color: var(--accent-red);">EXTERNAL SYSTEMS</small>
+                                        <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.5rem; flex-wrap: wrap;">
+                                            <span style="padding: 0.25rem 0.5rem; background: var(--bg-tertiary); border-radius: 4px; font-size: 0.75rem;">ServiceNow</span>
+                                            <span style="padding: 0.25rem 0.5rem; background: var(--bg-tertiary); border-radius: 4px; font-size: 0.75rem;">Datadog</span>
+                                            <span style="padding: 0.25rem 0.5rem; background: var(--bg-tertiary); border-radius: 4px; font-size: 0.75rem;">Slack</span>
+                                        </div>
+                                    </div>
+                                    <div style="text-align: center; color: var(--text-muted);">&#8595; API Gateway &#8595;</div>
+                                    <!-- Agent Layer -->
+                                    <div style="text-align: center; padding: 0.75rem; background: rgba(139, 92, 246, 0.1); border: 2px solid var(--accent-purple); border-radius: 8px;">
+                                        <small style="color: var(--accent-purple);">AGENTIC CORE</small>
+                                        <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.5rem; flex-wrap: wrap;">
+                                            <span style="padding: 0.25rem 0.5rem; background: rgba(139, 92, 246, 0.2); border-radius: 4px; font-size: 0.75rem; color: var(--accent-purple);">Triage Agent</span>
+                                            <span style="padding: 0.25rem 0.5rem; background: rgba(139, 92, 246, 0.2); border-radius: 4px; font-size: 0.75rem; color: var(--accent-purple);">Decision Agent</span>
+                                            <span style="padding: 0.25rem 0.5rem; background: rgba(139, 92, 246, 0.2); border-radius: 4px; font-size: 0.75rem; color: var(--accent-purple);">Execution Agent</span>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; justify-content: center; gap: 2rem; color: var(--text-muted);">
+                                        <span>&#8595;</span><span>&#8595;</span><span>&#8595;</span>
+                                    </div>
+                                    <!-- Data Layer -->
+                                    <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                                        <div style="padding: 0.5rem; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-green); border-radius: 8px; text-align: center;">
+                                            <small style="color: var(--accent-green);">Vector DB</small><br>
+                                            <span style="font-size: 0.7rem; color: var(--text-muted);">KB Embeddings</span>
+                                        </div>
+                                        <div style="padding: 0.5rem; background: rgba(59, 130, 246, 0.1); border: 1px solid var(--accent-blue); border-radius: 8px; text-align: center;">
+                                            <small style="color: var(--accent-blue);">PostgreSQL</small><br>
+                                            <span style="font-size: 0.7rem; color: var(--text-muted);">State & Logs</span>
+                                        </div>
+                                        <div style="padding: 0.5rem; background: rgba(245, 158, 11, 0.1); border: 1px solid var(--accent-orange); border-radius: 8px; text-align: center;">
+                                            <small style="color: var(--accent-orange);">LLM API</small><br>
+                                            <span style="font-size: 0.7rem; color: var(--text-muted);">GPT-4 / Claude</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="example-comparison" style="margin-top: 1rem;">
+                                <div class="example-box bad">
+                                    <div class="example-header">&#10060; Bad Architecture Doc</div>
+                                    <div class="example-content">
+                                        "Uses AI to process tickets"<br><br>
+                                        No data flow diagrams<br><br>
+                                        Missing security considerations
+                                    </div>
+                                </div>
+                                <div class="example-box good">
+                                    <div class="example-header">&#9989; Good Architecture Doc</div>
+                                    <div class="example-content">
+                                        Component diagrams with data flows<br><br>
+                                        API contracts documented<br><br>
+                                        Security & failure modes covered
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document 3: Prompt Library -->
+                <div class="gov-card" onclick="toggleCard(this)">
+                    <div class="gov-card-header">
+                        <div class="gov-card-icon" style="background: rgba(6, 182, 212, 0.15);">&#128172;</div>
+                        <div class="gov-card-title">
+                            <h4>3. Prompt Library</h4>
+                            <p>All prompts with versions</p>
+                        </div>
+                        <div class="gov-card-expand">&#9660;</div>
+                    </div>
+                    <div class="gov-card-preview">
+                        <small style="color: var(--text-muted);">Living document | Version controlled | Owner: AI Engineer</small>
+                    </div>
+                    <div class="gov-card-detail">
+                        <div class="gov-card-content">
+                            <div class="visual-diagram">
+                                <div class="diagram-title">Prompt Documentation Structure</div>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; text-align: left;">
+                                    <div style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 8px;">
+                                        <strong style="color: var(--accent-cyan); font-size: 0.85rem;">&#128196; Prompt ID</strong>
+                                        <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0; color: var(--text-muted);">PROMPT-TRIAGE-001</p>
+                                    </div>
+                                    <div style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 8px;">
+                                        <strong style="color: var(--accent-cyan); font-size: 0.85rem;">&#127991; Version</strong>
+                                        <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0; color: var(--text-muted);">v2.3.1 (2026-02-01)</p>
+                                    </div>
+                                    <div style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 8px;">
+                                        <strong style="color: var(--accent-cyan); font-size: 0.85rem;">&#127919; Purpose</strong>
+                                        <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0; color: var(--text-muted);">Classify incident severity</p>
+                                    </div>
+                                    <div style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 8px;">
+                                        <strong style="color: var(--accent-cyan); font-size: 0.85rem;">&#129504; Model</strong>
+                                        <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0; color: var(--text-muted);">GPT-4-turbo, temp=0.1</p>
+                                    </div>
+                                    <div style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 8px;">
+                                        <strong style="color: var(--accent-cyan); font-size: 0.85rem;">&#128200; Metrics</strong>
+                                        <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0; color: var(--text-muted);">94% accuracy on test set</p>
+                                    </div>
+                                    <div style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 8px;">
+                                        <strong style="color: var(--accent-cyan); font-size: 0.85rem;">&#128100; Owner</strong>
+                                        <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0; color: var(--text-muted);">AI Team / Jane Smith</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 style="margin-top: 1.5rem; margin-bottom: 1rem;">Prompt Template Example</h5>
+                            <div class="prompt-box" style="margin: 0;">
+                                <div class="prompt-content" style="font-size: 0.75rem; line-height: 1.5;">
+<strong style="color: var(--accent-cyan);">PROMPT-TRIAGE-001 v2.3.1</strong>
+
+<strong>SYSTEM:</strong>
+You are an IT incident triage specialist. Your task is to
+classify incidents by severity and identify root cause.
+
+<strong>RULES:</strong>
+- P1: Production down, revenue impact
+- P2: Major degradation, multiple users
+- P3: Minor issue, workaround exists
+- P4: Cosmetic, enhancement request
+
+<strong>OUTPUT FORMAT (JSON):</strong>
+{
+  "severity": "P1|P2|P3|P4",
+  "confidence": 0.0-1.0,
+  "root_cause": "string",
+  "kb_match": "KB-XXXXX or null",
+  "recommended_action": "string"
+}
+
+<strong>CONSTRAINTS:</strong>
+- If confidence < 0.7, set severity to null
+- Never recommend P1/P2 auto-resolution
+- Always cite KB article if matched
+
+<strong>USER:</strong>
+Incident: {{incident_description}}
+Affected System: {{system_name}}
+Error Logs: {{error_logs}}</div>
+                            </div>
+
+                            <div class="warning-box" style="margin-top: 1rem;">
+                                <span class="icon">&#9888;</span>
+                                <p><strong>Version Control:</strong> Every prompt change must be tracked with date, author, reason, and test results.</p>
+                            </div>
+
+                            <div class="example-comparison" style="margin-top: 1rem;">
+                                <div class="example-box bad">
+                                    <div class="example-header">&#10060; Bad Practice</div>
+                                    <div class="example-content">
+                                        Prompts in code comments<br><br>
+                                        No version history<br><br>
+                                        "Classify this incident"
+                                    </div>
+                                </div>
+                                <div class="example-box good">
+                                    <div class="example-header">&#9989; Good Practice</div>
+                                    <div class="example-content">
+                                        Separate prompt repository<br><br>
+                                        Git-tracked versions<br><br>
+                                        Structured output format
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document 4: Test Documentation -->
+                <div class="gov-card" onclick="toggleCard(this)">
+                    <div class="gov-card-header">
+                        <div class="gov-card-icon" style="background: rgba(16, 185, 129, 0.15);">&#128269;</div>
+                        <div class="gov-card-title">
+                            <h4>4. Test Documentation</h4>
+                            <p>Test cases & evaluation results</p>
+                        </div>
+                        <div class="gov-card-expand">&#9660;</div>
+                    </div>
+                    <div class="gov-card-preview">
+                        <small style="color: var(--text-muted);">Updated per release | Owner: QA Lead</small>
+                    </div>
+                    <div class="gov-card-detail">
+                        <div class="gov-card-content">
+                            <div class="visual-diagram">
+                                <div class="diagram-title">Test Categories for Agentic AI</div>
+                                <div class="failure-diagram">
+                                    <div class="failure-scenario" style="border-left: 3px solid var(--accent-green);">
+                                        <div class="failure-icon">&#9989;</div>
+                                        <div class="failure-name">Functional</div>
+                                        <div style="font-size: 0.7rem; color: var(--text-muted);">Does it work correctly?</div>
+                                    </div>
+                                    <div class="failure-scenario" style="border-left: 3px solid var(--accent-blue);">
+                                        <div class="failure-icon">&#128202;</div>
+                                        <div class="failure-name">Accuracy</div>
+                                        <div style="font-size: 0.7rem; color: var(--text-muted);">LLM output quality</div>
+                                    </div>
+                                    <div class="failure-scenario" style="border-left: 3px solid var(--accent-purple);">
+                                        <div class="failure-icon">&#128737;</div>
+                                        <div class="failure-name">Guardrails</div>
+                                        <div style="font-size: 0.7rem; color: var(--text-muted);">Refusal & limits work?</div>
+                                    </div>
+                                    <div class="failure-scenario" style="border-left: 3px solid var(--accent-orange);">
+                                        <div class="failure-icon">&#128680;</div>
+                                        <div class="failure-name">Failure Modes</div>
+                                        <div style="font-size: 0.7rem; color: var(--text-muted);">Graceful degradation</div>
+                                    </div>
+                                    <div class="failure-scenario" style="border-left: 3px solid var(--accent-red);">
+                                        <div class="failure-icon">&#128274;</div>
+                                        <div class="failure-name">Security</div>
+                                        <div style="font-size: 0.7rem; color: var(--text-muted);">Injection, data leak</div>
+                                    </div>
+                                    <div class="failure-scenario" style="border-left: 3px solid var(--accent-cyan);">
+                                        <div class="failure-icon">&#9881;</div>
+                                        <div class="failure-name">Integration</div>
+                                        <div style="font-size: 0.7rem; color: var(--text-muted);">End-to-end flows</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 style="margin-top: 1.5rem; margin-bottom: 1rem;">Test Case Template</h5>
+                            <div style="overflow-x: auto;">
+                                <table class="grading-table" style="font-size: 0.8rem;">
+                                    <thead>
+                                        <tr>
+                                            <th>Test ID</th>
+                                            <th>Category</th>
+                                            <th>Input</th>
+                                            <th>Expected</th>
+                                            <th>Result</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>TC-001</td>
+                                            <td>Functional</td>
+                                            <td>P3 incident, known KB</td>
+                                            <td>Auto-resolve</td>
+                                            <td><span class="badge pass">PASS</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>TC-002</td>
+                                            <td>Guardrail</td>
+                                            <td>P1 incident</td>
+                                            <td>Escalate, no auto</td>
+                                            <td><span class="badge pass">PASS</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>TC-003</td>
+                                            <td>Security</td>
+                                            <td>Prompt injection</td>
+                                            <td>Reject, log alert</td>
+                                            <td><span class="badge pass">PASS</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>TC-004</td>
+                                            <td>Failure</td>
+                                            <td>LLM timeout</td>
+                                            <td>Queue, alert ops</td>
+                                            <td><span class="badge pass">PASS</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="info-box" style="margin-top: 1rem;">
+                                <span class="icon">&#128161;</span>
+                                <p><strong>Golden Dataset:</strong> Maintain a set of 100+ labeled examples for regression testing after every prompt change.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document 5: Runbook / Operations Guide -->
+                <div class="gov-card" onclick="toggleCard(this)">
+                    <div class="gov-card-header">
+                        <div class="gov-card-icon" style="background: rgba(245, 158, 11, 0.15);">&#128214;</div>
+                        <div class="gov-card-title">
+                            <h4>5. Operations Runbook</h4>
+                            <p>Day-to-day operations guide</p>
+                        </div>
+                        <div class="gov-card-expand">&#9660;</div>
+                    </div>
+                    <div class="gov-card-preview">
+                        <small style="color: var(--text-muted);">Must be actionable | Owner: Operations Lead</small>
+                    </div>
+                    <div class="gov-card-detail">
+                        <div class="gov-card-content">
+                            <div class="visual-diagram">
+                                <div class="diagram-title">Runbook Sections</div>
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <div style="display: flex; align-items: stretch; gap: 0.5rem;">
+                                        <div style="flex: 1; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border-left: 3px solid var(--accent-green);">
+                                            <strong style="color: var(--accent-green);">&#128994; Startup</strong>
+                                            <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0;">How to start the system</p>
+                                        </div>
+                                        <div style="flex: 1; padding: 0.75rem; background: rgba(239, 68, 68, 0.1); border-radius: 8px; border-left: 3px solid var(--accent-red);">
+                                            <strong style="color: var(--accent-red);">&#128308; Shutdown</strong>
+                                            <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0;">Safe shutdown procedure</p>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: stretch; gap: 0.5rem;">
+                                        <div style="flex: 1; padding: 0.75rem; background: rgba(245, 158, 11, 0.1); border-radius: 8px; border-left: 3px solid var(--accent-orange);">
+                                            <strong style="color: var(--accent-orange);">&#9888; Incident Response</strong>
+                                            <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0;">When things go wrong</p>
+                                        </div>
+                                        <div style="flex: 1; padding: 0.75rem; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border-left: 3px solid var(--accent-blue);">
+                                            <strong style="color: var(--accent-blue);">&#128200; Monitoring</strong>
+                                            <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0;">What to watch, alerts</p>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: stretch; gap: 0.5rem;">
+                                        <div style="flex: 1; padding: 0.75rem; background: rgba(139, 92, 246, 0.1); border-radius: 8px; border-left: 3px solid var(--accent-purple);">
+                                            <strong style="color: var(--accent-purple);">&#128260; Maintenance</strong>
+                                            <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0;">Regular tasks, updates</p>
+                                        </div>
+                                        <div style="flex: 1; padding: 0.75rem; background: rgba(6, 182, 212, 0.1); border-radius: 8px; border-left: 3px solid var(--accent-cyan);">
+                                            <strong style="color: var(--accent-cyan);">&#128260; Rollback</strong>
+                                            <p style="font-size: 0.75rem; margin: 0.25rem 0 0 0;">How to undo changes</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 style="margin-top: 1.5rem; margin-bottom: 1rem;">Incident Response Example</h5>
+                            <div class="prompt-box" style="margin: 0; background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.3);">
+                                <div class="prompt-content" style="font-size: 0.8rem; line-height: 1.6;">
+<strong style="color: var(--accent-red);">&#128680; INCIDENT: Agent Making Wrong Decisions</strong>
+
+<strong>SYMPTOMS:</strong>
+- Incorrect severity classifications
+- Wrong KB articles matched
+- User complaints increasing
+
+<strong>IMMEDIATE ACTIONS:</strong>
+1. &#128721; DISABLE agent auto-execution
+   $ kubectl scale deployment triage-agent --replicas=0
+
+2. &#128226; NOTIFY stakeholders
+   Slack: #incident-response
+   Page: Platform Lead (Jane Smith)
+
+3. &#128269; INVESTIGATE
+   - Check recent prompt changes
+   - Review decision logs (last 1h)
+   - Compare with golden dataset
+
+<strong>RECOVERY:</strong>
+1. Rollback to last known good prompt version
+2. Re-run test suite
+3. Enable agent in read-only mode
+4. Monitor for 30 min before full enable
+
+<strong>POST-INCIDENT:</strong>
+- Root cause analysis within 24h
+- Update golden dataset if needed
+- Document in incident log</div>
+                            </div>
+
+                            <div class="example-comparison" style="margin-top: 1rem;">
+                                <div class="example-box bad">
+                                    <div class="example-header">&#10060; Bad Runbook</div>
+                                    <div class="example-content">
+                                        "Contact the AI team if issues"<br><br>
+                                        No specific commands<br><br>
+                                        Missing escalation paths
+                                    </div>
+                                </div>
+                                <div class="example-box good">
+                                    <div class="example-header">&#9989; Good Runbook</div>
+                                    <div class="example-content">
+                                        Copy-paste commands<br><br>
+                                        Step-by-step procedures<br><br>
+                                        Named contacts with phones
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document 6: Governance Document -->
+                <div class="gov-card" onclick="toggleCard(this)">
+                    <div class="gov-card-header">
+                        <div class="gov-card-icon" style="background: rgba(239, 68, 68, 0.15);">&#128737;</div>
+                        <div class="gov-card-title">
+                            <h4>6. Governance Document</h4>
+                            <p>Rules, policies & compliance</p>
+                        </div>
+                        <div class="gov-card-expand">&#9660;</div>
+                    </div>
+                    <div class="gov-card-preview">
+                        <small style="color: var(--text-muted);">Required for production | Owner: Compliance + Architecture</small>
+                    </div>
+                    <div class="gov-card-detail">
+                        <div class="gov-card-content">
+                            <div class="info-box" style="margin-top: 0;">
+                                <span class="icon">&#128161;</span>
+                                <p><strong>This is the document you're creating in today's exercise!</strong> See Section 7 for the complete template.</p>
+                            </div>
+
+                            <div class="visual-diagram">
+                                <div class="diagram-title">Governance Document Checklist</div>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; text-align: left;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: var(--bg-tertiary); border-radius: 6px;">
+                                        <span style="color: var(--accent-green);">&#9745;</span>
+                                        <span style="font-size: 0.85rem;">Agent Role Model</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: var(--bg-tertiary); border-radius: 6px;">
+                                        <span style="color: var(--accent-green);">&#9745;</span>
+                                        <span style="font-size: 0.85rem;">Behavior & Decision Model</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: var(--bg-tertiary); border-radius: 6px;">
+                                        <span style="color: var(--accent-green);">&#9745;</span>
+                                        <span style="font-size: 0.85rem;">Failure & Degradation</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: var(--bg-tertiary); border-radius: 6px;">
+                                        <span style="color: var(--accent-green);">&#9745;</span>
+                                        <span style="font-size: 0.85rem;">Trust Boundaries</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: var(--bg-tertiary); border-radius: 6px;">
+                                        <span style="color: var(--accent-green);">&#9745;</span>
+                                        <span style="font-size: 0.85rem;">Explainability & Audit</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: var(--bg-tertiary); border-radius: 6px;">
+                                        <span style="color: var(--accent-green);">&#9745;</span>
+                                        <span style="font-size: 0.85rem;">Change & Evolution</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: var(--bg-tertiary); border-radius: 6px;">
+                                        <span style="color: var(--accent-green);">&#9745;</span>
+                                        <span style="font-size: 0.85rem;">Operational Ownership</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: var(--bg-tertiary); border-radius: 6px;">
+                                        <span style="color: var(--accent-green);">&#9745;</span>
+                                        <span style="font-size: 0.85rem;">KAF Mapping</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="critical-box" style="margin-top: 1rem;">
+                                <span class="icon">&#9888;</span>
+                                <p><strong>No Governance = No Production.</strong> This document is required for any agentic system deployment.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentation Best Practices -->
+            <h3>Documentation Best Practices</h3>
+
+            <div class="lifecycle-flow" style="flex-direction: column; align-items: stretch; gap: 1rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <div class="card" style="margin: 0; border-left: 4px solid var(--accent-green);">
+                        <h4 style="color: var(--accent-green); margin-top: 0; font-size: 1rem;">&#9989; DO</h4>
+                        <ul style="color: var(--text-secondary); font-size: 0.85rem; padding-left: 1.25rem; margin: 0;">
+                            <li>Write for the person at 3 AM</li>
+                            <li>Include copy-paste commands</li>
+                            <li>Version control everything</li>
+                            <li>Update docs with code changes</li>
+                            <li>Use diagrams over text</li>
+                            <li>Name specific people, not teams</li>
+                            <li>Include "what can go wrong"</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="margin: 0; border-left: 4px solid var(--accent-red);">
+                        <h4 style="color: var(--accent-red); margin-top: 0; font-size: 1rem;">&#10060; DON'T</h4>
+                        <ul style="color: var(--text-secondary); font-size: 0.85rem; padding-left: 1.25rem; margin: 0;">
+                            <li>Write "contact the team"</li>
+                            <li>Use placeholder text</li>
+                            <li>Assume reader knows context</li>
+                            <li>Skip failure scenarios</li>
+                            <li>Document in code comments only</li>
+                            <li>Say "best effort" or "as needed"</li>
+                            <li>Forget to update after changes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentation Maturity Model -->
+            <h3>Documentation Maturity Model</h3>
+            <p>Where is your project on the documentation maturity scale?</p>
+
+            <div class="visual-diagram" style="background: var(--bg-card);">
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 80px; text-align: right; font-size: 0.8rem; color: var(--accent-red); font-weight: 600;">Level 0</div>
+                        <div style="flex: 1; height: 40px; background: linear-gradient(90deg, rgba(239, 68, 68, 0.3) 0%, transparent 20%); border-radius: 6px; display: flex; align-items: center; padding-left: 1rem;">
+                            <span style="font-size: 0.85rem;">&#10060; No documentation - "It's in my head"</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 80px; text-align: right; font-size: 0.8rem; color: var(--accent-orange); font-weight: 600;">Level 1</div>
+                        <div style="flex: 1; height: 40px; background: linear-gradient(90deg, rgba(245, 158, 11, 0.3) 0%, transparent 40%); border-radius: 6px; display: flex; align-items: center; padding-left: 1rem;">
+                            <span style="font-size: 0.85rem;">&#128221; Basic READMEs - Setup instructions only</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 80px; text-align: right; font-size: 0.8rem; color: var(--accent-blue); font-weight: 600;">Level 2</div>
+                        <div style="flex: 1; height: 40px; background: linear-gradient(90deg, rgba(59, 130, 246, 0.3) 0%, transparent 60%); border-radius: 6px; display: flex; align-items: center; padding-left: 1rem;">
+                            <span style="font-size: 0.85rem;">&#128209; Structured docs - Architecture + Runbook</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 80px; text-align: right; font-size: 0.8rem; color: var(--accent-purple); font-weight: 600;">Level 3</div>
+                        <div style="flex: 1; height: 40px; background: linear-gradient(90deg, rgba(139, 92, 246, 0.3) 0%, transparent 80%); border-radius: 6px; display: flex; align-items: center; padding-left: 1rem;">
+                            <span style="font-size: 0.85rem;">&#128737; Governance included - Policies + Ownership</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 80px; text-align: right; font-size: 0.8rem; color: var(--accent-green); font-weight: 600;">Level 4</div>
+                        <div style="flex: 1; height: 40px; background: linear-gradient(90deg, rgba(16, 185, 129, 0.3) 0%, transparent 100%); border-radius: 6px; display: flex; align-items: center; padding-left: 1rem;">
+                            <span style="font-size: 0.85rem;">&#9989; Enterprise ready - Full set, reviewed, maintained</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="critical-box" style="margin-top: 1.5rem;">
+                <span class="icon">&#127919;</span>
+                <p><strong>Target for production:</strong> Level 3 minimum. Level 4 for client-facing or high-risk agents.</p>
+            </div>
+
+            <!-- Quick Reference Card -->
+            <h3>Quick Reference: Document Ownership</h3>
+
+            <div style="overflow-x: auto;">
+                <table class="grading-table" style="font-size: 0.85rem;">
+                    <thead>
+                        <tr>
+                            <th>Document</th>
+                            <th>Owner</th>
+                            <th>Reviewer</th>
+                            <th>Update Frequency</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Project Charter</td>
+                            <td>Project Manager</td>
+                            <td>Sponsor</td>
+                            <td>Project start, major changes</td>
+                        </tr>
+                        <tr>
+                            <td>Architecture Doc</td>
+                            <td>Solution Architect</td>
+                            <td>Tech Lead, Security</td>
+                            <td>Every release</td>
+                        </tr>
+                        <tr>
+                            <td>Prompt Library</td>
+                            <td>AI Engineer</td>
+                            <td>AI Lead, QA</td>
+                            <td>Every prompt change</td>
+                        </tr>
+                        <tr>
+                            <td>Test Documentation</td>
+                            <td>QA Lead</td>
+                            <td>AI Engineer</td>
+                            <td>Every release</td>
+                        </tr>
+                        <tr>
+                            <td>Operations Runbook</td>
+                            <td>Operations Lead</td>
+                            <td>SRE, Support</td>
+                            <td>After every incident</td>
+                        </tr>
+                        <tr>
+                            <td>Governance Document</td>
+                            <td>Architecture + Compliance</td>
+                            <td>Legal, Security, Risk</td>
+                            <td>Quarterly review</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Folder Structure Best Practice -->
+            <h3>Best Practice: Documentation Folder Structure</h3>
+            <p>Organize your agentic AI project documentation using this recommended folder structure.</p>
+
+            <div class="card" style="background: var(--bg-code); border-color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.8;">
+                <div style="color: var(--text-muted); margin-bottom: 1rem;">&#128193; project-root/</div>
+                <div style="padding-left: 1.5rem;">
+                    <div style="color: var(--accent-cyan);">&#128193; docs/</div>
+                    <div style="padding-left: 1.5rem;">
+                        <div style="color: var(--text-muted); margin: 0.5rem 0;">&#9472;&#9472; &#128196; README.md <span style="color: var(--accent-green); font-size: 0.75rem; margin-left: 0.5rem;"># Documentation index</span></div>
+
+                        <div style="color: var(--accent-purple); margin-top: 1rem;">&#128193; 01-project/</div>
+                        <div style="padding-left: 1.5rem; color: var(--text-secondary);">
+                            <div>&#9500;&#9472;&#9472; &#128196; PROJECT-CHARTER.md</div>
+                            <div>&#9500;&#9472;&#9472; &#128196; STAKEHOLDERS.md</div>
+                            <div>&#9492;&#9472;&#9472; &#128196; ROADMAP.md</div>
+                        </div>
+
+                        <div style="color: var(--accent-blue); margin-top: 1rem;">&#128193; 02-architecture/</div>
+                        <div style="padding-left: 1.5rem; color: var(--text-secondary);">
+                            <div>&#9500;&#9472;&#9472; &#128196; ARCHITECTURE.md</div>
+                            <div>&#9500;&#9472;&#9472; &#128196; DATA-FLOW.md</div>
+                            <div>&#9500;&#9472;&#9472; &#128196; INTEGRATION-SPECS.md</div>
+                            <div>&#9500;&#9472;&#9472; &#128193; diagrams/</div>
+                            <div style="padding-left: 1.5rem;">
+                                <div>&#9500;&#9472;&#9472; &#128196; system-overview.png</div>
+                                <div>&#9500;&#9472;&#9472; &#128196; agent-workflow.png</div>
+                                <div>&#9492;&#9472;&#9472; &#128196; data-architecture.png</div>
+                            </div>
+                            <div>&#9492;&#9472;&#9472; &#128196; SECURITY.md</div>
+                        </div>
+
+                        <div style="color: var(--accent-orange); margin-top: 1rem;">&#128193; 03-governance/</div>
+                        <div style="padding-left: 1.5rem; color: var(--text-secondary);">
+                            <div>&#9500;&#9472;&#9472; &#128196; GOVERNANCE.md <span style="color: var(--accent-orange); font-size: 0.75rem; margin-left: 0.5rem;"># Main governance doc</span></div>
+                            <div>&#9500;&#9472;&#9472; &#128196; ROLE-MODEL.md</div>
+                            <div>&#9500;&#9472;&#9472; &#128196; DECISION-MATRIX.md</div>
+                            <div>&#9500;&#9472;&#9472; &#128196; TRUST-BOUNDARIES.md</div>
+                            <div>&#9500;&#9472;&#9472; &#128196; FAILURE-MODES.md</div>
+                            <div>&#9492;&#9472;&#9472; &#128196; KAF-MAPPING.md</div>
+                        </div>
+
+                        <div style="color: var(--accent-cyan); margin-top: 1rem;">&#128193; 04-prompts/</div>
+                        <div style="padding-left: 1.5rem; color: var(--text-secondary);">
+                            <div>&#9500;&#9472;&#9472; &#128196; PROMPT-CATALOG.md <span style="color: var(--accent-cyan); font-size: 0.75rem; margin-left: 0.5rem;"># Index of all prompts</span></div>
+                            <div>&#9500;&#9472;&#9472; &#128193; system-prompts/</div>
+                            <div style="padding-left: 1.5rem;">
+                                <div>&#9500;&#9472;&#9472; &#128196; triage-agent-v2.3.md</div>
+                                <div>&#9500;&#9472;&#9472; &#128196; decision-agent-v1.5.md</div>
+                                <div>&#9492;&#9472;&#9472; &#128196; execution-agent-v1.2.md</div>
+                            </div>
+                            <div>&#9500;&#9472;&#9472; &#128193; templates/</div>
+                            <div>&#9492;&#9472;&#9472; &#128196; PROMPT-CHANGELOG.md</div>
+                        </div>
+
+                        <div style="color: var(--accent-green); margin-top: 1rem;">&#128193; 05-testing/</div>
+                        <div style="padding-left: 1.5rem; color: var(--text-secondary);">
+                            <div>&#9500;&#9472;&#9472; &#128196; TEST-STRATEGY.md</div>
+                            <div>&#9500;&#9472;&#9472; &#128196; TEST-CASES.md</div>
+                            <div>&#9500;&#9472;&#9472; &#128193; golden-dataset/</div>
+                            <div style="padding-left: 1.5rem;">
+                                <div>&#9500;&#9472;&#9472; &#128196; triage-examples.json</div>
+                                <div>&#9492;&#9472;&#9472; &#128196; edge-cases.json</div>
+                            </div>
+                            <div>&#9492;&#9472;&#9472; &#128196; EVALUATION-RESULTS.md</div>
+                        </div>
+
+                        <div style="color: var(--accent-red); margin-top: 1rem;">&#128193; 06-operations/</div>
+                        <div style="padding-left: 1.5rem; color: var(--text-secondary);">
+                            <div>&#9500;&#9472;&#9472; &#128196; RUNBOOK.md <span style="color: var(--accent-red); font-size: 0.75rem; margin-left: 0.5rem;"># Day-to-day operations</span></div>
+                            <div>&#9500;&#9472;&#9472; &#128196; INCIDENT-RESPONSE.md</div>
+                            <div>&#9500;&#9472;&#9472; &#128196; MONITORING.md</div>
+                            <div>&#9500;&#9472;&#9472; &#128196; ALERTING-RULES.md</div>
+                            <div>&#9492;&#9472;&#9472; &#128196; ROLLBACK-PROCEDURES.md</div>
+                        </div>
+
+                        <div style="color: var(--text-muted); margin-top: 1rem;">&#128193; 07-compliance/</div>
+                        <div style="padding-left: 1.5rem; color: var(--text-secondary);">
+                            <div>&#9500;&#9472;&#9472; &#128196; AUDIT-LOG-SPEC.md</div>
+                            <div>&#9500;&#9472;&#9472; &#128196; DATA-RETENTION.md</div>
+                            <div>&#9500;&#9472;&#9472; &#128196; PRIVACY-IMPACT.md</div>
+                            <div>&#9492;&#9472;&#9472; &#128196; COMPLIANCE-CHECKLIST.md</div>
+                        </div>
+
+                        <div style="color: var(--text-muted); margin-top: 1rem;">&#128193; 08-handover/</div>
+                        <div style="padding-left: 1.5rem; color: var(--text-secondary);">
+                            <div>&#9500;&#9472;&#9472; &#128196; ONBOARDING-GUIDE.md</div>
+                            <div>&#9500;&#9472;&#9472; &#128196; FAQ.md</div>
+                            <div>&#9492;&#9472;&#9472; &#128196; KNOWN-ISSUES.md</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Folder Structure Explanation -->
+            <div class="governance-cards" style="margin-top: 1.5rem;">
+                <div class="card" style="margin: 0;">
+                    <h4 style="margin-top: 0; color: var(--accent-purple);">&#128193; 01-project/</h4>
+                    <p style="margin-bottom: 0; font-size: 0.9rem;">Business context, stakeholders, why we're building this. Start here when onboarding new team members.</p>
+                </div>
+                <div class="card" style="margin: 0;">
+                    <h4 style="margin-top: 0; color: var(--accent-blue);">&#128193; 02-architecture/</h4>
+                    <p style="margin-bottom: 0; font-size: 0.9rem;">Technical design, system diagrams, data flows. The "how it works" for developers and architects.</p>
+                </div>
+                <div class="card" style="margin: 0;">
+                    <h4 style="margin-top: 0; color: var(--accent-orange);">&#128193; 03-governance/</h4>
+                    <p style="margin-bottom: 0; font-size: 0.9rem;">Rules, boundaries, ownership. Required for compliance reviews and audits.</p>
+                </div>
+                <div class="card" style="margin: 0;">
+                    <h4 style="margin-top: 0; color: var(--accent-cyan);">&#128193; 04-prompts/</h4>
+                    <p style="margin-bottom: 0; font-size: 0.9rem;">Version-controlled prompt library. Every prompt with ID, version, purpose, and changelog.</p>
+                </div>
+                <div class="card" style="margin: 0;">
+                    <h4 style="margin-top: 0; color: var(--accent-green);">&#128193; 05-testing/</h4>
+                    <p style="margin-bottom: 0; font-size: 0.9rem;">Test cases, golden datasets, evaluation results. Evidence for quality assurance.</p>
+                </div>
+                <div class="card" style="margin: 0;">
+                    <h4 style="margin-top: 0; color: var(--accent-red);">&#128193; 06-operations/</h4>
+                    <p style="margin-bottom: 0; font-size: 0.9rem;">Runbooks, incident response, monitoring. The "3 AM guide" for operators.</p>
+                </div>
+            </div>
+
+            <!-- File Naming Convention -->
+            <h3>File Naming Conventions</h3>
+
+            <div class="example-comparison">
+                <div class="example-box bad">
+                    <div class="example-header">&#10060; Bad Naming</div>
+                    <div class="example-content" style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">
+                        docs.md<br>
+                        prompt_new_final_v2.md<br>
+                        architecture (1).md<br>
+                        test.md<br>
+                        notes from meeting.md
+                    </div>
+                </div>
+                <div class="example-box good">
+                    <div class="example-header">&#9989; Good Naming</div>
+                    <div class="example-content" style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">
+                        ARCHITECTURE.md<br>
+                        triage-agent-v2.3.md<br>
+                        GOVERNANCE.md<br>
+                        TEST-CASES.md<br>
+                        2026-02-05-design-review.md
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box" style="margin-top: 1rem;">
+                <span class="icon">&#128161;</span>
+                <p><strong>Naming Rules:</strong> UPPERCASE for main documents (ARCHITECTURE.md), lowercase-with-dashes for versioned files (triage-agent-v2.3.md), dates in ISO format (2026-02-05).</p>
+            </div>
+
+            <!-- Minimum Viable Documentation -->
+            <h3>Minimum Viable Documentation (MVD)</h3>
+            <p>Don't have time for everything? Here's the absolute minimum for production:</p>
+
+            <div class="visual-diagram" style="background: var(--bg-card);">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; text-align: center;">
+                    <div style="padding: 1rem; background: rgba(239, 68, 68, 0.1); border: 2px solid var(--accent-red); border-radius: 12px;">
+                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">&#128196;</div>
+                        <div style="font-weight: 600; color: var(--accent-red);">GOVERNANCE.md</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Required</div>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(239, 68, 68, 0.1); border: 2px solid var(--accent-red); border-radius: 12px;">
+                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">&#128736;</div>
+                        <div style="font-weight: 600; color: var(--accent-red);">ARCHITECTURE.md</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Required</div>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(239, 68, 68, 0.1); border: 2px solid var(--accent-red); border-radius: 12px;">
+                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">&#128214;</div>
+                        <div style="font-weight: 600; color: var(--accent-red);">RUNBOOK.md</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Required</div>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(245, 158, 11, 0.1); border: 2px solid var(--accent-orange); border-radius: 12px;">
+                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">&#128172;</div>
+                        <div style="font-weight: 600; color: var(--accent-orange);">PROMPT-CATALOG.md</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Recommended</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="critical-box" style="margin-top: 1rem;">
+                <span class="icon">&#9888;</span>
+                <p><strong>No shortcuts:</strong> GOVERNANCE.md, ARCHITECTURE.md, and RUNBOOK.md are non-negotiable for any production agentic system.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 7: Final Exercise -->
+        <section id="exercise">
+            <h2><span class="number">7</span> Final Exercise</h2>
+
+            <div class="card" style="border-color: var(--accent-green);">
+                <h3 style="margin-top: 0;">Scenario: Incident Triage Agent</h3>
+                <p>Design an agent that analyzes incidents, determines severity, recommends actions, and integrates with ITSM tools.</p>
+                <p style="margin-bottom: 0;"><strong>Mode:</strong> Semi-autonomous - auto-execute low-risk, escalate high-risk.</p>
+            </div>
+
+            <div class="exercise-box">
+                <h4>&#128221; Your Task: 2-Page Governance Document</h4>
+                <ol class="exercise-steps">
+                    <li>Open ChatGPT Enterprise</li>
+                    <li>Use the prompt template below</li>
+                    <li>Review and customize the output</li>
+                    <li>Map every decision to a KAF component</li>
+                    <li>Present for peer review (15 min)</li>
+                </ol>
+            </div>
+
+            <div class="prompt-box">
+                <h4>&#129302; Document Generation Prompt</h4>
+                <div class="prompt-content">Create a 2-page Governance Document for an Incident Triage Agent.
+
+The agent:
+- Analyzes IT incidents, determines severity (P1-P4)
+- Recommends or executes remediation
+- Integrates with ServiceNow, Datadog, KB
+- Semi-autonomous (auto-execute low-risk, escalate high-risk)
+
+Include these 8 sections:
+
+1. AGENT ROLE MODEL - Roles, responsibilities, authority
+2. BEHAVIOR & DECISION MODEL - Auto vs human approval vs prohibited
+3. FAILURE & DEGRADATION - Scenarios and safe responses
+4. TRUST BOUNDARIES - Authoritative vs advisory data, R/W permissions
+5. EXPLAINABILITY & AUDIT - What to log, how to explain decisions
+6. CHANGE & EVOLUTION - Update process, testing, rollback
+7. OPERATIONAL OWNERSHIP - Owners, kill switch authority
+8. KAF MAPPING TABLE - Map each section to KAF components
+
+Be specific. No placeholder language.</div>
+                <button class="copy-btn" onclick="copyPrompt(this)" style="margin-top: 1rem;">Copy prompt</button>
+            </div>
+
+            <h3>Document Structure</h3>
+
+            <div class="doc-preview">
+                <div class="doc-page" data-page="Page 1">
+                    <div class="doc-section">
+                        <h6>1. Agent Role Model</h6>
+                        <p>Triage Agent, Validation Agent, Execution Agent with clear boundaries...</p>
+                    </div>
+                    <div class="doc-section">
+                        <h6>2. Behavior & Decision Model</h6>
+                        <p>AUTO: P3/P4 with KB match. HUMAN: P1/P2. NEVER: Delete data...</p>
+                    </div>
+                    <div class="doc-section">
+                        <h6>3. Failure & Degradation</h6>
+                        <p>LLM timeout: Queue + alert. DB fail: Read-only mode...</p>
+                    </div>
+                    <div class="doc-section">
+                        <h6>4. Trust Boundaries</h6>
+                        <p>Authoritative: CMDB. Advisory: Datadog, KB. Write: Comments only...</p>
+                    </div>
+                </div>
+                <div class="doc-page" data-page="Page 2">
+                    <div class="doc-section">
+                        <h6>5. Explainability & Audit</h6>
+                        <p>Log: timestamp, input, decision, confidence, rationale, KB ref...</p>
+                    </div>
+                    <div class="doc-section">
+                        <h6>6. Change & Evolution</h6>
+                        <p>PR required, peer review, 24h staging, 10% canary, auto-rollback...</p>
+                    </div>
+                    <div class="doc-section">
+                        <h6>7. Operational Ownership</h6>
+                        <p>Owner: Platform Lead. Kill switch: Any SRE L2+ or Manager...</p>
+                    </div>
+                    <div class="doc-section">
+                        <h6>8. KAF Mapping</h6>
+                        <p>Role Model -> Core + Responsible AI. Failure -> Builder...</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Grading</h3>
+
+            <table class="grading-table">
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Points</th>
+                        <th>Fail Gate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Completeness</strong> - All 8 sections</td>
+                        <td><span class="points">20 pts</span></td>
+                        <td><span class="badge fail">Missing = FAIL</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Behavioral Clarity</strong> - Clear mandate</td>
+                        <td><span class="points">20 pts</span></td>
+                        <td>-10 for "best effort"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Failure Handling</strong> - Safe degradation</td>
+                        <td><span class="points">15 pts</span></td>
+                        <td>-10 for "retries only"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>KAF Mapping</strong> - Correct components</td>
+                        <td><span class="points">25 pts</span></td>
+                        <td><span class="badge fail">>20% wrong = FAIL</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Governance</strong> - Clear ownership</td>
+                        <td><span class="points">10 pts</span></td>
+                        <td>-5 for "shared"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Enterprise Ready</strong> - Audit + change</td>
+                        <td><span class="points">10 pts</span></td>
+                        <td>-10 for demo-level</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="stats-grid">
+                <div class="stat-card" style="border-color: var(--accent-green);">
+                    <div class="stat-value" style="-webkit-text-fill-color: var(--accent-green);">Pass</div>
+                    <div class="stat-label">70+ points</div>
+                </div>
+                <div class="stat-card" style="border-color: var(--accent-orange);">
+                    <div class="stat-value" style="-webkit-text-fill-color: var(--accent-orange);">Conditional</div>
+                    <div class="stat-label">70+ but weak gov</div>
+                </div>
+                <div class="stat-card" style="border-color: var(--accent-red);">
+                    <div class="stat-value" style="-webkit-text-fill-color: var(--accent-red);">Fail</div>
+                    <div class="stat-label">&lt;70 or fail gate</div>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <span class="icon">&#9201;</span>
+                <p><strong>Time:</strong> 50 min create, 20 min peer review, 20 min discussion.</p>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section id="takeaways">
+            <h2><span class="number">&#127942;</span> Key Takeaways</h2>
+
+            <div class="final-flow">
+                <div class="final-step">
+                    <div class="final-step-icon">&#128209;</div>
+                    <div class="final-step-label">Document<br>Everything</div>
+                </div>
+                <div class="final-arrow">&#8594;</div>
+                <div class="final-step">
+                    <div class="final-step-icon">&#128269;</div>
+                    <div class="final-step-label">Map to<br>KAF</div>
+                </div>
+                <div class="final-arrow">&#8594;</div>
+                <div class="final-step">
+                    <div class="final-step-icon">&#128274;</div>
+                    <div class="final-step-label">Define<br>Boundaries</div>
+                </div>
+                <div class="final-arrow">&#8594;</div>
+                <div class="final-step">
+                    <div class="final-step-icon">&#128100;</div>
+                    <div class="final-step-label">Assign<br>Owners</div>
+                </div>
+                <div class="final-arrow">&#8594;</div>
+                <div class="final-step">
+                    <div class="final-step-icon">&#10003;</div>
+                    <div class="final-step-label">Ship<br>Safely</div>
+                </div>
+            </div>
+
+            <div class="card" style="border-color: var(--accent-purple); text-align: center; margin-top: 2rem;">
+                <h3 style="margin-top: 0; color: var(--accent-purple);">Final Principle</h3>
+                <p style="font-size: 1.1rem; margin-bottom: 0;"><strong>Kyndryl does not deliver agents that merely work.<br>Kyndryl delivers agents that can be explained, governed, trusted, and operated at scale.</strong></p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>AI Academy 2026 &bull; Kyndryl &bull; Day 4: System Design & Governance Blueprint</p>
+    </footer>
+
+    <script>
+        // Theme handling
+        const html = document.documentElement;
+        const lightBtn = document.getElementById('theme-light');
+        const darkBtn = document.getElementById('theme-dark');
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        setTheme(savedTheme);
+
+        function setTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            if (theme === 'light') {
+                lightBtn.classList.add('active');
+                darkBtn.classList.remove('active');
+            } else {
+                darkBtn.classList.add('active');
+                lightBtn.classList.remove('active');
+            }
+        }
+
+        lightBtn.addEventListener('click', () => setTheme('light'));
+        darkBtn.addEventListener('click', () => setTheme('dark'));
+
+        // Tab functionality
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Expandable governance cards
+        function toggleCard(card) {
+            card.classList.toggle('expanded');
+        }
+
+        // Copy prompt
+        function copyPrompt(btn) {
+            const promptContent = btn.parentElement.querySelector('.prompt-content');
+            navigator.clipboard.writeText(promptContent.textContent).then(() => {
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy prompt', 2000);
+            });
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+                document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Active nav on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            let current = '';
+            sections.forEach(section => {
+                if (scrollY >= section.offsetTop - 200) current = section.getAttribute('id');
+            });
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2601 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Academy | Databases & Memory for Agents</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Theme Variables */
+        :root {
+            --transition-speed: 0.3s;
+        }
+
+        /* Dark Theme (default) */
+        [data-theme="dark"] {
+            --bg-primary: #0f1419;
+            --bg-secondary: #1a1f26;
+            --bg-tertiary: #242b35;
+            --bg-card: #1a1f26;
+            --bg-card-hover: #242b35;
+            --bg-code: #0d1117;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #2d3748;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.5);
+            --nav-bg: rgba(15, 20, 25, 0.9);
+            --hero-gradient: radial-gradient(ellipse at top, rgba(59, 130, 246, 0.15) 0%, transparent 60%);
+            --tooltip-bg: #0f1419;
+            --tooltip-text: #cbd5e1;
+            --tooltip-title: #a78bfa;
+            --code-header-bg: #1a1f26;
+            --mermaid-theme: dark;
+        }
+
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --bg-code: #1e293b;
+            --accent-blue: #2563eb;
+            --accent-green: #059669;
+            --accent-orange: #d97706;
+            --accent-purple: #7c3aed;
+            --accent-red: #dc2626;
+            --accent-cyan: #0891b2;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --hero-gradient: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+            --tooltip-bg: #1e293b;
+            --tooltip-text: #e2e8f0;
+            --tooltip-title: #c4b5fd;
+            --code-header-bg: #334155;
+            --mermaid-theme: default;
+        }
+
+        /* Common gradients */
+        :root {
+            --gradient-1: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --gradient-2: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+            transition: background var(--transition-speed), color var(--transition-speed);
+        }
+
+        /* Skip to content link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--accent-blue);
+            color: white;
+            padding: 8px 16px;
+            z-index: 10000;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 0 2rem;
+            box-shadow: var(--shadow-sm);
+            transition: background var(--transition-speed), border-color var(--transition-speed);
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 0;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 0.5rem;
+            list-style: none;
+            overflow-x: auto;
+            padding: 0.25rem 0;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        nav a:focus {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: 2px;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.35rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .theme-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle-btn.active {
+            background: var(--accent-blue);
+        }
+
+        .theme-toggle-btn:focus {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: 2px;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: var(--hero-gradient);
+            transition: background var(--transition-speed);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-speed);
+        }
+
+        .hero-badge span {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .time-box {
+            display: inline-flex;
+            gap: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-speed);
+        }
+
+        .time-item {
+            text-align: center;
+        }
+
+        .time-item .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        .time-item .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 5rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2 .number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 10px;
+            font-size: 1rem;
+            color: white;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Database Visualization */
+        .db-visual-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .db-visual-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+        }
+
+        .db-visual-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .db-visual-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .db-visual-card.relational::before { background: var(--accent-blue); }
+        .db-visual-card.timeseries::before { background: var(--accent-orange); }
+        .db-visual-card.nosql::before { background: var(--accent-green); }
+        .db-visual-card.vector::before { background: var(--accent-purple); }
+
+        .db-visual-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .db-illustration {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            transition: all var(--transition-speed);
+        }
+
+        /* Relational DB Visual */
+        .relational-visual {
+            display: flex;
+            gap: 0.5rem;
+            align-items: flex-start;
+        }
+
+        .db-table {
+            background: var(--accent-blue);
+            border-radius: 6px;
+            padding: 0.5rem;
+            font-size: 0.7rem;
+            color: white;
+            min-width: 70px;
+        }
+
+        .db-table-header {
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-bottom: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .db-table-row {
+            opacity: 0.9;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .db-relation {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            padding-top: 1rem;
+        }
+
+        /* Time Series Visual */
+        .timeseries-visual {
+            width: 100%;
+            height: 80px;
+            position: relative;
+        }
+
+        .ts-line {
+            stroke: var(--accent-orange);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .ts-area {
+            fill: url(#tsGradient);
+        }
+
+        .ts-point {
+            fill: var(--accent-orange);
+        }
+
+        /* NoSQL Visual */
+        .nosql-visual {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .json-doc {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--accent-green);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--accent-green);
+        }
+
+        /* Vector Visual */
+        .vector-visual {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .vector-space {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed var(--accent-purple);
+            border-radius: 8px;
+            position: relative;
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .vector-space .dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-purple);
+            border-radius: 50%;
+        }
+
+        .vector-space .dot:nth-child(1) { top: 20%; left: 30%; }
+        .vector-space .dot:nth-child(2) { top: 40%; left: 60%; opacity: 0.7; }
+        .vector-space .dot:nth-child(3) { top: 60%; left: 25%; opacity: 0.5; }
+        .vector-space .dot:nth-child(4) { top: 35%; left: 45%; }
+        .vector-space .dot:nth-child(5) { top: 70%; left: 70%; opacity: 0.6; }
+        .vector-space .dot.highlight {
+            background: var(--accent-cyan);
+            width: 12px;
+            height: 12px;
+            top: 38%;
+            left: 55%;
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        .db-use-case {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+            transition: all var(--transition-speed);
+        }
+
+        .db-use-case strong {
+            color: var(--text-primary);
+        }
+
+        .db-examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .db-examples span {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-secondary);
+            transition: all var(--transition-speed);
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison-table th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .comparison-table td {
+            color: var(--text-secondary);
+        }
+
+        .comparison-table tr:hover td {
+            background: var(--bg-secondary);
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge.best { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+        .badge.good { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+        .badge.ok { background: rgba(245, 158, 11, 0.15); color: var(--accent-orange); }
+        .badge.poor { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); }
+
+        /* Code Block */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .code-header {
+            background: var(--code-header-bg);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-header span {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .copy-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: white;
+        }
+
+        .copy-btn:focus {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: 2px;
+        }
+
+        pre {
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .code-comment { color: #6b7280; }
+        .code-keyword { color: #f472b6; }
+        .code-string { color: #86efac; }
+        .code-function { color: #c4b5fd; }
+        .code-variable { color: #fbbf24; }
+
+        /* Prompt Box */
+        .prompt-box {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .prompt-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-purple);
+        }
+
+        .prompt-content {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            color: var(--text-secondary);
+            transition: all var(--transition-speed);
+        }
+
+        /* Exercise Box */
+        .exercise-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exercise-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-green);
+        }
+
+        .exercise-steps {
+            list-style: none;
+            counter-reset: step;
+        }
+
+        .exercise-steps li {
+            counter-increment: step;
+            padding: 0.75rem 0;
+            padding-left: 3rem;
+            position: relative;
+            color: var(--text-secondary);
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .exercise-steps li:last-child {
+            border-bottom: none;
+        }
+
+        .exercise-steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0.75rem;
+            width: 28px;
+            height: 28px;
+            background: var(--accent-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .warning-box .icon {
+            font-size: 1.25rem;
+        }
+
+        .warning-box p {
+            margin: 0;
+            color: var(--accent-orange);
+            font-size: 0.9rem;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .info-box .icon {
+            font-size: 1.25rem;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+        }
+
+        /* Mermaid */
+        .mermaid {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            transition: all var(--transition-speed);
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .checklist li {
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .checklist li:hover {
+            background: var(--bg-secondary);
+        }
+
+        .checklist input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent-green);
+            cursor: pointer;
+        }
+
+        /* Flow Diagram with Tooltips */
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin: 1.5rem 0;
+            transition: all var(--transition-speed);
+        }
+
+        .flow-item {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            text-align: center;
+            min-width: 100px;
+            position: relative;
+            cursor: help;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .flow-item:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .flow-item.highlight {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .flow-item .emoji {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .flow-item .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .flow-arrow {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            bottom: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--tooltip-bg);
+            border: 1px solid var(--accent-purple);
+            border-radius: 10px;
+            padding: 1rem;
+            width: 250px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: var(--accent-purple);
+        }
+
+        .flow-item:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tooltip-title {
+            font-weight: 600;
+            color: var(--tooltip-title);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .tooltip-text {
+            font-size: 0.8rem;
+            color: var(--tooltip-text);
+            line-height: 1.5;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-blue);
+            background: var(--bg-secondary);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent-blue);
+        }
+
+        .tab-btn:focus {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: 2px;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-speed);
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* DB Info Cards */
+        .db-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .db-info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-speed);
+        }
+
+        .db-info-card h5 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .db-info-card .tag {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background: var(--bg-secondary);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .db-info-card p {
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .db-info-card .best-for {
+            font-size: 0.8rem;
+            color: var(--accent-green);
+            font-weight: 500;
+        }
+
+        /* Architecture Visual */
+        .architecture-visual {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-speed);
+        }
+
+        .arch-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .arch-layer {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .arch-label {
+            width: 120px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .arch-content {
+            flex: 1;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .arch-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all var(--transition-speed);
+        }
+
+        .arch-box.primary {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .arch-box.secondary {
+            border-color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .arch-box.accent {
+            border-color: var(--accent-purple);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        /* Exercise Illustration */
+        .exercise-illustration {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-speed);
+        }
+
+        .exercise-flow {
+            display: flex;
+            align-items: stretch;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .exercise-stage {
+            flex: 1;
+            min-width: 200px;
+            max-width: 280px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            transition: all var(--transition-speed);
+        }
+
+        .exercise-stage.before {
+            border-color: var(--accent-red);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .exercise-stage.after {
+            border-color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .exercise-stage .stage-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .exercise-stage .stage-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .exercise-stage .stage-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .exercise-stage .stage-label {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all var(--transition-speed);
+        }
+
+        .exercise-stage.before .stage-label {
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+        }
+
+        .exercise-stage.after .stage-label {
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .exercise-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--text-muted);
+            padding: 0 0.5rem;
+        }
+
+        .what-we-build {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px dashed var(--border);
+        }
+
+        .build-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .build-item .icon {
+            font-size: 1.5rem;
+        }
+
+        .build-item .text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .build-item strong {
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            transition: all var(--transition-speed);
+        }
+
+        footer a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            nav ul {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .theme-toggle {
+                align-self: flex-end;
+            }
+
+            .hero {
+                padding: 7rem 1rem 2rem;
+            }
+
+            .time-box {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            main {
+                padding: 1rem;
+            }
+
+            .db-visual-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-diagram {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+
+            .tooltip {
+                width: 200px;
+            }
+
+            .exercise-flow {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .exercise-arrow {
+                transform: rotate(90deg);
+            }
+
+            .arch-layer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .arch-label {
+                text-align: left;
+                width: auto;
+            }
+
+            .comparison-table {
+                font-size: 0.8rem;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            nav, .theme-toggle, .copy-btn {
+                display: none !important;
+            }
+
+            .hero {
+                padding-top: 2rem;
+            }
+
+            body {
+                background: white;
+                color: black;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <nav>
+        <div class="nav-container">
+            <ul>
+                <li><a href="#homework" class="active">Validation</a></li>
+                <li><a href="#databases">Database Types</a></li>
+                <li><a href="#vector">Vector DB</a></li>
+                <li><a href="#supabase">Supabase/Neon</a></li>
+                <li><a href="#exercise">Exercise</a></li>
+                <li><a href="#data-operations">Data Operations</a></li>
+            </ul>
+            <div class="theme-toggle" role="group" aria-label="Theme selection">
+                <button class="theme-toggle-btn" id="theme-light" aria-label="Light theme" title="Light theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                </button>
+                <button class="theme-toggle-btn active" id="theme-dark" aria-label="Dark theme" title="Dark theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-badge">
+            <span></span>
+            AI Academy 2026 &bull; Day 3
+        </div>
+        <h1>Databases & Memory for AI Agents</h1>
+        <p>From forgetting to long-term memory. Building the infrastructure that makes agents actually useful.</p>
+        <div class="time-box">
+            <div class="time-item">
+                <div class="value">90</div>
+                <div class="label">minutes</div>
+            </div>
+            <div class="time-item">
+                <div class="value">4</div>
+                <div class="label">exercises</div>
+            </div>
+            <div class="time-item">
+                <div class="value">1</div>
+                <div class="label">deployment</div>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <!-- SECTION 1: Homework Review -->
+        <section id="homework">
+            <h2><span class="number">1</span> Validation of Yesterday's Exercise</h2>
+
+            <div class="card">
+                <p><strong>Yesterday's task:</strong> Find bugs in the repo <code>github.com/lubor-fedak/ai-academy-dashboard</code> using an AI assistant and propose/implement fixes.</p>
+            </div>
+
+            <div class="prompt-box">
+                <h4>Validation Instructions/Prompt for Exercise from Yesterday</h4>
+                <p style="margin-bottom: 1rem; color: var(--text-secondary);">Copy this prompt into ChatGPT Enterprise. The AI will ask you questions to verify your work.</p>
+                <div class="prompt-content">You are my mentor for code security audit. Yesterday I was assigned to analyze the GitHub repo ai-academy-dashboard and find security bugs.
+
+Your task:
+1. Ask me 5 questions about my work (one at a time)
+2. After each answer, give me brief feedback
+3. At the end, give me an overall rating (1-5 stars)
+
+Questions should cover:
+- What tool/prompt did I use for the analysis
+- What categories of bugs did I look for (secrets, injection, RLS...)
+- Specific findings and their severity
+- Proposed solutions
+- What I learned about security
+
+If I didn't do the task, help me catch up quickly in 3 minutes.
+
+Start with the first question.</div>
+                <button class="copy-btn" onclick="copyPrompt(this)" style="margin-top: 1rem;">Copy prompt</button>
+            </div>
+
+            <h3>Expected Findings</h3>
+            <ul class="checklist">
+                <li><input type="checkbox" id="check1"> <label for="check1">Hardcoded secrets (API keys, tokens)</label></li>
+                <li><input type="checkbox" id="check2"> <label for="check2">Missing RLS policies in Supabase</label></li>
+                <li><input type="checkbox" id="check3"> <label for="check3">SQL/NoSQL injection risks</label></li>
+                <li><input type="checkbox" id="check4"> <label for="check4">Missing input validation</label></li>
+                <li><input type="checkbox" id="check5"> <label for="check5">Verbose error messages</label></li>
+                <li><input type="checkbox" id="check6"> <label for="check6">Outdated dependencies (npm audit)</label></li>
+            </ul>
+
+            <div class="warning-box">
+                <span class="icon">⏱</span>
+                <p><strong>Time limit:</strong> 3 minutes for self-assessment with AI. Then we move on.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Database Types -->
+        <section id="databases">
+            <h2><span class="number">2</span> Database Types for AI</h2>
+
+            <p>Different problems require different databases. For AI agents, we typically need a combination.</p>
+
+            <div class="db-visual-grid">
+                <!-- Relational -->
+                <div class="db-visual-card relational">
+                    <h4>Relational / SQL</h4>
+                    <div class="db-illustration">
+                        <div class="relational-visual">
+                            <div class="db-table">
+                                <div class="db-table-header">users</div>
+                                <div class="db-table-row">id | name</div>
+                                <div class="db-table-row">1 | John</div>
+                                <div class="db-table-row">2 | Jane</div>
+                            </div>
+                            <div class="db-relation">&#8596;</div>
+                            <div class="db-table">
+                                <div class="db-table-header">orders</div>
+                                <div class="db-table-row">id | user_id</div>
+                                <div class="db-table-row">1 | 1</div>
+                                <div class="db-table-row">2 | 1</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="db-use-case">
+                        <strong>For agents:</strong> User profiles, settings, billing, relationships between entities
+                    </div>
+                    <div class="db-examples">
+                        <span>PostgreSQL</span>
+                        <span>MySQL</span>
+                        <span>SQL Server</span>
+                    </div>
+                </div>
+
+                <!-- Time Series -->
+                <div class="db-visual-card timeseries">
+                    <h4>Time-Series</h4>
+                    <div class="db-illustration">
+                        <svg class="timeseries-visual" viewBox="0 0 200 80" aria-label="Time series chart visualization">
+                            <defs>
+                                <linearGradient id="tsGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.3" />
+                                    <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:0" />
+                                </linearGradient>
+                            </defs>
+                            <path class="ts-area" d="M0,60 L20,50 L40,55 L60,35 L80,40 L100,25 L120,30 L140,20 L160,25 L180,15 L200,20 L200,80 L0,80 Z"/>
+                            <path class="ts-line" d="M0,60 L20,50 L40,55 L60,35 L80,40 L100,25 L120,30 L140,20 L160,25 L180,15 L200,20"/>
+                            <circle class="ts-point" cx="60" cy="35" r="3"/>
+                            <circle class="ts-point" cx="100" cy="25" r="3"/>
+                            <circle class="ts-point" cx="140" cy="20" r="3"/>
+                            <circle class="ts-point" cx="180" cy="15" r="3"/>
+                        </svg>
+                    </div>
+                    <div class="db-use-case">
+                        <strong>For agents:</strong> Logs, metrics, usage tracking, performance monitoring
+                    </div>
+                    <div class="db-examples">
+                        <span>InfluxDB</span>
+                        <span>TimescaleDB</span>
+                        <span>Prometheus</span>
+                    </div>
+                </div>
+
+                <!-- NoSQL -->
+                <div class="db-visual-card nosql">
+                    <h4>NoSQL / Document</h4>
+                    <div class="db-illustration">
+                        <div class="nosql-visual">
+                            <div class="json-doc">{ "user": "john",<br>&nbsp;&nbsp;"prefs": {...} }</div>
+                            <div class="json-doc">{ "session": "abc",<br>&nbsp;&nbsp;"data": [...] }</div>
+                            <div class="json-doc">{ "msg": "hello",<br>&nbsp;&nbsp;"meta": {} }</div>
+                        </div>
+                    </div>
+                    <div class="db-use-case">
+                        <strong>For agents:</strong> Conversations, session state, flexible schemas, caching
+                    </div>
+                    <div class="db-examples">
+                        <span>MongoDB</span>
+                        <span>Redis</span>
+                        <span>Cassandra</span>
+                    </div>
+                </div>
+
+                <!-- Vector -->
+                <div class="db-visual-card vector">
+                    <h4>Vector Database</h4>
+                    <div class="db-illustration">
+                        <div class="vector-visual">
+                            <div class="vector-space" aria-label="Vector space visualization">
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                                <div class="dot highlight"></div>
+                            </div>
+                            <div style="margin-left: 1rem; text-align: left;">
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Query: "vegetarian food"</div>
+                                <div style="font-size: 0.85rem; color: var(--accent-cyan); margin-top: 0.25rem;">&#8594; Find similar</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="db-use-case">
+                        <strong>For agents:</strong> RAG, semantic memory, knowledge base, similarity search
+                    </div>
+                    <div class="db-examples">
+                        <span>Pinecone</span>
+                        <span>Weaviate</span>
+                        <span>pgvector</span>
+                        <span>Qdrant</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Comparison for AI Use Cases</h3>
+            <div style="overflow-x: auto;">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Use Case</th>
+                            <th>Relational</th>
+                            <th>Time-Series</th>
+                            <th>NoSQL</th>
+                            <th>Vector</th>
+                            <th>Recommendation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Conversation history</td>
+                            <td><span class="badge good">Good</span></td>
+                            <td><span class="badge ok">OK</span></td>
+                            <td><span class="badge best">Best</span></td>
+                            <td><span class="badge ok">OK</span></td>
+                            <td>NoSQL or Postgres JSONB</td>
+                        </tr>
+                        <tr>
+                            <td>User preferences</td>
+                            <td><span class="badge best">Best</span></td>
+                            <td><span class="badge poor">&#8212;</span></td>
+                            <td><span class="badge good">Good</span></td>
+                            <td><span class="badge poor">&#8212;</span></td>
+                            <td>Relational (referential integrity)</td>
+                        </tr>
+                        <tr>
+                            <td>Semantic search</td>
+                            <td><span class="badge ok">OK*</span></td>
+                            <td><span class="badge poor">&#8212;</span></td>
+                            <td><span class="badge poor">&#8212;</span></td>
+                            <td><span class="badge best">Best</span></td>
+                            <td>Vector DB (pgvector for simplicity)</td>
+                        </tr>
+                        <tr>
+                            <td>RAG knowledge base</td>
+                            <td><span class="badge poor">&#8212;</span></td>
+                            <td><span class="badge poor">&#8212;</span></td>
+                            <td><span class="badge ok">OK</span></td>
+                            <td><span class="badge best">Best</span></td>
+                            <td>Vector DB + metadata storage</td>
+                        </tr>
+                        <tr>
+                            <td>Usage analytics</td>
+                            <td><span class="badge ok">OK</span></td>
+                            <td><span class="badge best">Best</span></td>
+                            <td><span class="badge good">Good</span></td>
+                            <td><span class="badge poor">&#8212;</span></td>
+                            <td>Time-Series or ClickHouse</td>
+                        </tr>
+                        <tr>
+                            <td>Real-time metrics</td>
+                            <td><span class="badge poor">&#8212;</span></td>
+                            <td><span class="badge best">Best</span></td>
+                            <td><span class="badge good">Good</span></td>
+                            <td><span class="badge poor">&#8212;</span></td>
+                            <td>Time-Series (InfluxDB, Prometheus)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">* PostgreSQL with pgvector extension</p>
+        </section>
+
+        <!-- SECTION 3: Vector Databases -->
+        <section id="vector">
+            <h2><span class="number">3</span> Vector Databases in Detail</h2>
+
+            <p>Hover over each step to understand what happens and why.</p>
+
+            <div class="flow-diagram">
+                <div class="flow-item">
+                    <div class="tooltip">
+                        <div class="tooltip-title">Source Document</div>
+                        <div class="tooltip-text">Original content like PDFs, web pages, or markdown files. This is your knowledge base that the agent will search through.</div>
+                    </div>
+                    <div class="emoji">&#128196;</div>
+                    <div class="label">Document</div>
+                </div>
+                <span class="flow-arrow">&#8594;</span>
+                <div class="flow-item">
+                    <div class="tooltip">
+                        <div class="tooltip-title">Text Chunks</div>
+                        <div class="tooltip-text">Documents are split into smaller pieces (500-1000 tokens). This is needed because embeddings work better on focused content, and LLMs have context limits.</div>
+                    </div>
+                    <div class="emoji">&#9986;</div>
+                    <div class="label">Chunks</div>
+                </div>
+                <span class="flow-arrow">&#8594;</span>
+                <div class="flow-item highlight">
+                    <div class="tooltip">
+                        <div class="tooltip-title">Embedding Model</div>
+                        <div class="tooltip-text">An AI model (like OpenAI ada-002 or Gemini) converts text into numerical vectors. Similar meanings = similar vectors. This is the "magic" that enables semantic search.</div>
+                    </div>
+                    <div class="emoji">&#129518;</div>
+                    <div class="label">Embedding</div>
+                </div>
+                <span class="flow-arrow">&#8594;</span>
+                <div class="flow-item">
+                    <div class="tooltip">
+                        <div class="tooltip-title">Vector Representation</div>
+                        <div class="tooltip-text">Each chunk becomes an array of 768-3072 numbers. Example: [0.023, -0.041, 0.089, ...]. These numbers capture the semantic meaning of the text.</div>
+                    </div>
+                    <div class="emoji">&#128202;</div>
+                    <div class="label">Vectors</div>
+                </div>
+                <span class="flow-arrow">&#8594;</span>
+                <div class="flow-item">
+                    <div class="tooltip">
+                        <div class="tooltip-title">Vector Database</div>
+                        <div class="tooltip-text">Specialized database that stores vectors and enables fast similarity search using algorithms like HNSW or IVF. Returns the most similar chunks to any query.</div>
+                    </div>
+                    <div class="emoji">&#128451;</div>
+                    <div class="label">Vector DB</div>
+                </div>
+            </div>
+
+            <h3>How Similarity Search Works (RAG Flow)</h3>
+
+            <div class="info-box" style="margin-bottom: 1.5rem;">
+                <span class="icon">&#127891;</span>
+                <p><strong>Lecturer note:</strong> This is the core concept of RAG (Retrieval-Augmented Generation). Walk through each step with participants to explain how AI agents "remember" and find relevant information.</p>
+            </div>
+
+            <div class="flow-diagram">
+                <div class="flow-item">
+                    <div class="emoji">&#10067;</div>
+                    <div class="label">User Question</div>
+                </div>
+                <span class="flow-arrow">&#8594;</span>
+                <div class="flow-item" style="border-color: var(--accent-purple);">
+                    <div class="emoji">&#129518;</div>
+                    <div class="label">Embed Question</div>
+                </div>
+                <span class="flow-arrow">&#8594;</span>
+                <div class="flow-item" style="border-color: var(--accent-blue);">
+                    <div class="emoji">&#128269;</div>
+                    <div class="label">Find Similar</div>
+                </div>
+                <span class="flow-arrow">&#8594;</span>
+                <div class="flow-item">
+                    <div class="emoji">&#128220;</div>
+                    <div class="label">Top Results</div>
+                </div>
+                <span class="flow-arrow">&#8594;</span>
+                <div class="flow-item" style="border-color: var(--accent-green);">
+                    <div class="emoji">&#129302;</div>
+                    <div class="label">LLM + Context</div>
+                </div>
+                <span class="flow-arrow">&#8594;</span>
+                <div class="flow-item">
+                    <div class="emoji">&#9989;</div>
+                    <div class="label">Answer</div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <h4 style="margin-top: 0;">Step-by-Step Explanation</h4>
+                <ol style="color: var(--text-secondary); padding-left: 1.5rem; margin: 0;">
+                    <li style="margin-bottom: 0.5rem;"><strong>User Question</strong> &#8212; User asks: "What vegetarian options do you recommend?"</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Embed Question</strong> &#8212; The question is converted to a vector (array of numbers)</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Find Similar</strong> &#8212; Vector DB finds chunks with similar meaning (not just keywords!)</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Top Results</strong> &#8212; Returns e.g. "User said they are vegetarian" from past conversations</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>LLM + Context</strong> &#8212; AI receives both the question AND the retrieved context</li>
+                    <li style="margin-bottom: 0;"><strong>Answer</strong> &#8212; AI responds with personalized, context-aware answer</li>
+                </ol>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">1536</div>
+                    <div class="stat-label">dims (OpenAI ada-002)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3072</div>
+                    <div class="stat-label">dims (OpenAI text-3-large)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">768</div>
+                    <div class="stat-label">dims (Gemini embedding)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">&lt;100ms</div>
+                    <div class="stat-label">typical query time</div>
+                </div>
+            </div>
+
+            <h3>When to Use What?</h3>
+
+            <div class="db-info-grid">
+                <div class="db-info-card">
+                    <h5>pgvector <span class="tag">Extension</span></h5>
+                    <p>PostgreSQL extension that adds vector data type and similarity search. <strong>Not a separate database</strong> &#8212; works inside your existing Postgres.</p>
+                    <div class="best-for">Best for: MVP, &lt;1M vectors, Supabase/Neon users</div>
+                </div>
+                <div class="db-info-card">
+                    <h5>Pinecone <span class="tag">Managed</span></h5>
+                    <p>Fully managed vector database as a service. No infrastructure to manage. Fast, reliable, but proprietary.</p>
+                    <div class="best-for">Best for: Production at scale, teams without DevOps</div>
+                </div>
+                <div class="db-info-card">
+                    <h5>Weaviate <span class="tag">Open Source</span></h5>
+                    <p>Open-source vector DB with built-in hybrid search (vector + keyword). Supports GraphQL API and auto-vectorization.</p>
+                    <div class="best-for">Best for: Self-hosted, hybrid search needs</div>
+                </div>
+                <div class="db-info-card">
+                    <h5>Qdrant <span class="tag">Open Source</span></h5>
+                    <p>Written in Rust for performance. Excellent filtering capabilities and payload storage. Growing rapidly.</p>
+                    <div class="best-for">Best for: Performance-critical, advanced filtering</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <span class="icon">&#128161;</span>
+                <p><strong>Our choice today:</strong> pgvector via Supabase. Why? All-in-one platform (auth + DB + vectors + functions), no extra services to manage, perfect for learning and MVPs.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 4: Supabase -->
+        <section id="supabase">
+            <h2><span class="number">4</span> Why and How to Use Supabase/Neon Type?</h2>
+
+            <p>Both Supabase and Neon are "serverless Postgres" platforms. They give you a managed PostgreSQL database with extras.</p>
+
+            <div class="architecture-visual">
+                <h4 style="margin-bottom: 1.5rem; text-align: center; color: var(--text-primary);">What's Inside Supabase?</h4>
+                <div class="arch-flow">
+                    <div class="arch-layer">
+                        <div class="arch-label">Authentication</div>
+                        <div class="arch-content">
+                            <div class="arch-box primary">Auth (email, OAuth, magic link)</div>
+                            <div class="arch-box">User management</div>
+                            <div class="arch-box">JWT tokens</div>
+                        </div>
+                    </div>
+                    <div class="arch-layer">
+                        <div class="arch-label">Database</div>
+                        <div class="arch-content">
+                            <div class="arch-box primary">PostgreSQL 15</div>
+                            <div class="arch-box accent">pgvector extension</div>
+                            <div class="arch-box">Row Level Security</div>
+                        </div>
+                    </div>
+                    <div class="arch-layer">
+                        <div class="arch-label">API Layer</div>
+                        <div class="arch-content">
+                            <div class="arch-box secondary">Auto-generated REST API</div>
+                            <div class="arch-box secondary">Realtime subscriptions</div>
+                            <div class="arch-box">PostgREST</div>
+                        </div>
+                    </div>
+                    <div class="arch-layer">
+                        <div class="arch-label">Compute</div>
+                        <div class="arch-content">
+                            <div class="arch-box">Edge Functions (Deno)</div>
+                            <div class="arch-box">Storage (S3-compatible)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Key Concepts We'll Use Today</h3>
+
+            <div class="db-visual-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon" style="background: rgba(59, 130, 246, 0.15);">&#128737;</div>
+                        <div>
+                            <div class="card-title">Row Level Security (RLS)</div>
+                        </div>
+                    </div>
+                    <p>Database-level access control. Policies define WHO can see WHAT data. Even if someone bypasses your app, the database itself enforces rules.</p>
+                    <div class="code-block" style="margin: 0.5rem 0;">
+                        <pre style="padding: 0.75rem; font-size: 0.75rem;"><span class="code-comment">-- User can only see their own messages</span>
+<span class="code-keyword">CREATE POLICY</span> "users_own_messages"
+<span class="code-keyword">ON</span> messages <span class="code-keyword">FOR SELECT</span>
+<span class="code-keyword">USING</span> (user_id = auth.uid());</pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon" style="background: rgba(139, 92, 246, 0.15);">&#128269;</div>
+                        <div>
+                            <div class="card-title">Full-Text Search</div>
+                        </div>
+                    </div>
+                    <p>PostgreSQL's built-in search with stemming, ranking, and fuzzy matching. Good for keyword-based queries. Simpler than vector search.</p>
+                    <div class="code-block" style="margin: 0.5rem 0;">
+                        <pre style="padding: 0.75rem; font-size: 0.75rem;"><span class="code-comment">-- Search messages containing "vegetarian"</span>
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> messages
+<span class="code-keyword">WHERE</span> to_tsvector(content)
+  @@ to_tsquery(<span class="code-string">'vegetarian'</span>);</pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon" style="background: rgba(16, 185, 129, 0.15);">&#128202;</div>
+                        <div>
+                            <div class="card-title">Vector Similarity (pgvector)</div>
+                        </div>
+                    </div>
+                    <p>Semantic search using embeddings. Finds content with similar MEANING, not just matching words. Essential for RAG.</p>
+                    <div class="code-block" style="margin: 0.5rem 0;">
+                        <pre style="padding: 0.75rem; font-size: 0.75rem;"><span class="code-comment">-- Find semantically similar chunks</span>
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> chunks
+<span class="code-keyword">ORDER BY</span> embedding &lt;=&gt; query_embedding
+<span class="code-keyword">LIMIT</span> 5;</pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon" style="background: rgba(245, 158, 11, 0.15);">&#9889;</div>
+                        <div>
+                            <div class="card-title">Supabase AI Assistant</div>
+                        </div>
+                    </div>
+                    <p>Built-in AI in the SQL Editor. Describe what you want in natural language, it generates SQL. Your coding partner today.</p>
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem; margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary);">
+                        "Create a table for storing chat messages with user_id, role, content, and timestamps"
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: Exercise -->
+        <section id="exercise">
+            <h2><span class="number">5</span> Practical Exercise</h2>
+
+            <div class="card" style="border-color: var(--accent-green);">
+                <h3 style="margin-top: 0;">Situation: The Forgetful Agent</h3>
+                <p>You received a complaint from a client:</p>
+                <blockquote style="border-left: 3px solid var(--accent-orange); padding-left: 1rem; margin: 1rem 0; color: var(--text-secondary); font-style: italic;">
+                    "Your AI assistant is stupid. Yesterday I told it I'm vegetarian and today it's recommending me steaks!"
+                </blockquote>
+                <p><strong>Your task:</strong> Design and implement a database layer that enables the agent to remember conversations and facts about users.</p>
+            </div>
+
+            <!-- Exercise Illustration -->
+            <div class="exercise-illustration">
+                <h4 style="text-align: center; margin-bottom: 1.5rem; color: var(--text-primary);">What We're Building</h4>
+                <div class="exercise-flow">
+                    <div class="exercise-stage before">
+                        <div class="stage-label">BEFORE</div>
+                        <div class="stage-icon">&#129302;&#128168;</div>
+                        <div class="stage-title">Stateless Agent</div>
+                        <div class="stage-desc">Forgets everything after each session. No context. Frustrated users.</div>
+                    </div>
+                    <div class="exercise-arrow">&#8594;</div>
+                    <div class="exercise-stage after">
+                        <div class="stage-label">AFTER</div>
+                        <div class="stage-icon">&#129302;&#129504;</div>
+                        <div class="stage-title">Agent with Memory</div>
+                        <div class="stage-desc">Remembers conversations, learns preferences, provides personalized responses.</div>
+                    </div>
+                </div>
+                <div class="what-we-build">
+                    <div class="build-item">
+                        <span class="icon">&#128221;</span>
+                        <div class="text"><strong>messages</strong> table &#8212; stores conversation history</div>
+                    </div>
+                    <div class="build-item">
+                        <span class="icon">&#128161;</span>
+                        <div class="text"><strong>user_facts</strong> table &#8212; extracted preferences &amp; facts</div>
+                    </div>
+                    <div class="build-item">
+                        <span class="icon">&#128737;</span>
+                        <div class="text"><strong>RLS policies</strong> &#8212; users only see their own data</div>
+                    </div>
+                    <div class="build-item">
+                        <span class="icon">&#128269;</span>
+                        <div class="text"><strong>search function</strong> &#8212; finds relevant memories</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs" role="tablist">
+                <button class="tab-btn active" onclick="showTab('tab1')" role="tab" aria-selected="true" aria-controls="tab1">1. Setup</button>
+                <button class="tab-btn" onclick="showTab('tab2')" role="tab" aria-selected="false" aria-controls="tab2">2. Schema</button>
+                <button class="tab-btn" onclick="showTab('tab3')" role="tab" aria-selected="false" aria-controls="tab3">3. RLS</button>
+                <button class="tab-btn" onclick="showTab('tab4')" role="tab" aria-selected="false" aria-controls="tab4">4. Search</button>
+            </div>
+
+            <div id="tab1" class="tab-content active" role="tabpanel">
+                <div class="exercise-box">
+                    <h4>Exercise 1: Setup Supabase</h4>
+                    <ol class="exercise-steps">
+                        <li>Go to <a href="https://supabase.com" target="_blank" rel="noopener" style="color: var(--accent-blue);">supabase.com</a> and create an account (if you don't have one)</li>
+                        <li>Click "New Project" &#8594; select region <strong>Frankfurt</strong> (GDPR)</li>
+                        <li>Wait ~2 minutes for the project to be created</li>
+                        <li>In the left menu, find "SQL Editor" &#8212; this is where you'll work</li>
+                    </ol>
+                </div>
+
+                <div class="warning-box">
+                    <span class="icon">&#10003;</span>
+                    <p><strong>Checkpoint:</strong> Do you see a green status in the dashboard? Continue to Schema.</p>
+                </div>
+            </div>
+
+            <div id="tab2" class="tab-content" role="tabpanel">
+                <div class="exercise-box">
+                    <h4>Exercise 2: Schema Design</h4>
+                    <p style="margin-bottom: 1rem;">Use ChatGPT Enterprise to design the schema:</p>
+                    <ol class="exercise-steps">
+                        <li>Open ChatGPT and paste the prompt below</li>
+                        <li>Copy the generated SQL</li>
+                        <li>Run it in Supabase SQL Editor</li>
+                        <li>If there's an error, copy the error back to ChatGPT</li>
+                    </ol>
+                </div>
+
+                <div class="prompt-box">
+                    <h4>Prompt for ChatGPT</h4>
+                    <div class="prompt-content">Design a database schema for Supabase (PostgreSQL) for an AI agent with memory.
+
+I need tables:
+1. messages - conversation history (user_id, role, content, created_at)
+2. user_facts - facts about the user (user_id, fact_type, fact_value, confidence)
+3. sessions - session management (user_id, started_at, ended_at)
+
+Requirements:
+- UUID for all IDs
+- user_id references auth.users
+- Timestamps with timezone
+- Indexes for common queries
+- JSONB for metadata where it makes sense
+
+Generate complete SQL for Supabase.</div>
+                    <button class="copy-btn" onclick="copyPrompt(this)" style="margin-top: 1rem;">Copy prompt</button>
+                </div>
+
+                <div class="warning-box">
+                    <span class="icon">&#10003;</span>
+                    <p><strong>Checkpoint:</strong> Do you see 3 tables in Table Editor? Continue to RLS.</p>
+                </div>
+            </div>
+
+            <div id="tab3" class="tab-content" role="tabpanel">
+                <div class="exercise-box">
+                    <h4>Exercise 3: Row Level Security</h4>
+                    <p style="margin-bottom: 1rem;">Yesterday we looked for security bugs. Today we prevent them.</p>
+                    <ol class="exercise-steps">
+                        <li>Use the prompt below for RLS policies</li>
+                        <li>Run the SQL in Supabase</li>
+                        <li>Test: in SQL Editor try <code>SELECT * FROM messages;</code></li>
+                        <li>Red team: try to bypass your own policies</li>
+                    </ol>
+                </div>
+
+                <div class="prompt-box">
+                    <h4>Prompt for ChatGPT</h4>
+                    <div class="prompt-content">I need RLS (Row Level Security) policies for Supabase.
+
+My tables:
+- messages (id, user_id, role, content, created_at)
+- user_facts (id, user_id, fact_type, fact_value)
+- sessions (id, user_id, started_at, ended_at)
+
+Rules:
+1. Users can only see and modify their OWN records
+2. user_id must equal auth.uid()
+3. INSERT must have user_id = auth.uid()
+4. Admin role can see everything
+
+Generate:
+- ALTER TABLE ... ENABLE ROW LEVEL SECURITY for each table
+- CREATE POLICY for SELECT, INSERT, UPDATE, DELETE
+- Comments explaining each policy</div>
+                    <button class="copy-btn" onclick="copyPrompt(this)" style="margin-top: 1rem;">Copy prompt</button>
+                </div>
+
+                <h4 style="margin-top: 2rem;">Red Team Challenge</h4>
+                <p>Try these queries and verify RLS is working:</p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>SQL</span>
+                    </div>
+                    <pre><span class="code-comment">-- This should return ONLY your messages</span>
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> messages;
+
+<span class="code-comment">-- This should FAIL</span>
+<span class="code-keyword">INSERT INTO</span> messages (user_id, role, content)
+<span class="code-keyword">VALUES</span> (<span class="code-string">'other-user-id'</span>, <span class="code-string">'user'</span>, <span class="code-string">'hack'</span>);
+
+<span class="code-comment">-- This should return 0 rows</span>
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> user_facts
+<span class="code-keyword">WHERE</span> user_id != auth.uid();</pre>
+                </div>
+
+                <div class="warning-box">
+                    <span class="icon">&#10003;</span>
+                    <p><strong>Checkpoint:</strong> Do you see policies in Authentication &#8594; Policies? Continue to Search.</p>
+                </div>
+            </div>
+
+            <div id="tab4" class="tab-content" role="tabpanel">
+                <div class="exercise-box">
+                    <h4>Exercise 4: Search Function</h4>
+                    <p style="margin-bottom: 1rem;">The agent needs to find relevant memories.</p>
+                    <ol class="exercise-steps">
+                        <li>Use Supabase AI or ChatGPT prompt</li>
+                        <li>Create a database function for full-text search</li>
+                        <li>Test the function with sample data</li>
+                        <li>Bonus: Add vector search with pgvector</li>
+                    </ol>
+                </div>
+
+                <div class="prompt-box">
+                    <h4>Prompt for Supabase AI or ChatGPT</h4>
+                    <div class="prompt-content">Create a PostgreSQL function for Supabase:
+
+Name: search_user_messages
+Parameters:
+- search_query (text)
+- user_uuid (uuid)
+- max_results (int, default 10)
+
+The function should:
+1. Search in messages.content using full-text search
+2. Return only messages for the given user (RLS compliance)
+3. Order by relevance
+4. Limit to max_results
+
+Bonus: If I have pgvector extension, add similarity search too.</div>
+                    <button class="copy-btn" onclick="copyPrompt(this)" style="margin-top: 1rem;">Copy prompt</button>
+                </div>
+
+                <h4 style="margin-top: 2rem;">Test the Function</h4>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>SQL</span>
+                    </div>
+                    <pre><span class="code-comment">-- First add some test data</span>
+<span class="code-keyword">INSERT INTO</span> messages (user_id, role, content) <span class="code-keyword">VALUES</span>
+  (auth.uid(), <span class="code-string">'user'</span>, <span class="code-string">'I am vegetarian and love Italian cuisine'</span>),
+  (auth.uid(), <span class="code-string">'assistant'</span>, <span class="code-string">'Great! I recommend trying risotto ai funghi.'</span>),
+  (auth.uid(), <span class="code-string">'user'</span>, <span class="code-string">'I have a nut allergy'</span>);
+
+<span class="code-comment">-- Now test the search</span>
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> <span class="code-function">search_user_messages</span>(
+  <span class="code-string">'vegetarian'</span>,
+  auth.uid(),
+  <span class="code-variable">5</span>
+);</pre>
+                </div>
+
+                <div class="warning-box">
+                    <span class="icon">&#127881;</span>
+                    <p><strong>Done!</strong> You have a working database with RLS and search. The agent can now remember.</p>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 3rem;">Reference: What This Would Look Like in Code</h3>
+            <div class="info-box" style="margin-bottom: 1rem;">
+                <span class="icon">&#128214;</span>
+                <p><strong>For illustration only.</strong> This shows how a developer would connect the database to an AI agent. You don't need to write this code today &#8212; the database work you did above is the foundation that makes this possible.</p>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span>TypeScript (illustrative example)</span>
+                </div>
+                <pre><span class="code-comment">// This is what the integration would look like in a real application</span>
+<span class="code-keyword">import</span> { createClient } <span class="code-keyword">from</span> <span class="code-string">'@supabase/supabase-js'</span>
+
+<span class="code-keyword">const</span> supabase = <span class="code-function">createClient</span>(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+<span class="code-comment">// Before responding - load relevant history</span>
+<span class="code-keyword">async function</span> <span class="code-function">getRelevantMemories</span>(userQuestion: <span class="code-variable">string</span>, userId: <span class="code-variable">string</span>) {
+  <span class="code-keyword">const</span> { data } = <span class="code-keyword">await</span> supabase
+    .<span class="code-function">rpc</span>(<span class="code-string">'search_user_messages'</span>, {
+      search_query: userQuestion,
+      user_uuid: userId,
+      max_results: <span class="code-variable">5</span>
+    })
+
+  <span class="code-keyword">return</span> data
+}
+
+<span class="code-comment">// After responding - save the interaction</span>
+<span class="code-keyword">async function</span> <span class="code-function">saveMessage</span>(userId: <span class="code-variable">string</span>, role: <span class="code-variable">string</span>, content: <span class="code-variable">string</span>) {
+  <span class="code-keyword">await</span> supabase
+    .<span class="code-function">from</span>(<span class="code-string">'messages'</span>)
+    .<span class="code-function">insert</span>({ user_id: userId, role, content })
+}</pre>
+            </div>
+
+            <div class="card" style="border-color: var(--accent-cyan); margin-top: 1.5rem;">
+                <h4 style="margin-top: 0; color: var(--accent-cyan);">Key Takeaway</h4>
+                <p style="margin-bottom: 0;">Today you learned how to design and set up the <strong>database layer</strong> that gives AI agents memory. The actual code integration (shown above) is typically handled by developers, but understanding the database architecture is essential for anyone working with AI systems.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 6: Working with Data -->
+        <section id="data-operations">
+            <h2><span class="number">6</span> Working with Data: Search & Insert</h2>
+
+            <p>Now that you have a database set up, let's learn the fundamental operations: <strong>finding data</strong> (querying) and <strong>adding data</strong> (inserting). These are the building blocks for any AI agent with memory.</p>
+
+            <div class="info-box">
+                <span class="icon">&#128161;</span>
+                <p><strong>Why this matters:</strong> An AI agent needs to both <em>remember</em> new information (INSERT) and <em>recall</em> relevant information (SELECT/search). Without these operations, your agent has no memory.</p>
+            </div>
+
+            <h3>The Two Core Operations</h3>
+
+            <div class="db-visual-grid">
+                <div class="card" style="border-left: 4px solid var(--accent-green);">
+                    <div class="card-header">
+                        <div class="card-icon" style="background: rgba(16, 185, 129, 0.15);">&#128229;</div>
+                        <div>
+                            <div class="card-title">INSERT &#8212; Adding Data</div>
+                        </div>
+                    </div>
+                    <p>When a user says something or the agent learns a new fact, we need to <strong>store it</strong> in the database.</p>
+                    <ul style="color: var(--text-secondary); padding-left: 1.25rem; margin-bottom: 1rem;">
+                        <li>Save conversation messages</li>
+                        <li>Store extracted facts about users</li>
+                        <li>Log agent responses</li>
+                        <li>Track session information</li>
+                    </ul>
+                </div>
+
+                <div class="card" style="border-left: 4px solid var(--accent-blue);">
+                    <div class="card-header">
+                        <div class="card-icon" style="background: rgba(59, 130, 246, 0.15);">&#128269;</div>
+                        <div>
+                            <div class="card-title">SELECT/Search &#8212; Finding Data</div>
+                        </div>
+                    </div>
+                    <p>Before responding, the agent needs to <strong>find relevant information</strong> from past interactions.</p>
+                    <ul style="color: var(--text-secondary); padding-left: 1.25rem; margin-bottom: 1rem;">
+                        <li>Retrieve conversation history</li>
+                        <li>Find user preferences</li>
+                        <li>Search for similar past queries</li>
+                        <li>Look up facts about the user</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Basic SQL Operations</h3>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>SQL &#8212; INSERT: Adding a new message</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><span class="code-comment">-- Adding a single message to the database</span>
+<span class="code-keyword">INSERT INTO</span> messages (user_id, role, content)
+<span class="code-keyword">VALUES</span> (
+  auth.uid(),                <span class="code-comment">-- Current user's ID (automatic from Supabase auth)</span>
+  <span class="code-string">'user'</span>,                    <span class="code-comment">-- Who said it: 'user' or 'assistant'</span>
+  <span class="code-string">'I prefer vegetarian food'</span> <span class="code-comment">-- The actual message content</span>
+);
+
+<span class="code-comment">-- Adding multiple messages at once</span>
+<span class="code-keyword">INSERT INTO</span> messages (user_id, role, content) <span class="code-keyword">VALUES</span>
+  (auth.uid(), <span class="code-string">'user'</span>, <span class="code-string">'What restaurants do you recommend?'</span>),
+  (auth.uid(), <span class="code-string">'assistant'</span>, <span class="code-string">'Based on your preferences, I suggest...'</span>);</pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>SQL &#8212; SELECT: Retrieving data</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><span class="code-comment">-- Get all messages for the current user</span>
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> messages
+<span class="code-keyword">WHERE</span> user_id = auth.uid()
+<span class="code-keyword">ORDER BY</span> created_at <span class="code-keyword">DESC</span>;
+
+<span class="code-comment">-- Get only the last 10 messages</span>
+<span class="code-keyword">SELECT</span> role, content, created_at
+<span class="code-keyword">FROM</span> messages
+<span class="code-keyword">WHERE</span> user_id = auth.uid()
+<span class="code-keyword">ORDER BY</span> created_at <span class="code-keyword">DESC</span>
+<span class="code-keyword">LIMIT</span> <span class="code-variable">10</span>;
+
+<span class="code-comment">-- Get messages from a specific time period</span>
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> messages
+<span class="code-keyword">WHERE</span> user_id = auth.uid()
+  <span class="code-keyword">AND</span> created_at > <span class="code-string">'2026-01-01'</span>;</pre>
+            </div>
+
+            <h3>Full-Text Search: Finding by Keywords</h3>
+            <p>PostgreSQL has built-in full-text search that understands word variations (e.g., "vegetarian" matches "vegetarians").</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>SQL &#8212; Full-Text Search</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><span class="code-comment">-- Simple keyword search</span>
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> messages
+<span class="code-keyword">WHERE</span> user_id = auth.uid()
+  <span class="code-keyword">AND</span> content <span class="code-keyword">ILIKE</span> <span class="code-string">'%vegetarian%'</span>;  <span class="code-comment">-- Case-insensitive search</span>
+
+<span class="code-comment">-- Full-text search (smarter, handles word forms)</span>
+<span class="code-keyword">SELECT</span> * <span class="code-keyword">FROM</span> messages
+<span class="code-keyword">WHERE</span> user_id = auth.uid()
+  <span class="code-keyword">AND</span> to_tsvector(<span class="code-string">'english'</span>, content) @@ to_tsquery(<span class="code-string">'english'</span>, <span class="code-string">'vegetarian | vegan'</span>);
+
+<span class="code-comment">-- Search with ranking (most relevant first)</span>
+<span class="code-keyword">SELECT</span> 
+  content,
+  ts_rank(to_tsvector(<span class="code-string">'english'</span>, content), to_tsquery(<span class="code-string">'food & preferences'</span>)) <span class="code-keyword">AS</span> relevance
+<span class="code-keyword">FROM</span> messages
+<span class="code-keyword">WHERE</span> user_id = auth.uid()
+  <span class="code-keyword">AND</span> to_tsvector(<span class="code-string">'english'</span>, content) @@ to_tsquery(<span class="code-string">'food & preferences'</span>)
+<span class="code-keyword">ORDER BY</span> relevance <span class="code-keyword">DESC</span>;</pre>
+            </div>
+
+            <div class="warning-box">
+                <span class="icon">&#128214;</span>
+                <p><strong>Full-text search operators:</strong> <code>&</code> means AND, <code>|</code> means OR, <code>!</code> means NOT. Example: <code>'vegetarian & !fish'</code></p>
+            </div>
+
+            <h3>Storing User Facts</h3>
+            <p>Beyond raw messages, it's useful to extract and store specific facts about users for quick lookup.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>SQL &#8212; Managing User Facts</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><span class="code-comment">-- Insert a new fact about the user</span>
+<span class="code-keyword">INSERT INTO</span> user_facts (user_id, fact_type, fact_value, confidence)
+<span class="code-keyword">VALUES</span> (
+  auth.uid(),
+  <span class="code-string">'dietary_preference'</span>,
+  <span class="code-string">'vegetarian'</span>,
+  <span class="code-variable">0.95</span>  <span class="code-comment">-- High confidence (user explicitly stated it)</span>
+);
+
+<span class="code-comment">-- Insert or update (upsert) - useful when fact might already exist</span>
+<span class="code-keyword">INSERT INTO</span> user_facts (user_id, fact_type, fact_value, confidence)
+<span class="code-keyword">VALUES</span> (auth.uid(), <span class="code-string">'favorite_cuisine'</span>, <span class="code-string">'Italian'</span>, <span class="code-variable">0.8</span>)
+<span class="code-keyword">ON CONFLICT</span> (user_id, fact_type)
+<span class="code-keyword">DO UPDATE SET</span>
+  fact_value = EXCLUDED.fact_value,
+  confidence = EXCLUDED.confidence,
+  updated_at = now();
+
+<span class="code-comment">-- Retrieve all facts for the current user</span>
+<span class="code-keyword">SELECT</span> fact_type, fact_value, confidence
+<span class="code-keyword">FROM</span> user_facts
+<span class="code-keyword">WHERE</span> user_id = auth.uid()
+<span class="code-keyword">ORDER BY</span> confidence <span class="code-keyword">DESC</span>;
+
+<span class="code-comment">-- Get specific fact types</span>
+<span class="code-keyword">SELECT</span> fact_value
+<span class="code-keyword">FROM</span> user_facts
+<span class="code-keyword">WHERE</span> user_id = auth.uid()
+  <span class="code-keyword">AND</span> fact_type <span class="code-keyword">IN</span> (<span class="code-string">'dietary_preference'</span>, <span class="code-string">'allergies'</span>);</pre>
+            </div>
+
+            <h3>Real-World Agent Flow</h3>
+
+            <div class="flow-diagram">
+                <div class="flow-item">
+                    <div class="emoji">&#128172;</div>
+                    <div class="label">User Message</div>
+                </div>
+                <span class="flow-arrow">&#8594;</span>
+                <div class="flow-item" style="border-color: var(--accent-blue);">
+                    <div class="emoji">&#128269;</div>
+                    <div class="label">Search History</div>
+                </div>
+                <span class="flow-arrow">&#8594;</span>
+                <div class="flow-item" style="border-color: var(--accent-purple);">
+                    <div class="emoji">&#129302;</div>
+                    <div class="label">AI + Context</div>
+                </div>
+                <span class="flow-arrow">&#8594;</span>
+                <div class="flow-item" style="border-color: var(--accent-green);">
+                    <div class="emoji">&#128229;</div>
+                    <div class="label">Save Response</div>
+                </div>
+                <span class="flow-arrow">&#8594;</span>
+                <div class="flow-item">
+                    <div class="emoji">&#9989;</div>
+                    <div class="label">Reply to User</div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <h4 style="margin-top: 0;">Step-by-Step: What Happens When User Sends a Message</h4>
+                <ol style="color: var(--text-secondary); padding-left: 1.5rem; margin: 0;">
+                    <li style="margin-bottom: 0.5rem;"><strong>Receive</strong> &#8212; User sends: "What should I eat for dinner?"</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Search</strong> &#8212; Query database for relevant history and facts</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Context</strong> &#8212; Found: "User is vegetarian", "Likes Italian food"</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Generate</strong> &#8212; AI creates response WITH context: "Try pasta primavera!"</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Save</strong> &#8212; INSERT both user message and AI response into database</li>
+                    <li style="margin-bottom: 0;"><strong>Reply</strong> &#8212; Send the personalized response to user</li>
+                </ol>
+            </div>
+
+            <h3>Try It Yourself</h3>
+
+            <div class="exercise-box">
+                <h4>Mini Exercise: Query Your Data</h4>
+                <p style="margin-bottom: 1rem;">Open Supabase SQL Editor and try these queries:</p>
+                <ol class="exercise-steps">
+                    <li>Insert 3 test messages with different content (use the INSERT examples above)</li>
+                    <li>Query all messages: <code>SELECT * FROM messages WHERE user_id = auth.uid();</code></li>
+                    <li>Search for a keyword: <code>SELECT * FROM messages WHERE content ILIKE '%food%';</code></li>
+                    <li>Insert a fact about yourself, then query it back</li>
+                    <li>Try the full-text search with <code>to_tsvector</code> and <code>to_tsquery</code></li>
+                </ol>
+            </div>
+
+            <div class="info-box">
+                <span class="icon">&#127919;</span>
+                <p><strong>Pro tip:</strong> When working with AI agents, always save <em>both</em> the user's message AND the assistant's response. This creates a complete conversation history that can be used for context in future interactions.</p>
+            </div>
+        </section>
+
+        <!-- Homework -->
+        <section id="homework-new">
+            <h2><span class="number">&#128218;</span> Homework</h2>
+
+            <div class="card" style="border-color: var(--accent-purple);">
+                <h4 style="margin-top: 0;">Extension: Semantic Memory with pgvector</h4>
+                <ol style="color: var(--text-secondary); padding-left: 1.5rem;">
+                    <li>Enable <code>pgvector</code> extension in Supabase (Database &#8594; Extensions)</li>
+                    <li>Add column <code>embedding vector(1536)</code> to the messages table</li>
+                    <li>Create a function for similarity search (<code>&lt;=&gt;</code> operator)</li>
+                    <li>Bonus: Write an Edge Function that calls the embedding API</li>
+                </ol>
+                <p style="margin-top: 1rem;"><strong>Hint:</strong> Ask ChatGPT "How to implement semantic search in Supabase with pgvector step by step"</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>AI Academy 2026 &bull; Kyndryl &bull; <a href="https://github.com/lubor-fedak/ai-academy-dashboard">GitHub Repo</a></p>
+    </footer>
+
+    <script>
+        // Theme handling
+        const html = document.documentElement;
+        const lightBtn = document.getElementById('theme-light');
+        const darkBtn = document.getElementById('theme-dark');
+
+        // Load saved theme or default to dark
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        setTheme(savedTheme);
+
+        function setTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+
+            if (theme === 'light') {
+                lightBtn.classList.add('active');
+                darkBtn.classList.remove('active');
+            } else {
+                darkBtn.classList.add('active');
+                lightBtn.classList.remove('active');
+            }
+
+            // Reinitialize Mermaid with correct theme
+            initMermaid(theme);
+        }
+
+        lightBtn.addEventListener('click', () => setTheme('light'));
+        darkBtn.addEventListener('click', () => setTheme('dark'));
+
+        // Initialize Mermaid
+        function initMermaid(theme) {
+            const isDark = theme === 'dark';
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: isDark ? 'dark' : 'default',
+                themeVariables: isDark ? {
+                    primaryColor: '#3b82f6',
+                    primaryTextColor: '#f1f5f9',
+                    primaryBorderColor: '#2d3748',
+                    lineColor: '#64748b',
+                    secondaryColor: '#1a1f26',
+                    tertiaryColor: '#0f1419'
+                } : {
+                    primaryColor: '#2563eb',
+                    primaryTextColor: '#0f172a',
+                    primaryBorderColor: '#e2e8f0',
+                    lineColor: '#94a3b8',
+                    secondaryColor: '#f8fafc',
+                    tertiaryColor: '#ffffff'
+                }
+            });
+
+            // Re-render mermaid diagrams
+            document.querySelectorAll('.mermaid').forEach(el => {
+                const code = el.textContent || el.innerText;
+                el.removeAttribute('data-processed');
+                el.innerHTML = code;
+            });
+            mermaid.run();
+        }
+
+        // Initial mermaid render
+        initMermaid(savedTheme);
+
+        // Tab functionality
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-selected', 'false');
+            });
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+            event.target.setAttribute('aria-selected', 'true');
+        }
+
+        // Copy prompt functionality
+        function copyPrompt(btn) {
+            const promptContent = btn.parentElement.querySelector('.prompt-content');
+            navigator.clipboard.writeText(promptContent.textContent).then(() => {
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.textContent = 'Copy prompt';
+                }, 2000);
+            });
+        }
+
+        // Copy code functionality
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block').querySelector('pre');
+            navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth' });
+
+                document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Update active nav on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('nav a');
+
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Keyboard navigation for tabs
+        document.querySelectorAll('.tab-btn').forEach((btn, index, buttons) => {
+            btn.addEventListener('keydown', (e) => {
+                let targetIndex;
+                if (e.key === 'ArrowRight') {
+                    targetIndex = (index + 1) % buttons.length;
+                } else if (e.key === 'ArrowLeft') {
+                    targetIndex = (index - 1 + buttons.length) % buttons.length;
+                }
+                if (targetIndex !== undefined) {
+                    buttons[targetIndex].focus();
+                    buttons[targetIndex].click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

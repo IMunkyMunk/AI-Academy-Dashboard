@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Academy | AI Security Fundamentals</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Theme Variables */
+        :root {
+            --transition-speed: 0.3s;
+        }
+
+        /* Dark Theme (default) */
+        [data-theme="dark"] {
+            --bg-primary: #0f1419;
+            --bg-secondary: #1a1f26;
+            --bg-tertiary: #242b35;
+            --bg-card: #1a1f26;
+            --bg-card-hover: #242b35;
+            --bg-code: #0d1117;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #2d3748;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.5);
+            --nav-bg: rgba(15, 20, 25, 0.9);
+            --hero-gradient: radial-gradient(ellipse at top, rgba(239, 68, 68, 0.15) 0%, transparent 60%);
+        }
+
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --bg-code: #1e293b;
+            --accent-blue: #2563eb;
+            --accent-green: #059669;
+            --accent-orange: #d97706;
+            --accent-purple: #7c3aed;
+            --accent-red: #dc2626;
+            --accent-cyan: #0891b2;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --hero-gradient: linear-gradient(180deg, #fef2f2 0%, #ffffff 100%);
+        }
+
+        :root {
+            --gradient-1: linear-gradient(135deg, #ef4444 0%, #f59e0b 100%);
+            --gradient-2: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+            transition: background var(--transition-speed), color var(--transition-speed);
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--accent-red);
+            color: white;
+            padding: 8px 16px;
+            z-index: 10000;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 0 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 0;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 0.5rem;
+            list-style: none;
+            overflow-x: auto;
+            padding: 0.25rem 0;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.35rem;
+        }
+
+        .theme-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle-btn.active {
+            background: var(--accent-red);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: var(--hero-gradient);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-badge span {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-red);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .time-box {
+            display: inline-flex;
+            gap: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+        }
+
+        .time-item {
+            text-align: center;
+        }
+
+        .time-item .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-red);
+        }
+
+        .time-item .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 5rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2 .number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 10px;
+            font-size: 1rem;
+            color: white;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--accent-red);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .code-header {
+            background: #1a1f26;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-header span {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        pre {
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+            margin: 0;
+        }
+
+        .code-comment { color: #6b7280; }
+        .code-keyword { color: #f472b6; }
+        .code-string { color: #86efac; }
+        .code-function { color: #c4b5fd; }
+
+        /* Folder Structure */
+        .folder-structure {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            margin: 1.5rem 0;
+        }
+
+        .folder-structure .folder {
+            color: var(--accent-orange);
+        }
+
+        .folder-structure .file {
+            color: var(--text-secondary);
+        }
+
+        .folder-structure .comment {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .folder-line {
+            padding: 0.25rem 0;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .folder-line:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        /* OWASP Cards */
+        .owasp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .owasp-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .owasp-card:hover {
+            border-color: var(--accent-red);
+            transform: translateY(-2px);
+        }
+
+        .owasp-card.critical {
+            border-left: 4px solid var(--accent-red);
+        }
+
+        .owasp-card.high {
+            border-left: 4px solid var(--accent-orange);
+        }
+
+        .owasp-card.medium {
+            border-left: 4px solid var(--accent-purple);
+        }
+
+        .owasp-card .owasp-number {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .owasp-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .owasp-card p {
+            font-size: 0.85rem;
+            margin: 0;
+            color: var(--text-secondary);
+        }
+
+        /* Prompt Box */
+        .prompt-box {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .prompt-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-red);
+        }
+
+        .prompt-content {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            color: var(--text-secondary);
+        }
+
+        .copy-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: white;
+        }
+
+        /* Exercise Box */
+        .exercise-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exercise-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-green);
+        }
+
+        .exercise-steps {
+            list-style: none;
+            counter-reset: step;
+        }
+
+        .exercise-steps li {
+            counter-increment: step;
+            padding: 0.75rem 0;
+            padding-left: 3rem;
+            position: relative;
+            color: var(--text-secondary);
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .exercise-steps li:last-child {
+            border-bottom: none;
+        }
+
+        .exercise-steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0.75rem;
+            width: 28px;
+            height: 28px;
+            background: var(--accent-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .warning-box .icon { font-size: 1.25rem; }
+        .warning-box p { margin: 0; color: var(--accent-orange); font-size: 0.9rem; }
+
+        /* Critical Box */
+        .critical-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .critical-box .icon { font-size: 1.25rem; }
+        .critical-box p { margin: 0; color: var(--accent-red); font-size: 0.9rem; }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .info-box .icon { font-size: 1.25rem; }
+        .info-box p { margin: 0; color: var(--accent-blue); font-size: 0.9rem; }
+
+        /* Security Checklist */
+        .security-checklist {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .checklist-icon.danger {
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        .checklist-icon.warning {
+            background: rgba(245, 158, 11, 0.15);
+        }
+
+        .checklist-icon.safe {
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .checklist-content h5 {
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        .checklist-content p {
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        /* Visual Diagram */
+        .visual-diagram {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 1px solid var(--border);
+        }
+
+        .diagram-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        /* Auth Flow */
+        .auth-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            padding: 1rem;
+        }
+
+        .auth-step {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .auth-step .emoji {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .auth-step .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .auth-arrow {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            nav ul {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .time-box {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .owasp-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-flow {
+                flex-direction: column;
+            }
+
+            .auth-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <nav>
+        <div class="nav-container">
+            <ul>
+                <li><a href="#homework" class="active">Homework</a></li>
+                <li><a href="#security">Why Security</a></li>
+                <li><a href="#codebase">Code Structure</a></li>
+                <li><a href="#owasp">OWASP LLM</a></li>
+                <li><a href="#analysis">Code Analysis</a></li>
+                <li><a href="#auth">Authentication</a></li>
+                <li><a href="#exercise">Exercise</a></li>
+            </ul>
+            <div class="theme-toggle">
+                <button class="theme-toggle-btn" id="theme-light" aria-label="Light theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                </button>
+                <button class="theme-toggle-btn active" id="theme-dark" aria-label="Dark theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-badge">
+            <span></span>
+            AI Academy 2026 &bull; Day 2
+        </div>
+        <h1>AI Security Fundamentals</h1>
+        <p>Learn HOW to protect AI systems. Analyze code for vulnerabilities, understand OWASP Top 10 for LLMs, and implement secure authentication.</p>
+        <div class="time-box">
+            <div class="time-item">
+                <div class="value">90</div>
+                <div class="label">Minutes</div>
+            </div>
+            <div class="time-item">
+                <div class="value">10</div>
+                <div class="label">OWASP Risks</div>
+            </div>
+            <div class="time-item">
+                <div class="value">1</div>
+                <div class="label">Code Review</div>
+            </div>
+            <div class="time-item">
+                <div class="value">Day 2</div>
+                <div class="label">of 25</div>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <!-- SECTION 1: Homework Review -->
+        <section id="homework">
+            <h2><span class="number">1</span> Day 1 Homework Review</h2>
+
+            <div class="card" style="border-color: var(--accent-orange);">
+                <h3 style="margin-top: 0;">&#128221; Self-Assessment: Your First Agent</h3>
+                <p>Yesterday you created your first AI agent with a 500-word system prompt. Before we continue with security, let's validate your work.</p>
+            </div>
+
+            <div class="prompt-box">
+                <h4>&#129302; Self-Assessment Prompt</h4>
+                <div class="prompt-content">You are an AI Academy instructor. A student has completed Day 1 homework: creating an AI agent.
+
+Assess their work against these requirements:
+1. Did they create a functional agent with a clear purpose?
+2. Does the system prompt include: role, context, constraints, and output format?
+3. Is there a GitHub repository with the agent code/configuration?
+4. Did they set up their AI tools (ChatGPT Enterprise or Copilot)?
+
+Start by asking: "Please share your agent's system prompt and describe what it does."
+
+Then provide feedback on:
+- Clarity of instructions
+- Completeness of the prompt structure
+- Practical usefulness of the agent
+- Suggestions for improvement
+
+Be encouraging but specific about gaps.</div>
+                <button class="copy-btn" onclick="copyPrompt(this)" style="margin-top: 1rem;">Copy prompt</button>
+            </div>
+
+            <div class="info-box">
+                <span class="icon">&#128161;</span>
+                <p><strong>Progressive Learning:</strong> If you struggle with AI concepts, ask your AI Tutor to be your "progressive learning tutor" &mdash; it will explain concepts in 5 levels from basics to advanced with examples and quizzes.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Why Security Matters -->
+        <section id="security">
+            <h2><span class="number">2</span> Why AI Security Matters</h2>
+
+            <div class="card" style="border-color: var(--accent-red);">
+                <h3 style="margin-top: 0;">&#128680; Security is the #1 Issue</h3>
+                <p>Security is the main driver for AI adoption &mdash; AND the main blocker. Companies that can't trust AI won't deploy it. Companies that trust AI without verification will regret it.</p>
+                <p style="margin-bottom: 0;"><strong>Your role:</strong> Build AI systems that clients can trust. Today we learn how to identify and fix security vulnerabilities.</p>
+            </div>
+
+            <h3>Two Sides of AI Security</h3>
+
+            <div class="visual-diagram">
+                <div class="diagram-title">AI Security Drivers</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; padding: 1rem;">
+                    <div style="padding: 1.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 12px; border: 1px solid var(--accent-green);">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">&#128200;</div>
+                        <h4 style="color: var(--accent-green); margin-bottom: 0.5rem;">AI Enables Security</h4>
+                        <ul style="font-size: 0.85rem; color: var(--text-secondary); padding-left: 1.25rem; margin: 0;">
+                            <li>Automated threat detection</li>
+                            <li>Data analytics for compliance</li>
+                            <li>Faster vulnerability scanning</li>
+                            <li>Continuous monitoring at scale</li>
+                        </ul>
+                    </div>
+                    <div style="padding: 1.5rem; background: rgba(239, 68, 68, 0.1); border-radius: 12px; border: 1px solid var(--accent-red);">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">&#128683;</div>
+                        <h4 style="color: var(--accent-red); margin-bottom: 0.5rem;">AI Creates Risks</h4>
+                        <ul style="font-size: 0.85rem; color: var(--text-secondary); padding-left: 1.25rem; margin: 0;">
+                            <li>Prompt injection attacks</li>
+                            <li>Data leakage through models</li>
+                            <li>Insecure integrations</li>
+                            <li>Uncontrolled agent behavior</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="critical-box">
+                <span class="icon">&#9888;</span>
+                <p><strong>Never put confidential information in AI tools without verification.</strong> Even email addresses can be problematic if combined with other data.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Code Structure -->
+        <section id="codebase">
+            <h2><span class="number">3</span> Understanding AI Code Structure</h2>
+
+            <div class="card">
+                <h3 style="margin-top: 0;">&#128193; Typical Agent Codebase</h3>
+                <p>Every AI agent is just software. Understanding the structure helps you identify where security issues typically occur.</p>
+            </div>
+
+            <div class="exercise-box">
+                <h4>&#128187; Exercise: Fork the Repository</h4>
+                <ol class="exercise-steps">
+                    <li>Go to: <code style="background: var(--bg-tertiary); padding: 0.2rem 0.5rem; border-radius: 4px;">github.com/luborfedak/ai-academy-dashboard</code></li>
+                    <li>Click "Fork" to create your own copy</li>
+                    <li>This creates a clone in YOUR GitHub account</li>
+                    <li>You can now modify it without affecting the original</li>
+                </ol>
+            </div>
+
+            <h3>5 Key Parts of an AI Agent Codebase</h3>
+
+            <div class="folder-structure">
+                <div class="folder-line"><span class="folder">&#128193; .github/workflows/</span> <span class="comment">&larr; CI/CD configuration (GitHub Actions)</span></div>
+                <div class="folder-line"><span class="folder">&#128193; e2e/</span> <span class="comment">&larr; End-to-end tests (Playwright/Cypress)</span></div>
+                <div class="folder-line"><span class="folder">&#128193; public/</span> <span class="comment">&larr; Static assets, patterns, frameworks</span></div>
+                <div class="folder-line"><span class="folder">&#128193; scripts/</span> <span class="comment">&larr; Utility scripts (seeding, migrations)</span></div>
+                <div class="folder-line"><span class="folder">&#128193; src/</span> <span class="comment">&larr; Main source code</span></div>
+                <div class="folder-line" style="padding-left: 1.5rem;"><span class="folder">&#128193; app/</span> <span class="comment">&larr; Pages and routes</span></div>
+                <div class="folder-line" style="padding-left: 1.5rem;"><span class="folder">&#128193; components/</span> <span class="comment">&larr; Reusable UI pieces</span></div>
+                <div class="folder-line" style="padding-left: 1.5rem;"><span class="folder">&#128193; hooks/</span> <span class="comment">&larr; &#9888; Connectors (security-sensitive!)</span></div>
+                <div class="folder-line" style="padding-left: 1.5rem;"><span class="folder">&#128193; lib/</span> <span class="comment">&larr; Shared utilities</span></div>
+                <div class="folder-line" style="padding-left: 1.5rem;"><span class="folder">&#128193; types/</span> <span class="comment">&larr; TypeScript definitions</span></div>
+                <div class="folder-line"><span class="file">&#128196; .env</span> <span class="comment">&larr; &#128680; Environment variables (NEVER commit!)</span></div>
+                <div class="folder-line"><span class="file">&#128196; .env.example</span> <span class="comment">&larr; Template for environment variables</span></div>
+            </div>
+
+            <div class="warning-box">
+                <span class="icon">&#9888;</span>
+                <p><strong>Hooks are where security issues often occur.</strong> They connect your app to external systems &mdash; databases, APIs, authentication. Always review them carefully.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 4: OWASP Top 10 for LLMs -->
+        <section id="owasp">
+            <h2><span class="number">4</span> OWASP Top 10 for LLM Applications</h2>
+
+            <div class="card" style="border-color: var(--accent-red);">
+                <h3 style="margin-top: 0;">&#128274; The Security Standard for AI</h3>
+                <p>OWASP (Open Web Application Security Project) created a Top 10 specifically for LLM applications. These are the most critical security risks you must know.</p>
+            </div>
+
+            <div class="owasp-grid">
+                <div class="owasp-card critical">
+                    <span class="owasp-number">LLM01</span>
+                    <h4>Prompt Injection</h4>
+                    <p>Attacker manipulates LLM through crafted inputs to bypass instructions or execute unintended actions.</p>
+                </div>
+                <div class="owasp-card critical">
+                    <span class="owasp-number">LLM02</span>
+                    <h4>Insecure Output Handling</h4>
+                    <p>Insufficient validation of LLM outputs before passing to other systems (XSS, SSRF, code execution).</p>
+                </div>
+                <div class="owasp-card critical">
+                    <span class="owasp-number">LLM03</span>
+                    <h4>Training Data Poisoning</h4>
+                    <p>Manipulation of training data to introduce vulnerabilities, biases, or backdoors.</p>
+                </div>
+                <div class="owasp-card high">
+                    <span class="owasp-number">LLM04</span>
+                    <h4>Model Denial of Service</h4>
+                    <p>Resource-heavy operations that cause service degradation or high costs.</p>
+                </div>
+                <div class="owasp-card high">
+                    <span class="owasp-number">LLM05</span>
+                    <h4>Supply Chain Vulnerabilities</h4>
+                    <p>Compromised components, models, or plugins from third parties.</p>
+                </div>
+                <div class="owasp-card high">
+                    <span class="owasp-number">LLM06</span>
+                    <h4>Sensitive Information Disclosure</h4>
+                    <p>LLM reveals confidential data, PII, or proprietary information in responses.</p>
+                </div>
+                <div class="owasp-card medium">
+                    <span class="owasp-number">LLM07</span>
+                    <h4>Insecure Plugin Design</h4>
+                    <p>Plugins with excessive permissions, lack of input validation, or insecure integrations.</p>
+                </div>
+                <div class="owasp-card medium">
+                    <span class="owasp-number">LLM08</span>
+                    <h4>Excessive Agency</h4>
+                    <p>LLM granted too much autonomy to take actions without human oversight.</p>
+                </div>
+                <div class="owasp-card medium">
+                    <span class="owasp-number">LLM09</span>
+                    <h4>Overreliance</h4>
+                    <p>Users trusting LLM outputs without verification, leading to misinformation or security gaps.</p>
+                </div>
+                <div class="owasp-card medium">
+                    <span class="owasp-number">LLM10</span>
+                    <h4>Model Theft</h4>
+                    <p>Unauthorized access to proprietary LLM models, weights, or configurations.</p>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <span class="icon">&#128218;</span>
+                <p><strong>Deep Dive:</strong> Visit <a href="https://owasp.org/www-project-top-10-for-large-language-model-applications/" target="_blank" style="color: var(--accent-blue);">OWASP LLM Top 10</a> for detailed descriptions, attack scenarios, and prevention strategies.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 5: Code Analysis -->
+        <section id="analysis">
+            <h2><span class="number">5</span> Security Code Analysis with AI</h2>
+
+            <div class="card" style="border-color: var(--accent-purple);">
+                <h3 style="margin-top: 0;">&#128269; Using AI to Find Vulnerabilities</h3>
+                <p>Your AI Tutor can analyze code for security issues. This is how enterprise security teams work &mdash; AI-assisted code review finds vulnerabilities faster than manual inspection.</p>
+            </div>
+
+            <div class="prompt-box">
+                <h4>&#129302; Security Analysis Prompt</h4>
+                <div class="prompt-content">Analyze this codebase for security vulnerabilities. Focus on:
+
+1. **OWASP LLM Top 10** - Prompt injection, insecure outputs, excessive agency
+2. **Authentication/Authorization** - Are there proper access controls?
+3. **Environment Variables** - Are secrets properly handled?
+4. **Input Validation** - Is user input sanitized?
+5. **API Security** - Are endpoints protected?
+6. **Data Exposure** - Could sensitive data leak?
+
+For each issue found:
+- Severity: CRITICAL / HIGH / MEDIUM / LOW
+- Location: File and line number
+- Description: What's the vulnerability
+- Fix: How to remediate
+
+Start with the most critical issues.
+
+Here is the code:
+[PASTE CODE OR LINK TO REPO]</div>
+                <button class="copy-btn" onclick="copyPrompt(this)" style="margin-top: 1rem;">Copy prompt</button>
+            </div>
+
+            <h3>Common Vulnerabilities to Look For</h3>
+
+            <div class="security-checklist">
+                <div class="checklist-item">
+                    <div class="checklist-icon danger">&#128680;</div>
+                    <div class="checklist-content">
+                        <h5>Hardcoded Secrets</h5>
+                        <p>API keys, passwords, or tokens directly in code instead of environment variables.</p>
+                    </div>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-icon danger">&#128680;</div>
+                    <div class="checklist-content">
+                        <h5>Missing Authentication</h5>
+                        <p>API endpoints or pages accessible without proper authentication checks.</p>
+                    </div>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-icon warning">&#9888;</div>
+                    <div class="checklist-content">
+                        <h5>Unvalidated User Input</h5>
+                        <p>User input passed directly to LLM or database without sanitization.</p>
+                    </div>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-icon warning">&#9888;</div>
+                    <div class="checklist-content">
+                        <h5>Excessive Permissions</h5>
+                        <p>Database connections or API calls with more access than needed.</p>
+                    </div>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-icon safe">&#9989;</div>
+                    <div class="checklist-content">
+                        <h5>Proper Error Handling</h5>
+                        <p>Errors are caught and don't expose sensitive information in responses.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: Authentication with Clerk -->
+        <section id="auth">
+            <h2><span class="number">6</span> Secure Authentication with Clerk</h2>
+
+            <div class="card" style="border-color: var(--accent-green);">
+                <h3 style="margin-top: 0;">&#128274; Enterprise Authentication</h3>
+                <p>Clerk provides secure, enterprise-ready authentication. It handles user management, sessions, and security best practices so you don't have to build it from scratch.</p>
+            </div>
+
+            <h3>Authentication Flow</h3>
+
+            <div class="visual-diagram">
+                <div class="diagram-title">Clerk Authentication Flow</div>
+                <div class="auth-flow">
+                    <div class="auth-step">
+                        <div class="emoji">&#128100;</div>
+                        <div class="label">User</div>
+                    </div>
+                    <div class="auth-arrow">&#8594;</div>
+                    <div class="auth-step">
+                        <div class="emoji">&#128272;</div>
+                        <div class="label">Sign In</div>
+                    </div>
+                    <div class="auth-arrow">&#8594;</div>
+                    <div class="auth-step">
+                        <div class="emoji">&#128274;</div>
+                        <div class="label">Clerk</div>
+                    </div>
+                    <div class="auth-arrow">&#8594;</div>
+                    <div class="auth-step">
+                        <div class="emoji">&#127919;</div>
+                        <div class="label">JWT Token</div>
+                    </div>
+                    <div class="auth-arrow">&#8594;</div>
+                    <div class="auth-step">
+                        <div class="emoji">&#128640;</div>
+                        <div class="label">App Access</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header"><span>middleware.ts - Protecting Routes</span></div>
+<pre><span class="code-keyword">import</span> { clerkMiddleware } <span class="code-keyword">from</span> <span class="code-string">'@clerk/nextjs/server'</span>;
+
+<span class="code-comment">// Protect all routes by default</span>
+<span class="code-keyword">export default</span> <span class="code-function">clerkMiddleware</span>();
+
+<span class="code-keyword">export const</span> config = {
+  matcher: [
+    <span class="code-comment">// Skip static files and public routes</span>
+    <span class="code-string">'/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|...)).*)'</span>,
+    <span class="code-string">'/(api|trpc)(.*)'</span>,
+  ],
+};</pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header"><span>.env.local - Environment Variables</span></div>
+<pre><span class="code-comment"># Clerk Authentication</span>
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+
+<span class="code-comment"># Redirect URLs</span>
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/onboarding</pre>
+            </div>
+
+            <div class="critical-box">
+                <span class="icon">&#128680;</span>
+                <p><strong>Never commit .env files to GitHub!</strong> Use .env.example with placeholder values. Add .env to .gitignore.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 7: Exercise -->
+        <section id="exercise">
+            <h2><span class="number">7</span> Security Analysis Exercise</h2>
+
+            <div class="exercise-box">
+                <h4>&#128187; Your Task: Analyze the AI Academy Dashboard</h4>
+                <ol class="exercise-steps">
+                    <li>Fork the repository: <code style="background: var(--bg-tertiary); padding: 0.2rem 0.5rem; border-radius: 4px;">github.com/luborfedak/ai-academy-dashboard</code></li>
+                    <li>Open your AI Tutor and use the Security Analysis Prompt</li>
+                    <li>Analyze key files: <code>src/hooks/*</code>, <code>middleware.ts</code>, <code>src/app/api/*</code></li>
+                    <li>Identify at least 3 security vulnerabilities</li>
+                    <li>Propose fixes for each vulnerability</li>
+                    <li>Document your findings in a security report</li>
+                </ol>
+            </div>
+
+            <div class="prompt-box">
+                <h4>&#129302; Security Report Template</h4>
+                <div class="prompt-content">Create a security analysis report for the AI Academy Dashboard codebase.
+
+Structure your report as:
+
+## Executive Summary
+[Brief overview of findings]
+
+## Critical Issues (Fix Immediately)
+1. [Issue name]
+   - Location: [file:line]
+   - Risk: [what could happen]
+   - Fix: [how to remediate]
+
+## High Priority Issues
+[Same format]
+
+## Medium Priority Issues
+[Same format]
+
+## Recommendations
+[General security improvements]
+
+## OWASP LLM Compliance
+[Which of the Top 10 risks are mitigated, which are not]</div>
+                <button class="copy-btn" onclick="copyPrompt(this)" style="margin-top: 1rem;">Copy prompt</button>
+            </div>
+
+            <div class="card" style="border-color: var(--accent-green); text-align: center; margin-top: 2rem;">
+                <h3 style="margin-top: 0; color: var(--accent-green);">&#127919; Day 2 Goal Achieved</h3>
+                <p style="margin-bottom: 0;"><strong>You now know HOW to analyze AI code for security vulnerabilities.</strong><br>Tomorrow: WHERE does the AI get its data? (Databases & Vectors)</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>AI Academy 2026 &bull; Kyndryl &bull; Day 2: AI Security Fundamentals</p>
+    </footer>
+
+    <script>
+        // Theme handling
+        const html = document.documentElement;
+        const lightBtn = document.getElementById('theme-light');
+        const darkBtn = document.getElementById('theme-dark');
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        setTheme(savedTheme);
+
+        function setTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            if (theme === 'light') {
+                lightBtn.classList.add('active');
+                darkBtn.classList.remove('active');
+            } else {
+                darkBtn.classList.add('active');
+                lightBtn.classList.remove('active');
+            }
+        }
+
+        lightBtn.addEventListener('click', () => setTheme('light'));
+        darkBtn.addEventListener('click', () => setTheme('dark'));
+
+        // Copy prompt functionality
+        function copyPrompt(btn) {
+            const promptContent = btn.parentElement.querySelector('.prompt-content');
+            navigator.clipboard.writeText(promptContent.textContent).then(() => {
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy prompt', 2000);
+            });
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+                document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Active nav on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            let current = '';
+            sections.forEach(section => {
+                if (scrollY >= section.offsetTop - 200) current = section.getAttribute('id');
+            });
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
